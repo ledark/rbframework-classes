@@ -1,0 +1,24 @@
+{
+    "name": "ledark/rbframeworks",
+    "type": "library",
+    "description": "Utilitários para RBFrameworks",
+    "keywords": ["rbframeworks"],
+    "homepage": "https://github.com/Seldaek/monolog",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ricardo Bermejo",
+            "email": "mestreledark@gmail.com",
+            "homepage": "http://bermejo.com.br",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.3.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "RBFrameworks": "src"
+        }
+    }
+}
