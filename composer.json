@@ -1,9 +1,9 @@
 {
     "name": "ledark/rbframeworks",
     "type": "library",
-    "description": "Utilitários para RBFrameworks",
+    "description": "Utilitarios para RBFrameworks",
     "keywords": ["rbframeworks"],
-    "homepage": "https://github.com/Seldaek/monolog",
+    "homepage": "https://github.com/ledark/rbframework-classes",
     "license": "MIT",
     "authors": [
         {
@@ -14,11 +14,11 @@
         }
     ],
     "require": {
-        "php": ">=7.3.0"
+        "php": ">=7.2.0"
     },
     "autoload": {
         "psr-0": {
-            "RBFrameworks": "src"
+            "RBFrameworks\\": "src/"
         }
     }
 }
