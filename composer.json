@@ -2,7 +2,9 @@
     "name": "ledark/rbframeworks",
     "type": "library",
     "description": "Utilitarios para RBFrameworks",
-    "keywords": ["rbframeworks"],
+    "keywords": [
+        "rbframeworks"
+    ],
     "homepage": "https://github.com/ledark/rbframework-classes",
     "license": "MIT",
     "authors": [
@@ -20,5 +22,8 @@
         "psr-4": {
             "RBFrameworks\\": "src/"
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.0.0"
     }
 }
