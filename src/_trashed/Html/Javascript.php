@@ -22,7 +22,7 @@ class Javascript {
     
     public function render() {
         if($this->type == 'script') {
-            $FileHandler = new \RBFrameworks\Helpers\Files();
+            $FileHandler = new \RBFrameworks\Storage\Files();
             $filepath = $FileHandler->getSafePath($this->content);
             return $filepath.'<script src="'.$filepath.'"></script>';
         } else
