@@ -8,7 +8,7 @@ class Router {
     
     public $Request;
     
-    public function __construct(\RBFrameworks\Request $Request) {
+    public function __construct(\RBFrameworks\Request\Request $Request) {
         $this->Request = $Request;
     }
     

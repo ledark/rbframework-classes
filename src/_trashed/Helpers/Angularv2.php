@@ -4,7 +4,7 @@ namespace RBFrameworks\Helpers;
 
 use RBFrameworks\Helpers\Angularv1 as Angular;
 
-if(!defined('HTTPSITE')) define('HTTPSITE', (new \RBFrameworks\Request())->getHttpSite() );
+if(!defined('HTTPSITE')) define('HTTPSITE', (new \RBFrameworks\Request\Request())->getHttpSite() );
 
 class Angularv2 {
     
