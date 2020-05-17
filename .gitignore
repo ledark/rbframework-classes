@@ -2,3 +2,4 @@ nbproject/
 tests/
 vendor/
 composer.lock
+.metadata/

@@ -3,6 +3,9 @@
 namespace RBFrameworks\Storage;
 
 interface StorageInterface {
+    
+    
+    
 
     public function write(string $path, string $data) : void;
 
