@@ -1,6 +1,6 @@
 <?php
 
-namespace RBFrameworks\Request;
+namespace RBFrameworks;
 
 class Request {
     
