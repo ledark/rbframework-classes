@@ -1,6 +1,6 @@
 <?php
 
-namespace RBFrameworks\Helpers;
+namespace RBFrameworks\Storage;
 
 class Files {
     
