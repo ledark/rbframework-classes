@@ -1,6 +1,6 @@
 <?php
 
-namespace Interfaces;
+namespace RBFrameworks\Interfaces;
 
 interface Model {
     
