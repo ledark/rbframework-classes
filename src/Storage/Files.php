@@ -65,7 +65,7 @@ class Files {
     public function isIgnoredFile(string $filename): bool {
         if(in_array($name, $this->ignored_files)) return true;
         foreach($this->ignored_files as $pattern) {
-            if(preg_match($pattern, $name)) return true;
+            if(preg_match($pattern, $filename)) return true;
         }
         return false;
     }
