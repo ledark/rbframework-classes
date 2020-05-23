@@ -7,6 +7,8 @@ class Files {
     const tmpFolder = 'log/cache';
     
     public $globals = [];
+    
+    public $ignored_files = [];
        
     /**
      * Você passa quantos argumentos desejar, 
@@ -42,6 +44,8 @@ class Files {
             $name = $fileInfo->getFilename();
             $fullpath = $path.'/'.$name;
             
+            if($this->isIgnoredFile($name)) continue;
+            
             $dateCreate = date('d/m/Y', $fileInfo->getCTime());
             $dateModify = date('d/m/Y', $fileInfo->getMTime());
             $dateAccess = date('d/m/Y', $fileInfo->getATime());
@@ -51,6 +55,19 @@ class Files {
         }
         
         
+    }
+    
+    public function setIgnoredFile(string $filename): object {
+        $this->ignored_files[] = $filename;
+        return $this;
+    }
+    
+    public function isIgnoredFile(string $filename): bool {
+        if(in_array($name, $this->ignored_files)) return true;
+        foreach($this->ignored_files as $pattern) {
+            if(preg_match($pattern, $name)) return true;
+        }
+        return false;
     }
     
     public function include(string $filepath):void {
