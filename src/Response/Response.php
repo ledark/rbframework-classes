@@ -1,6 +1,6 @@
 <?php
 
-namespace RBFrameworks;
+namespace RBFrameworks\Response;
 
 plugin('utf8_encode_deep');
 
