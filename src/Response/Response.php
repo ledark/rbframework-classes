@@ -2,11 +2,13 @@
 
 namespace RBFrameworks\Response;
 
+use RBFrameworks\Utils\Strings\Encoding;
+
 plugin('utf8_encode_deep');
 
 class Response {
     
-    //Ideia de $add não implementada ainda
+    //Ideia de $add n?o implementada ainda
     public static $add = null;
     public static function add($mixed) {
         if(is_null(self::$add)) {
@@ -76,7 +78,7 @@ class Response {
     
     public static function text($text) {
         header("Content-Type: text/plain"); 
-        switch(\Encoding::detect($text)) {
+        switch(Encoding::detect($text)) {
             case 'ISO-8859-1':
                 $text = utf8_encode($text);
             break;
