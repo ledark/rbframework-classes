@@ -1,6 +1,6 @@
 <?php
 
-namespace RBFrameworks\Helpers\Strings;
+namespace RBFrameworks\Utils\Strings;
 
 /*
  * Exemplo:
