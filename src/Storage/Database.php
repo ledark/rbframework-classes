@@ -16,11 +16,12 @@ class Database {
     }
     
     public function __call (string $name, array $arguments) {
-        return call_user_method_array($name, $this->DB, $arguments);
+        return call_user_func_array(array($this->DB, $name), $arguments);
     }
     
-    public function __callStatic (string $name, array $arguments) {
-        return call_user_method_array($name, $this->DB, $arguments);
+    public static function __callStatic (string $name, array $arguments) {
+        return call_user_func_array(array($this->DB, $name), $arguments);
+        
     }
     
     private function extractConfig($mixed):array {
@@ -42,25 +43,25 @@ class Database {
                 }
             break;
             case "integer":
-                throw new \Exception("Tipo integer não possui uma configuração de banco de dados válida");
+                throw new \Exception("Tipo integer n?o possui uma configura??o de banco de dados v?lida");
             break;
             case "double":
-                throw new \Exception("Tipo float (ou double) não possui uma configuração de banco de dados válida");
+                throw new \Exception("Tipo float (ou double) n?o possui uma configura??o de banco de dados v?lida");
             break;
             case "string":
                 return get_config($mixed);
             break;
             case "object":
-                throw new \Exception("Tipo object não possui uma configuração de banco de dados implementada");
+                throw new \Exception("Tipo object n?o possui uma configura??o de banco de dados implementada");
             break;
             case "resource":
-                throw new \Exception("Tipo object não possui uma configuração de banco de dados implementada");
+                throw new \Exception("Tipo object n?o possui uma configura??o de banco de dados implementada");
             break;
             case "NULL":
                 return get_config('database');
             break;
             case "unknown type":
-                throw new \Exception("Tipo desconhecido que não possui uma configuração de banco de dados detecada");
+                throw new \Exception("Tipo desconhecido que n?o possui uma configura??o de banco de dados detecada");
             break;
         }
     }
