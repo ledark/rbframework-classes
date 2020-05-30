@@ -1,6 +1,6 @@
 <?php
 
-namespace Collection;
+namespace RBFrameworks\Collection;
 
 class Config {
     

@@ -1,6 +1,6 @@
 <?php
 
-namespace RBFrameworks;
+namespace RBFrameworks\Utils;
 
 define('TYPEHINT_PCRE'              ,'/^Argument (\d)+ passed to (?:(\w+)::)?(\w+)\(\) must be an instance of (\w+), (\w+) given/');
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace RBFrameworks\Database;
+namespace RBFrameworks\Storage\Database;
 
-class Dao extends \RBFrameworks\Database implements Crudable {
+class Dao extends \RBFrameworks\Storage\Database implements \RBFrameworks\Interfaces\Crudable {
     
     public $tabela;
 
@@ -20,11 +20,11 @@ class Dao extends \RBFrameworks\Database implements Crudable {
     }
     
     public function add(array $dados) {
-        
+        $this->insert($this->getTabela(), $dados);
     }
     
     public function set(array $dados, array $keys) {
-        
+        $this->update($this->getTabela(), $dados, $keys);
     }
     
     public function del(array $keys) {
@@ -32,7 +32,12 @@ class Dao extends \RBFrameworks\Database implements Crudable {
     }
     
     public function get() {
+        $table = $this->getTabela();
+        $this->query("SELECT * FROM $table");
+    }
+
+    public function upsert(array $dados, array $keys) {
         
     }
-    
+
 }

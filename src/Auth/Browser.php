@@ -1,6 +1,6 @@
 <?php
 
-namespace RBFrameworks\Auth\Http;
+namespace RBFrameworks\Auth;
 
 /**
  * Not Implemented

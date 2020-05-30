@@ -5,6 +5,8 @@
  * 21/11/2019 - Inclusão das funções replace, exists($key, $value) e cod_exists($key, $value)
 */
 
+namespace RBFrameworks\Storage\Database;
+
 class doDBv4 extends PDO {
 
 	//Conexão e geração das Variáveis

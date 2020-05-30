@@ -1,6 +1,6 @@
 <?php
 
-namespace RBFrameworks\Helpers\Php;
+namespace RBFrameworks\Utils;
 
 abstract class Arrays {
     
