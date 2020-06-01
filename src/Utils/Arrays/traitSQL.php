@@ -8,7 +8,7 @@ trait traitSQL {
 
     /**
      * extractFields extrair campo de uma array associativa ['field' => 'value', 'field2' => 'value', 'field3' => 'value'] 
-     * para field1, field2, field3
+     * para field1, field2, field3. Você pode passar um campo com * para não retornar `delimitado`.
      * @param array $dados
      * @return string
      */
@@ -21,7 +21,7 @@ trait traitSQL {
             $dados = $arr;
         }
         foreach($dados as $campo => $valor){
-            $return.= "`$campo`, ";
+            $return.= (strpos($campo, '*') !== false) ? "$campo, " : "`$campo`, ";
         }        
         return self::sqlTrim($return);
     }    
@@ -36,6 +36,20 @@ trait traitSQL {
     public static function extractBindParams(array $dados, string $return = ''): string {
         foreach($dados as $campo => $valor){
             $return.= "?, ";
+        }
+        return self::sqlTrim($return);
+    }
+
+    /**
+     * extractFields extrair campo de uma array associativa ['field' => 'value', 'field2' => 'value', 'field3' => 'value'] 
+     * para %s_field, %s_field2, %i_field3
+     * @param array $dados
+     * @return string
+     */    
+    public static function extractBindNamedParams(array $dados, string $return = ''): string {
+        foreach($dados as $campo => $valor){
+            $prefix = is_int($valor) ? 'i_' : 's_';
+            $return.= "%{$prefix}{$campo}, ";
         }
         return self::sqlTrim($return);
     }
