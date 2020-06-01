@@ -15,7 +15,7 @@ class Dao extends \RBFrameworks\Storage\Database implements \RBFrameworks\Interf
         $this->tabela = $this->prefixo.str_replace($this->prefixo, '', $tabela);
     }
     
-    protected function getTabela(bool $withPrefix = true):string {
+    public function getTabela(bool $withPrefix = true):string {
         return $withPrefix ? $this->tabela : str_replace($this->prefixo, '', $this->tabela);
     }
 
@@ -28,7 +28,9 @@ class Dao extends \RBFrameworks\Storage\Database implements \RBFrameworks\Interf
     }
 
     public function get(array $dados, array $criterias) {
-        
+        $fields = \RBFrameworks\Utils\Arrays::extractFields($dados);
+        $criterias = \RBFrameworks\Utils\Arrays::extractWhereAnd($criterias);        
+        return $this->query("SELECT $fields FROM `{$this->getTabela()}` WHERE (1=1) AND $criterias");
     }
 
     public function set(array $dados, array $keys) {
