@@ -81,4 +81,14 @@ abstract class Arrays {
         return $inp;
     }     
     
+    private static function extractKeysFromAssocArray(array $model, string $filter = 'mysql') {
+        $validFields = [];
+        foreach($model as $field => $props) {
+            if(isset($props[$filter]) and !empty($props[$filter])) {
+                $validFields[] = $field;
+            }
+        }
+        return $validFields;
+    }
+    
 }
