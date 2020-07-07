@@ -20,7 +20,11 @@ class Dao extends \RBFrameworks\Storage\Database implements \RBFrameworks\Interf
     }
 
     public function add(array $dados) {
-        
+        $fields = \RBFrameworks\Utils\Arrays::extractFields($dados);
+        $bindedValues = \RBFrameworks\Utils\Arrays::extractBindNamedParams($dados);
+        $values = \RBFrameworks\Utils\Arrays::extractValuesAsArray($dados);
+        $query = "INSERT INTO `{$this->getTabela()}` ($fields) VALUES ($bindedValues)";
+        return $this->query($query, $dados);
     }
 
     public function del(array $keys) {
@@ -41,4 +45,11 @@ class Dao extends \RBFrameworks\Storage\Database implements \RBFrameworks\Interf
         
     }
 
+    public function getModelObject(array $model = []): object {
+        if(!count($model) and isset($this->model)) $model = $this->model;
+        return new \RBFrameworks\Storage\Database\Model([$this->getTabela() => $model]);
+    }
+
+    use DaoTable;    
+    
 }
