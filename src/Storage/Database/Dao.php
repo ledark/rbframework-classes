@@ -42,7 +42,14 @@ class Dao extends \RBFrameworks\Storage\Database implements \RBFrameworks\Interf
     }
 
     public function upsert(array $dados, array $keys) {
+        $table          = $this->getTabela();
+        $keys_where     = \RBFrameworks\Utils\Arrays::extractWhereAnd($keys);
+        $update_values  = \RBFrameworks\Utils\Arrays::extractUpdateRaw($dados);
+        $campos         = \RBFrameworks\Utils\Arrays::extractFields($dados);
+        $values         = \RBFrameworks\Utils\Arrays::extractValues($dados);
         
+        $query = "UPDATE `$table` SET $update_values WHERE $keys_where; INSERT INTO `$table` ($campos) SELECT $values FROM `$table` WHERE $keys_where HAVING COUNT(*) = 0 ";
+        return $this->Database->setQuery($query)->execute()->rowCount();
     }
 
     public function getModelObject(array $model = []): object {

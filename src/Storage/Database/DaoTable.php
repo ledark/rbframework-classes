@@ -102,6 +102,37 @@ trait DaoTable {
         }
         
     }
+
+    private static function sanitize($inp) {
+        if(is_array($inp))
+            return array_map(__METHOD__, $inp);
+
+        if(!empty($inp) && is_string($inp)) {
+            return str_replace(array('\\', "\0", "\n", "\r", "'", '"', "\x1a"), array('\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'), $inp);
+        }
+
+        return $inp;
+    } 
     
+    /**
+     * Converte um valor qualquer para a Sintax "limit" do Mysql
+     * @param NULL|INT|ARRAY $value
+     * @return string
+     */
+    public static function toMysql_limit($value):string {
+        if(is_numeric($value) or is_int($value) ) {
+            return " LIMIT $value ";
+        } else
+        if(is_array($value)) {
+            return " LIMIT ".$value[0].','.$value[1];
+        }
+        return '';
+    }
+    
+    public function getValue(string $name, array $filter = []):string {
+        $query = "SELECT `$name` FROM `$this->tabela` WHERE ".$this->walk_query($filter, 'where_and');
+        $return = $this->select($query)[0][$name];
+        return is_string($return) ? $return : $query;
+    }        
     
 }
