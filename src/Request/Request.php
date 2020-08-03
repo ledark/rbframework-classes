@@ -65,4 +65,11 @@ class Request {
         return $_INPUT;
     } 
     
+    public function setCollectionsPath(string $path) {
+        $this->collections_path = $path;
+    }
+    public function getCollectionsPath(): string {
+        return (isset($this->collections_path)) ? $this->collections_path : './';
+    }
+    
 }
