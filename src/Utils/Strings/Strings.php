@@ -1,6 +1,6 @@
 <?php
 
-namespace RBFrameworks\Helpers;
+namespace RBFrameworks\Utils\Strings;
 
 /*
 Desenvolvido por: Ricardo[at]Bermejo.com.br
