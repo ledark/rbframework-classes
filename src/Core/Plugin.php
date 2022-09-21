@@ -46,10 +46,15 @@ class Plugin
 
             $functionname = str_replace('\\', '/', $functionname);
 
+            if(!function_exists('get_functions_dir')) {
+                throw new \Exception('Create get_functions_dir() function in project that returns the functions dir');
+                function get_functions_dir():string { return '/_app/functions'; }
+            }
+
             $include_class_paths = [
-                __DIR__."/../../../_app/functions/{$functionname}.php",
-                __DIR__."/../../../_app/functions/function.{$functionname}.php",
-                __DIR__."/../../../_app/functions/legacy/function.{$functionname}.php",
+                get_functions_dir()."{$functionname}.php",
+                get_functions_dir()."function.{$functionname}.php",
+                get_functions_dir()."legacy/function.{$functionname}.php",
             ];
 
             if (strpos($functionname, '_') !== false) {

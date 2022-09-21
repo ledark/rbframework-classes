@@ -9,7 +9,10 @@ use RBFrameworks\Core\Debug;
 class Config
 {
     public static function getCollectionDir():string {
-        if(!function_exists('get_collection_dir')) throw new \Exception('Create get_collection_dir() function in project that returns the collection dir');
+        if(!function_exists('get_collection_dir')) {
+            throw new \Exception('Create get_collection_dir() function in project that returns the collection dir');
+            function get_collection_dir():string { return '/_app/collections'; }
+        }
         return get_collection_dir();        
     }
 
