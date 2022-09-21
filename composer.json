@@ -26,7 +26,8 @@
     "autoload": {
         "psr-4": {
             "RBFrameworks\\": "src/"
-        }
+        },
+        "files": [ "_include.php" ]
     },
     "require-dev": {
         "phpunit/phpunit": "^8.0.0"
