@@ -11,7 +11,7 @@ use RBFrameworks\Core\Debug;
 class Factory
 {
     public static function getConnectionParams():array {
-        $genericDatabase = new \Core\Database();
+        $genericDatabase = new \RBFrameworks\Core\Database();
         return [
             'driver'      => 'pdo_mysql',
             'dbname'      => $genericDatabase->getConfigDatabase(),

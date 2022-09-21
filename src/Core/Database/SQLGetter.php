@@ -14,7 +14,7 @@ class SQLGetter {
     }
 
     public function __construct(string $name, array $replaces = []) {
-        \Core\Debug::log($name, $replaces, "SQLGetter", "CoreDatabase");
+        \RBFrameworks\Core\Debug::log($name, $replaces, "SQLGetter", "CoreDatabase");
         $this->setReplaces($replaces);
         $this->setName($name);
     }
@@ -77,7 +77,7 @@ class SQLGetter {
         } else {
             $this->name = $name;
             
-            $file = new \Core\Types\File($name);
+            $file = new \RBFrameworks\Core\Types\File($name);
 
             $file                
             ->addSearchExtension('.sql')
@@ -95,7 +95,7 @@ class SQLGetter {
             if(!$file->hasFile()) throw new \Exception("SQLGetter Failed to Read Query");
 
             $contents = $file->getFileContents();
-            $replacement = new \Core\Utils\Replace($contents, $this->replaces);
+            $replacement = new \RBFrameworks\Core\Utils\Replace($contents, $this->replaces);
 
             $contents = $replacement->render(true);
                         

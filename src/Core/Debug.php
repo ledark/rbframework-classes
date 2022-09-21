@@ -2,13 +2,17 @@
 
 namespace RBFrameworks\Core;
 
-use RBFrameworks\Core\Utils\Strings;
+use RBFrameworks\Core\Utils\Strings\Dispatcher;
+use RBFrameworks\Core\Utils\Variables;
+use RBFrameworks\Core\Plugin;
 
 if(!function_exists('is_developer')) {
     function is_developer():bool {
         return true;
     }
 }
+
+if(class_exists('RBFrameworks\Core\Debug')) return;
 
 class Debug {
 
@@ -134,12 +138,12 @@ CARD;
     public static function log($message, array $context = [], string $group = 'log', string $filename_backtrace = null, int $backtrace_level = 0) {
         Plugin::load('utf8_encode_deep');
         $uid = uniqid();
-        $message = new \Core\Utils\Variables($message);
+        $message = new Variables($message);
         if(is_null($filename_backtrace)) {
             $filename_backtrace = debug_backtrace()[$backtrace_level]['file'];
             $filename_backtrace = dirname($filename_backtrace).'.'.basename($filename_backtrace, '.php');
         }
-            $filename_backtrace = \Core\Utils\Strings\Dispatcher::file($filename_backtrace);
+            $filename_backtrace = Dispatcher::file($filename_backtrace);
             $filename_backtrace = str_replace('\\', '-', $filename_backtrace);
             $filename_backtrace = str_replace('/', '-', $filename_backtrace);
 

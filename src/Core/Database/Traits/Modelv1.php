@@ -104,7 +104,7 @@ trait Modelv1 {
      }
      
      public static function json_encode_nice($array, $options = null, $forceutf8 = true) {
-         \Core\Plugin::load('utf8_encode_deep');
+         \RBFrameworks\Core\Plugin::load('utf8_encode_deep');
          if($forceutf8) utf8_encode_deep($array);
          $stringjson = json_encode($array);
          if(substr($options, 'comment' !== false )) $stringjson = " /* $stringjson */ ";
@@ -113,7 +113,7 @@ trait Modelv1 {
      
      public static function json_decode_nice($json, $assoc = FALSE, $forceutf8 = true){
          if($forceutf8) $json = utf8_encode($json);
-         \Core\Plugin::load('utf8_encode_deep');
+         \RBFrameworks\Core\Plugin::load('utf8_encode_deep');
          $json = str_replace(array("\n","\r"),"",$json);
          $json = preg_replace('/([{,]+)(\s*)([^"]+?)\s*:/','$1"$3":',$json);
          $arr = json_decode($json,$assoc);

@@ -148,16 +148,16 @@ class Database
 
             if (in_array($behavior, ['logAll', 'logSuccess']) === true) {
                 $this->DB->error_handler  = function ($params) {
-                    \Core\Debug::log("SUCCESS " . $params['query'] . " run in " . $params['runtime'] . " (milliseconds)", [], 'MeekroDB.Success', 'MeekroDB');
+                    \RBFrameworks\Core\Debug::log("SUCCESS " . $params['query'] . " run in " . $params['runtime'] . " (milliseconds)", [], 'MeekroDB.Success', 'MeekroDB');
                 };
             }
             if (in_array($behavior, ['logAll', 'logError']) === true) {
                 $this->DB->error_handler = function ($params, $prefix = "") {
-                    \Core\Debug::log("ERROR " . $params['query'] . " run in " . $params['runtime'] . " (milliseconds)", [], 'MeekroDB.Errors', 'MeekroDB');
+                    \RBFrameworks\Core\Debug::log("ERROR " . $params['query'] . " run in " . $params['runtime'] . " (milliseconds)", [], 'MeekroDB.Errors', 'MeekroDB');
                 };
             }
         } catch (\Exception $e) {
-            \Core\Debug::log($e->getMessage(), [], 'MeekroDB.Exception','MeekroDB');
+            \RBFrameworks\Core\Debug::log($e->getMessage(), [], 'MeekroDB.Exception','MeekroDB');
         }
         return $this;
     }

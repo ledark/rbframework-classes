@@ -21,13 +21,13 @@ class Builder
     }
 
     public static function sqlCreateFromTable(string $table):string {
-        $genericDatabase = new \Core\Database($table);
+        $genericDatabase = new \RBFrameworks\Core\Database($table);
         $tableArr = $genericDatabase->queryFirstRow("SHOW CREATE TABLE {$genericDatabase->getTabela()}");
         return $tableArr['Create Table'];
     }
 
     public static function modelFromTable(string $table):Modelv2 {
-        $genericDatabase = new \Core\Database($table);
+        $genericDatabase = new \RBFrameworks\Core\Database($table);
         $tableArr = $genericDatabase->query("DESCRIBE {$genericDatabase->getTabela()}");
         $FldProps = [];
         foreach($tableArr as $i => $r) {

@@ -51,7 +51,7 @@ class doDBv4 extends PDO {
 		$this->model = reset($arrayModel);
 
 		//Parallel Meekro
-		$this->Meekro = new \Core\Database($this->tabela, $this->model, $strconn);
+		$this->Meekro = new \RBFrameworks\Core\Database($this->tabela, $this->model, $strconn);
 
 		//Constructor
 		parent::__construct("mysql:host=$server;dbname=$database", "$login", "$senha");
