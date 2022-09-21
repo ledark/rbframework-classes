@@ -1,0 +1,1 @@
+SELECT {field} FROM information_schema.tables WHERE TABLE_SCHEMA = '{databaseName}' AND TABLE_NAME = '{tableName}'"
