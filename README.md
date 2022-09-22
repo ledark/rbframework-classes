@@ -11,25 +11,31 @@ Simple init this repo with composer:
 composer install ledark/rbframeworks
 ```
 
-## Usage
+## Usage as Utilities
 ```php
-use RBFrameworks\Storage\Files as Files;
+use RBFrameworks\Core\Utils\Strings\Dispatcher;
 
-$meusArquivos = new Files();
+echo Dispatcher::sef("Uma frase que será transformada em versão Search Engine Friendly!"); //uma-frase-que-sera-transformada-em-versao-search-engine-friendly
 ```
 
 # Folder Structure
 ```bash
 .
-??? src                  #source files .php maped to RBFrameworks\ namespace
-?   ??? Storage
-?   ?   ??? Files
-?   ?   ??? Database
-??? tests                #test files
-?   ??? file21.ext       #dev
-?   ??? file22.ext       #dev
-?   ??? file23.ext       #dev
-??? vendor               #composer
-??? composer.json        #composer
-??? README.md            #this file
+│   src                  #source files .php maped to RBFrameworks\ namespace
+│   └─── Database/
+│   └─── Symfony/
+│   └─── Types/
+│   └─── Utils/
+│   └─── App
+│   └─── Database
+│   └─── Debug
+│   └─── Directory
+│   └─── Http
+│   └─── Plugin
+│   └─── Template
+│   └─── TemplateController
+│   └─── _include.php
+│   .gitignore           #keep files clean
+│   composer.json        #composer
+│   README.md            #this file
 ```
