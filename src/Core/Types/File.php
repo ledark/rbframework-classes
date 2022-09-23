@@ -212,7 +212,7 @@ class File {
                 foreach($this->search['prefix'] as $prefix) {
                     foreach($this->search['extension'] as $extension) {
                         $file = $folder.$this->name.$extension;
-                        if(file_exists($file)) {
+                        if(file_exists($file) and !is_dir($file)) {
                             $this->filepath = ($applyRealPath) ? realpath($file) : $file;
                             $this->folderpath = dirname(realpath($file));
                             $this->extension = $extension;
@@ -254,23 +254,15 @@ class File {
         return $this->getFilePath();
     }
 
-    public function render(bool $capture = false) {
-        
-        $replaces = $this->replaces;
+    public function renderCache(bool $capture = false) {
+
+        $obj = $this;
         $cachekey = Dispatcher::file($this->getFilePath()).md5(serialize($replaces));
+
         $cache = new FilesystemAdapter(); 
-        $content = $cache->get($cachekey, function (ItemInterface $item) use ($replaces) {
-            $item->expiresAfter(3600);
-            
-            ob_start();
-            if(!empty($this->getFilePath())) include($this->getFilePath());
-            $content = ob_get_clean();
-            
-            if(count($this->replaces)) {
-                $content = Replace::replace($content, $this->replaces);
-            }
-        
-            return $content;
+        $content = $cache->get($cachekey, function (ItemInterface $item) use ($obj) {
+            $item->expiresAfter(3600);                
+            return $this->render();
         });
         
         if(!$this->cache) {
@@ -280,7 +272,21 @@ class File {
         if($capture) {
             return $content;
         }
+    }
 
+    public function render(bool $capture = false) {
+        
+        ob_start();
+        if(!empty($this->getFilePath())) include($this->getFilePath());
+        $content = ob_get_clean();
+        
+        if(count($this->replaces)) {
+            $content = Replace::replace($content, $this->replaces);
+        }
+
+        if($capture) {
+            return $content;
+        }
     }
 
     /**

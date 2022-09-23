@@ -21,13 +21,16 @@
         "sergeytsalkov/meekrodb": "^2.2",
         "guzzlehttp/psr7": "^1.6",
         "eftec/bladeone": "^3.44",
-        "eftec/bladeonehtml": "^1.4"
+        "eftec/bladeonehtml": "^1.4",
+        "bramus/router": "^1.6"
     },
     "autoload": {
         "psr-4": {
             "RBFrameworks\\": "src/"
         },
-        "files": [ "_include.php" ]
+        "files": [
+            "_include.php"
+        ]
     },
     "require-dev": {
         "phpunit/phpunit": "^8.0.0"
