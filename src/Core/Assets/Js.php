@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Assets;
+namespace RBFrameworks\Core\Assets;
 
 class Js
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Utils;
+namespace RBFrameworks\Core\Utils;
 
 /*
  * Exemplo:

@@ -1,6 +1,6 @@
 <?php 
 
-namespace Core\Notifications\Services;
+namespace RBFrameworks\Core\Notifications\Services;
 
 class Service {
     

@@ -1,8 +1,8 @@
 <?php
 
-namespace Core\Validator\Rules;
+namespace RBFrameworks\Core\Validator\Rules;
 
-use Core\Validator\Rule;
+use RBFrameworks\Core\Validator\Rule;
 
 class Required extends Rule
 {

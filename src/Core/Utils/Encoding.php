@@ -378,7 +378,7 @@ class Encoding
 
   /*
     public static function deep(&$input, $ForceUTF8Encoding = true) {
-      \Core\Plugin::load('utf8_encode_deep');
+      Plugin::load('utf8_encode_deep');
       if($ForceUTF8Encoding) {
         utf8_encode_deep($input);
       } else {

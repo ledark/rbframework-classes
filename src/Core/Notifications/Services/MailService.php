@@ -1,6 +1,6 @@
 <?php 
 
-namespace Core\Notifications\Services;
+namespace RBFrameworks\Core\Notifications\Services;
 
 /*
 require("_app/class/vendor/PHPMailer/src/Exception.php");
@@ -13,7 +13,7 @@ use PHPMailer\PHPMailer\Exception;
 use RBFrameworks\Core\Config;
 use RBFrameworks\Core\Debug;
 use RBFrameworks\Core\Types\File;
-use Core\Utils\Replace;
+use RBFrameworks\Core\Utils\Replace;
 
 class MailService extends Service {
 

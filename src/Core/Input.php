@@ -3,6 +3,7 @@
 namespace RBFrameworks\Core;
 
 use RBFrameworks\Core\Plugin;
+use RBFrameworks\Core\Utils\Encoding;
 
 class Input {
 
@@ -80,13 +81,16 @@ class Input {
 
     public function get(bool $forceUtf8 = null):array {
         if(is_null($forceUtf8)) return $this->input;
-       Plugin::load('utf8_encode_deep');
         if($forceUtf8) {
-            utf8_encode_deep($this->input);
+            Encoding::DeepEncode($this->input);
         } else {
-            utf8_decode_deep($this->input);
+            Encoding::DeepDecode($this->input);
         }
         return $this->input;
+    }
+
+    public static function getAll():array {
+        return self::getInstance()->get();
     }
 
     public function decode():array {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Core\Assets;
+namespace RBFrameworks\Core\Assets;
 
-use Core\Types\File;
-use Core\Assets;
+use RBFrameworks\Core\Types\File;
+use RBFrameworks\Core\Assets;
 
 class Css
 {

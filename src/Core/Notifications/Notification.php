@@ -1,6 +1,6 @@
 <?php 
 
-namespace Core\Notifications;
+namespace RBFrameworks\Core\Notifications;
 
 class Notification {
     

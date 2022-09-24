@@ -1,19 +1,20 @@
 <?php 
 
-namespace Core;
+namespace RBFrameworks\Core;
 
 /**
  * Dependences: 
  *  custom_mime_content_type
  */
 
-use Core\Assets\Html as AssetHtml;
-use Core\Assets\Css as AssetCss;
-use Core\Assets\Js as AssetJs;
+use RBFrameworks\Core\Assets\Html as AssetHtml;
+use RBFrameworks\Core\Assets\Css as AssetCss;
+use RBFrameworks\Core\Assets\Js as AssetJs;
 use RBFrameworks\Core\Types\File;
 use RBFrameworks\Core\Config;
 use RBFrameworks\Core\Debug;
 use RBFrameworks\Core\Http;
+use RBFrameworks\Core\Utils\Replace;
 
 abstract class Assets {
 
@@ -119,7 +120,7 @@ abstract class Assets {
     }
     if(is_null($buffer)) {
 
-        $result = new \Core\Utils\Replace($assets_output_buffer[$name], self::getGlobalReplaces());
+        $result = new Replace($assets_output_buffer[$name], self::getGlobalReplaces());
         $result->render();        
         
         Debug::log('rendered $name', $assets_output_buffer, 'assets_output_buffer', 'CoreAssetsRender');
@@ -203,7 +204,7 @@ abstract class Assets {
                         $file = new File($folder.$name.$extension);
                         ob_start();
                         include($file->getFilePath());
-                        $content = new \Core\Utils\Replace(ob_get_clean(), array_merge(self::getGlobalReplaces(), $replaces));
+                        $content = new Replace(ob_get_clean(), array_merge(self::getGlobalReplaces(), $replaces));
                         echo $content->render(true);                        
                         
                         return;

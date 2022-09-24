@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Http;
+namespace RBFrameworks\Core\Http;
 
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Cookie\SessionCookieJar as GuzzleSession;

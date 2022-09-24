@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Http;
+namespace RBFrameworks\Core\Http;
 
 interface HttpRequestInterface
 {

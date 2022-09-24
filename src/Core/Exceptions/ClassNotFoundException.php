@@ -2,7 +2,7 @@
 
 namespace RBFrameworks\Core\Exceptions;
 
-use Core\Templates\Render;
+use RBFrameworks\Core\Templates\Render;
 use RBFrameworks\Core\Template;
 
 class ClassNotFoundException extends DefaultException {

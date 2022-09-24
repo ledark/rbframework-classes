@@ -1,9 +1,9 @@
 <?php
 
-namespace Core\Assets;
+namespace RBFrameworks\Core\Assets;
 
-use Core\Assets\Css;
-use Core\Assets\Js;
+use RBFrameworks\Core\Assets\Css;
+use RBFrameworks\Core\Assets\Js;
 
 class Html
 {
