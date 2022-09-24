@@ -2,6 +2,7 @@
 
 namespace RBFrameworks\Core\Database\Legacy;
 
+use RBFrameworks\Core\Config;
 use RBFrameworks\Core\Plugin;
 
 /**
@@ -41,7 +42,7 @@ class Queryv2 {
         if(isset($GLOBALS['prefixo']) and !empty($GLOBALS['prefixo'])) {
             return $GLOBALS['prefixo'];
         }
-        return get_config('database.prefixo');
+        return Config::get('database.prefixo');
     }
     
     public function setGroup($campo) {

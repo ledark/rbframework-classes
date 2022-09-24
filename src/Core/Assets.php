@@ -138,7 +138,7 @@ abstract class Assets {
 
     private static function RenderInjector(string $component_name, array $replaces = [], string $prefix = "", string $sufix = "", string $scope = 'footer'):void {
 
-        //$components_directories = get_config('location.assets');
+        //$components_directories = Config::get('location.assets');
         $components_directories = [
             '_app/snippets/',
         ];

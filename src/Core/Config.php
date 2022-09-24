@@ -9,9 +9,11 @@ use RBFrameworks\Core\Debug;
 class Config
 {
     public static function getCollectionDir():string {
+        if(is_dir(__DIR__.'/../../collections')) return __DIR__.'/../../collections/'; //_app/class/Core/ or src/Core/
+        if(is_dir('./collections')) return './collections/';
         if(!function_exists('get_collection_dir')) {
             throw new \Exception('Create get_collection_dir() function in project that returns the collection dir');
-            function get_collection_dir():string { return '/_app/collections'; }
+            function get_collection_dir():string { return '/_app/collections/'; }
         }
         return get_collection_dir();        
     }
@@ -102,6 +104,16 @@ class Config
 
         
         return Arrays::getValueByDotKey($collection_path, $collection, null, '.');
+    }
+
+    public static function getCollectionNames():array {
+        $collections_dir = self::getCollectionDir();
+        $files = glob($collections_dir.'/*.php');
+        $names = array();
+        foreach($files as $file) {
+            $names[] = str_replace('.php', '', basename($file));
+        }
+        return $names;
     }
 
 }

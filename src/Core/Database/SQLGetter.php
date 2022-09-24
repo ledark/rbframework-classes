@@ -2,6 +2,10 @@
 
 namespace RBFrameworks\Core\Database;
 
+use RBFrameworks\Core\Config;
+use RBFrameworks\Core\Http;
+
+
 class SQLGetter {
 
     private $name, $originalQuery;
@@ -21,10 +25,10 @@ class SQLGetter {
 
     public function setReplaces(array $replaces) {
         
-        $databaseVariables = get_config('database');
+        $databaseVariables = Config::get('database');
 
         $this->replaces = array_merge([
-            'httpSite' => httpSite(),
+            'httpSite' => Http::getSite(),
             'database' => $databaseVariables['database'],
             'prefixo' => $databaseVariables['prefixo'],
         ], $this->replaces, $replaces);

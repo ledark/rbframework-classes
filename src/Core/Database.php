@@ -106,7 +106,7 @@ class Database
         //ServerDatabaseConn
         $this->DB = new MeekroDB($config['server'], $config['login'], $config['senha'], $config['database']);
         $this->resolveMeekroDB();
-        $this->defaultHandlers(is_null(get_config('database.logs')) ? '' : get_config('database.logs'));
+        $this->defaultHandlers(is_null(Config::get('database.logs')) ? '' : Config::get('database.logs'));
         $this->database = $config['database'];
         $this->host = $config['server'];
         $this->user = $config['login'];

@@ -5,6 +5,8 @@ namespace RBFrameworks\Core;
 use RBFrameworks\Core\Utils\Strings\Dispatcher;
 use RBFrameworks\Core\Utils\Variables;
 use RBFrameworks\Core\Plugin;
+use RBFrameworks\Core\Config;
+use RBFrameworks\Core\Utils\Encoding;
 
 if(!function_exists('is_developer')) {
     function is_developer():bool {
@@ -119,7 +121,7 @@ CARD;
      */
     private static function logIgnoreGroup():array {
         Plugin::load("helper");
-        $ignored = get_config('debug.ignore_groups');
+        $ignored = Config::get('debug.ignore_groups');
         if(!is_array($ignored)) $ignored = [];
         return array_merge($ignored, []);        
     }
@@ -129,7 +131,7 @@ CARD;
      * @return array
      */
     private static function logIgnoreFilenames():array {
-        $ignored = get_config('debug.ignore_filenames');
+        $ignored = Config::get('debug.ignore_filenames');
         if(!is_array($ignored)) $ignored = [];
         return array_merge($ignored, []);
     }
@@ -151,9 +153,9 @@ CARD;
         if(in_array($filename_backtrace, self::logIgnoreFilenames()) == true) return;
 
 
-        $filename = Config::get('path.log_file');
+        $filename = Config::get('location.log_file');
         $filename = str_replace('[filename_backtrace]', $filename_backtrace, $filename);
-        utf8_encode_deep($context);
+        Encoding::DeepEncode($context);
         file_put_contents($filename, date('Y-m-d H:i:s').'['.$uid.']'.$group.': '.$message->getString().' --'.json_encode($context)."\r\n", FILE_APPEND);
     }
 

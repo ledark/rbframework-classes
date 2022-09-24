@@ -263,7 +263,7 @@ class Http {
     public static function sanitizeUri(string $uri):string {
 
         if(!self::isAbsolute($uri)) {
-            $baseUrl = Config::get('env.server.baseUrl');
+            $baseUrl = Config::get('server.server.baseUrl');
             $mountedUrl = rtrim($baseUrl, '/').'/'.ltrim($uri, '/');
             $uri = $mountedUrl;
         }

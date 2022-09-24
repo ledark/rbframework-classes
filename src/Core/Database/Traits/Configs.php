@@ -31,7 +31,7 @@ trait Configs {
                 throw new \Exception("Tipo float (ou double) n?o possui uma configura??o de banco de dados v?lida");
             break;
             case "string":
-                $config = get_config($mixed);
+                $config = Config::get($mixed);
                 if(!is_array($config)) throw new \Exception("get_config dont found $mixed");
                 return $config;
             break;

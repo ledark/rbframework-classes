@@ -13,6 +13,7 @@ use PDO;
 use PDOException;
 use Exception;
 use RBFrameworks\Core\Debug;
+use RBFrameworks\Core\Config;
 use RBFrameworks\Core\Plugin;
 
 class doDBv4 extends PDO {
@@ -36,7 +37,7 @@ class doDBv4 extends PDO {
 		//Constructor
 		if(is_null($strconn)) {
 			Plugin::load("helper");
-			$strconn = get_config('database');
+			$strconn = Config::get('database');
 		}
 		
         $server         = $strconn['server'];

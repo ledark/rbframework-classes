@@ -398,4 +398,36 @@ class File {
         exit();
     }
 
+    public static function createFileDummy(string $filename, int $size = 0) {
+        
+        if(!is_dir(dirname($filename)) and is_readable(dirname($filename))) {
+            throw new \Exception("Directory ".dirname($filename)." not found or not readable");
+        }
+
+        if($size === 0) {
+            return touch($filename);
+        }
+
+        // 32bits 4 294 967 296 bytes MAX Size
+        $f = fopen($filename, 'wb');
+        if($size >= 1000000000)  {
+            $z = ($size / 1000000000);       
+            if (is_float($z))  {
+                $z = round($z,0);
+                fseek($f, ( $size - ($z * 1000000000) -1 ), SEEK_END);
+                fwrite($f, "\0");
+            }       
+            while(--$z > -1) {
+                fseek($f, 999999999, SEEK_END);
+                fwrite($f, "\0");
+            }
+        }
+        else {
+            fseek($f, $size - 1, SEEK_END);
+            fwrite($f, "\0");
+        }
+        fclose($f);
+        return true;
+    }
+
 }
