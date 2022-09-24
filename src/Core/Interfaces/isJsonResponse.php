@@ -1,6 +1,6 @@
 <?php
 
-namespace RBFrameworks\Core\Contracts;
+namespace RBFrameworks\Core\Interfaces;
 
 interface isJsonResponse
 {

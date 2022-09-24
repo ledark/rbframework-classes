@@ -2,7 +2,7 @@
 
 namespace RBFrameworks\Core\Exceptions;
 
-class CoreTypeException extends \Exception
+class CoreTypeException extends DefaultException
 {
     public function __construct(string $message) {
         $message = $this->resolveMessage($message);

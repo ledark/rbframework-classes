@@ -2,9 +2,10 @@
 
 namespace RBFrameworks\Core\Response;
 
-use RBFrameworks\Core\Contracts\isResponse;
-use RBFrameworks\Core\Contracts\isJsonResponse;
+use RBFrameworks\Core\Interfaces\isResponse;
+use RBFrameworks\Core\Interfaces\isJsonResponse;
 use RBFrameworks\Core\Plugin;
+use RBFrameworks\Core\Utils\Encoding;
 
 class ResponseJson implements isResponse, isJsonResponse
 {
@@ -12,7 +13,6 @@ class ResponseJson implements isResponse, isJsonResponse
     public $forceEncodeUTF8 = false;
 
     public function __construct(array $dados, bool $forceEncodeUTF8 = false) {
-       Plugin::load("utf8_encode_deep");
         $this->dados = $dados;
         $this->forceEncodeUTF8 = $forceEncodeUTF8;
     }
@@ -23,10 +23,10 @@ class ResponseJson implements isResponse, isJsonResponse
 
     private function handleEncoding() {
         if(!$this->forceEncodeUTF8) {
-            utf8_decode_deep($this->dados);
+            Encoding::DeepDecode($this->dados);
         }
         if($this->forceEncodeUTF8) {
-            utf8_encode_deep($this->dados);
+            Encoding::DeepEncode($this->dados);
         }
     }
 
