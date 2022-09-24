@@ -43,11 +43,11 @@ uploads/
 ._*
 
 # TestFiles and Others
-tests/
-_app/tests
+#tests/
+#_app/tests
 *.bak
 *.sql~compiled
-tests.php
+#tests.php
 
 
 # Anothers
