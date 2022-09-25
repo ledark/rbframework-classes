@@ -4,6 +4,8 @@ namespace RBFrameworks\Core;
 
 class TemplateController extends Template {
 
+    public $headerPage;
+    public $footerPage;
     public $templatePage = 'bootstrap5';
     public $prefixContent = '<div class="container">';
     public $sufixContent = '</div>';

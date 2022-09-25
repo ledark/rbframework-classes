@@ -52,19 +52,5 @@ class Common implements Mockable {
     public static function json(array $dados, bool $forceEncodeUTF8 = false):void {
         ResponseJson::json($dados, $forceEncodeUTF8);
     }
-    /*
-    public static function json(array $dados, bool $forceEncodeUTF8 = false):void {
-        if(!headers_sent()) header("Content-Type: application/json");
-       Plugin::load("utf8_encode_deep");
-        if(!$forceEncodeUTF8) {
-            utf8_decode_deep($dados);
-        }
-        if($forceEncodeUTF8) {
-            utf8_encode_deep($dados);
-        }
-        echo json_encode($dados);
-        exit();
-    }
-    */
 
 }

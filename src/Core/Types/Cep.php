@@ -31,11 +31,6 @@ class Cep {
 
     public function getDetail():array {
         return (new \RBFrameworks\Core\Http("https://midiacriativa.com/cep/busca-json.php?cep=".$this->getFormatted()))->getJsonResponse();
-        /*
-        \RBFrameworks\Core\Plugin::load('guzzle');
-        $json = guzzle_request('GET', "https://midiacriativa.com/cep/busca-json.php?cep=".$this->getFormatted(), []);
-        return json_decode($json, true);
-        */
     }
 
 }

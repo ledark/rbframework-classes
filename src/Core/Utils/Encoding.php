@@ -376,18 +376,6 @@ class Encoding
         )+%xs', $string);
   }
 
-  /*
-    public static function deep(&$input, $ForceUTF8Encoding = true) {
-      Plugin::load('utf8_encode_deep');
-      if($ForceUTF8Encoding) {
-        utf8_encode_deep($input);
-      } else {
-        utf8_decode_deep($input);
-      }
-      return $input;
-    }
-    */
-
   //Função Adicionada em 31/07/2019
   public static function deep(&$input, $encoding = 'AUTO')
   {

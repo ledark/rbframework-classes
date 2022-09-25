@@ -164,5 +164,14 @@ CARD;
         print_r($message);
         echo '</pre>';
     }
+
+    public static function getFileBacktrace():array {
+        $res = [];
+        $backtrace = debug_backtrace();
+        foreach($backtrace as $level => $prop) {
+            $res[$level] = $prop['file'].':'.$prop['line'];
+        }
+        return $res;
+    }
     
 }

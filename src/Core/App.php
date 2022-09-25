@@ -9,6 +9,8 @@ use RBFrameworks\Core\Debug;
 use RBFrameworks\Core\Http;
 use RBFrameworks\Core\App\IncludeTrait;
 use Bramus\Router\Router;
+use RBFrameworks\Core\Utils\Encoding;
+use RBFrameworks\Core\Exceptions\AppException as Exception;
 
 /**
  * @sample (new App('path/to/routes'))->run();
@@ -84,6 +86,14 @@ class App {
         $this->setOption('baseDir', Types\Directory::trimPath($this->getOption('baseDir')).'/' );
         $this->setOption('pagesDir', Types\Directory::trimPath($this->getOption('pagesDir')).'/' );
         $this->setOption('templatePage', '/'.Types\Directory::trimPath($this->getOption('templatePage')) );      
+
+        $this->checkOptions();
+
+    }
+
+    private function checkOptions():void {
+
+        if(strpos($this->getOption('mount'), '/') !== 0) Exception::throw('O mount é a base da url para o app e deve começar com /');
 
     }
 
@@ -288,8 +298,7 @@ class App {
                 }
             }
 			if(file_exists('.'.$router->getCurrentUri())) {
-				Plugin::load("custom_mime_content_type");
-				custom_mime_content_type_readfile('.'.$router->getCurrentUri());
+                File::readFile('.'.$router->getCurrentUri());
 			}
             $app->trigger404();
             exit();

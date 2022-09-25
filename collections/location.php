@@ -1,6 +1,7 @@
-<?php 
-
-return [
+<?php return [
+    'collections_dir' => './collections/',
+    'functions_dir' => './functions/',
+    'sessions_dir' => './sessions/',
     'assets' => [
         'front/layout/assets/',
         'admin/layout/assets/',

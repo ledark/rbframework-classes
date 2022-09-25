@@ -31,11 +31,15 @@ POSSIBILITY OF SUCH DAMAGE.
  * @author   "Ricardo Bermejo" <ricardo@bermejo.com.br>
  * @copyright Copyright (c) 2021 Ricardo Bermejo
  * @package  Core\Plugin
- * @version  1.0.0 [Core v1.98.2] Ago/2021
+ * @version  1.1.0 [Core v1.98.2] Set/2022
  * @license  Revised BSD
  */
 
 namespace RBFrameworks\Core;
+
+use RBFrameworks\Core\Config;
+use RBFrameworks\Core\Debug;
+use RBFrameworks\Core\Exceptions\AppException as Exception;
 
 class Plugin
 {
@@ -47,8 +51,9 @@ class Plugin
             $functionname = str_replace('\\', '/', $functionname);
 
             if(!function_exists('get_functions_dir')) {
-                throw new \Exception('Create get_functions_dir() function in project that returns the functions dir');
-                function get_functions_dir():string { return '/_app/functions'; }
+                $location_functions_dir = Config::get('location.functions_dir');
+                if(!is_dir($location_functions_dir)) Exception::throw("functions dir {$location_functions_dir} not found");
+                function get_functions_dir():string { return Config::get('location.functions_dir'); }
             }
 
             $include_class_paths = [
@@ -70,7 +75,9 @@ class Plugin
                 }
             }
 
-            throw new \Exception("fn $functionname not founded in [" . implode('], [', $include_class_paths) . ']');
+            
+
+            Exception::throw(implode("\r\n", Debug::getFileBacktrace())."fn $functionname not founded in [" . implode('], [', $include_class_paths) . ']');
         }
     }
 

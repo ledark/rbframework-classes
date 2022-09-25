@@ -39,8 +39,12 @@ POSSIBILITY OF SUCH DAMAGE.
 
 namespace RBFrameworks\Core;
 
+use RBFrameworks\Core\Debug;
 use RBFrameworks\Core\Plugin;
 use RBFrameworks\Core\Http;
+use RBFrameworks\Core\Utils\Encoding;
+use RBFrameworks\Core\Exceptions\DefaultException as Exception;
+use GuzzleHttp\Psr7\MessageTrait;
 
 class Session
 {
@@ -57,20 +61,33 @@ class Session
      */
     public function __construct(string $session_id = null)
     {
-        Plugin::load('session');
-        session_init();
+        self::session_init();
         $this->createSessionID($session_id);
     }
 
+    private static function session_init() {
+        if(!headers_sent()) {        
+            if (version_compare(phpversion(), '5.4.10', '<')) {
+                if(session_id() == '') {
+                    session_start();
+                }
+            } else {
+                if (session_status() == PHP_SESSION_NONE) {
+                    session_start();
+                }
+            }
+            $_SESSION['LAST_ACTIVITY'] = time();
+        }
+    }     
+
     public static function get(bool $utf8_encode = null):array {
         $sess = new self();
-        Plugin::load('utf8_encode_deep');
         $dados = $_SESSION;
         if($utf8_encode === true) {
-            utf8_encode_deep($dados);
+            Encoding::DeepEncode($dados);
         } else
         if($utf8_encode === false) {
-            utf8_decode_deep($dados);
+            Encoding::DeepDecode($dados);
         }
         return $dados;
     }
@@ -85,37 +102,9 @@ class Session
         $this->session_id = $session_id === false ? uniqid('_') : $session_id;
     }
 
-    public static function doMsg():void {
-        $Msg = new Session\Message();
-        $Msg->render();
-    }
+    use MessageTrait;
 
-    public static function doMsgError(string $message, string $redir = null):void {
-        (new Session\Message())
-            ->prepare()
-            ->setMessage($message)
-            ->setPrefix('<div class="alert alert-danger">')
-            ->setSufix('</div>')
-            ->setCssClass('')
-        ;
-        if(!is_null($redir)) {
-            Http::redir($redir);
-        }
-    }
-
-    public static function doMsgSuccess(string $message, string $redir = null):void {
-        (new Session\Message())
-            ->prepare()
-            ->setMessage($message)
-            ->setPrefix('<div class="alert alert-success">')
-            ->setSufix('</div>')
-            ->setCssClass('')
-        ;
-        if(!is_null($redir)) {
-            Http::redir($redir);
-        }
-    }
-
+ 
 
 
 }

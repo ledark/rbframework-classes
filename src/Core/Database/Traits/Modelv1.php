@@ -2,6 +2,9 @@
 
 namespace RBFrameworks\Core\Database\Traits;
 
+use RBFrameworks\Core\Utils\Encoding;
+use RBFrameworks\Core\Types\Json;
+
 trait Modelv1 {
     
     use Configs;
@@ -54,10 +57,9 @@ trait Modelv1 {
      */
     
     public static function new2old($new) {
-        plugin("utf8_encode_deep");
         $model = array();
         foreach($new as $field => $props) {
-            utf8_encode_deep($props);
+            Encoding::DeepEncode($props);
             if(!isset($props['mysql'])) continue;
             if(empty($props['mysql'])) continue;
             $model[$field] = $props['mysql']." /* ".json_encode($props)." */";
@@ -71,9 +73,7 @@ trait Modelv1 {
       * @param type $value
       */
      public static function addParam(&$model, $param, $value) {
-         
-         plugin("utf8_encode_deep");
-         
+                 
          //Adicionar Parâmetro em um $model old
          if(!is_array($model)) {
              $arr = self::getParams($model);
@@ -98,14 +98,12 @@ trait Modelv1 {
          if(!count($matches)) {
              return array();
          } else {
-             plugin("json");
              return self::json_decode_nice(($matches[1][0]), true);
          }        
      }
      
      public static function json_encode_nice($array, $options = null, $forceutf8 = true) {
-         \RBFrameworks\Core\Plugin::load('utf8_encode_deep');
-         if($forceutf8) utf8_encode_deep($array);
+         if($forceutf8) Encoding::DeepEncode($array);
          $stringjson = json_encode($array);
          if(substr($options, 'comment' !== false )) $stringjson = " /* $stringjson */ ";
          return $stringjson;
@@ -113,11 +111,10 @@ trait Modelv1 {
      
      public static function json_decode_nice($json, $assoc = FALSE, $forceutf8 = true){
          if($forceutf8) $json = utf8_encode($json);
-         \RBFrameworks\Core\Plugin::load('utf8_encode_deep');
          $json = str_replace(array("\n","\r"),"",$json);
          $json = preg_replace('/([{,]+)(\s*)([^"]+?)\s*:/','$1"$3":',$json);
          $arr = json_decode($json,$assoc);
-         if($forceutf8) utf8_decode_deep($arr);
+         if($forceutf8) Encoding::DeepDecode($arr);
          return $arr;
      }    
      
