@@ -5,6 +5,7 @@ namespace RBFrameworks\Core;
 use RBFrameworks\Core\Config;
 use RBFrameworks\Core\Plugin;
 use RBFrameworks\Core\Debug;
+use RBFrameworks\Core\Session;
 
 abstract class Auth {
 
@@ -13,8 +14,7 @@ abstract class Auth {
     }
 
     public static function generateTokenConditional(string $salt = ''):string {
-        Plugin::load('session');
-        $token = session_admin_get_token();
+        $token = Config::get('session.admin.token');
         return self::checkToken($token, $salt) ? $token : self::generateToken($salt);
     }
 

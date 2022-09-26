@@ -2,117 +2,158 @@
 
 namespace RBFrameworks\Core\Notifications\Services;
 
-/*
-require("_app/class/vendor/PHPMailer/src/Exception.php");
-require("_app/class/vendor/PHPMailer/src/PHPMailer.php");
-require("_app/class/vendor/PHPMailer/src/SMTP.php");    
-*/
+use RBFrameworks\Core\Config;
+use Notifications\Services\NotificationServiceInterface;
+use RBFrameworks\Core\Utils\Replace;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
-use RBFrameworks\Core\Config;
-use RBFrameworks\Core\Debug;
-use RBFrameworks\Core\Types\File;
-use RBFrameworks\Core\Utils\Replace;
 
 class MailService extends Service {
 
     public $mail;
+    private $errors = [];
+    public $template = 'sample';
 
     public function __construct() {
+
+        //Create an instance; passing `true` enables exceptions
+        $this->mail = new PHPMailer(true);        
 
         try {
 
             $this->mail = new PHPMailer(true); //True Enables Exceptions
         
             //Server settings
-            $this->mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+            $this->mail->SMTPDebug = SMTP::DEBUG_OFF;                      //Change to STMP::DEBUG_SERVER to enable verbose debug output
             $this->mail->isSMTP();                                            //Send using SMTP        
         
             //ThisConfig Changes
-            $this->mail->Host       = 'mail.rbframework.com.br'          ;  // Specify main and backup SMTP servers
-            $this->mail->SMTPAuth   = true                         ;  // Enable SMTP authentication
-            $this->mail->Username   = 'user@rbframework.com.br'          ;  // SMTP username
-            $this->mail->Password   = 'password'        ;  // SMTP password
-            $this->mail->SMTPSecure = 'ssl'                        ;  // Enable TLS encryption, `ssl` also accepted
-            $this->mail->Port       = 465                          ;       
-        
-            //Recipients
-            $this->mail->setFrom('feed@bermejo.com.br', 'RBFrameworks');
-            $this->mail->addReplyTo('contato@rbframework.com.br', 'RBFrameworks');
+            $this->mail->Host       = Config::get('mail.host');         // Specify main and backup SMTP servers
+            $this->mail->SMTPAuth   = Config::get('mail.SMTPAuth');     // Enable SMTP authentication
+            $this->mail->Username   = Config::get('mail.username');     // SMTP username
+            $this->mail->Password   = Config::get('mail.password');     // SMTP password
+            $this->mail->SMTPSecure = Config::get('mail.SMTPSecure');   // Enable TLS encryption, `ssl` also accepted
+            $this->mail->Port       = Config::get('mail.port');         //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
-            //$this->mail->addAddress('mestreledark@gmail.com', 'Ricardo TestPhpMailer');     //Add a recipient
-        //    $this->mail->addAddress('ellen@example.com');               //Name is optional
-         //   $this->mail->addCC('cc@example.com');
-         //   $this->mail->addBCC('bcc@example.com');
+            //Recipients
+            $this->addDefaultRecipients('mail.from');
+            $this->addDefaultRecipients('mail.to');
+            $this->addDefaultRecipients('mail.reply');
+            $this->addDefaultRecipients('mail.cc');
+            $this->addDefaultRecipients('mail.bcc');
         
-         /*
             //Attachments
-            $this->mail->addAttachment('/var/tmp/file.tar.gz');         //Add attachments
-            $this->mail->addAttachment('/tmp/image.jpg', 'new.jpg');    //Optional name
-        */
+            //$this->mail->addAttachment('/var/tmp/file.tar.gz');         //Add attachments
+            //$this->mail->addAttachment('/tmp/image.jpg', 'new.jpg');    //Optional name
         
             //Content
             $this->mail->isHTML(true);                                  //Set email format to HTML
-            $this->mail->Subject = 'Novo contato através do Site';
-            $this->mail->Body    = 'This is the HTML message body <b>in bold!</b>';
-            $this->mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
-        
+            $this->mail->Subject = Config::get('mail.subject');
+            $this->mail->Body    = Config::get('mail.body');
+            $this->mail->AltBody = strip_tags(Config::get('mail.body'));      
             
-            
+        } catch (Exception $e) {
+            $this->errors[] = "Message could not be created. Mailer Error: {$this->mail->ErrorInfo} $e->errorMessage();";
         } catch (\Exception $e) {
-            echo "Message could not be sent. Mailer Error: {$this->mail->ErrorInfo}";
-        }
+            $this->errors[] = "PHP err exception on created: {$e->getMessage()}";
+        }   
         
     }
 
-    public function useTemplate(string $message, string $subject = ""):object {
-        //claudio.simil@hotmail.com
-        $content = new File('template');
-        $replacer = new Replace($content->getFileContents(), [
-            'subject' => empty($subject) ? $this->mail->Subject : $subject,
-            'message' => $message,
-        ]);
-        $this->mail->Body    = $replacer->render(true);
+    public function useTemplate(string $message, string $subject = "", string $template = "sample" ):object {
+        ob_start();
+        include(__DIR__."/../Templates/{$template}.html");
+        $template = ob_get_clean();
+        
+        $content = (new Replace($template, [
+            'title' => $subject,
+            'body' => $message,
+            'unscribelink' => $this->getUnscribeLink(),
+        ]))
+            ->whenLiteral( function($matches) { return ''.$matches[1].''; } )
+            ->setBrackets(['\[\[', '\]\]'])
+            ->render(true);        
+        
+        $this->mail->Subject = $subject;
+        $this->mail->Body    = $content;
         $this->mail->AltBody = strip_tags($this->mail->Body);
         return $this;
     }
 
     public function asTest():object {
-
-        $this->mail->SMTPDebug = SMTP::DEBUG_OFF;
-
-        //Recipients [MultipleProviders]
-        //$this->mail->setFrom('feed@rbframework.com.br', 'JFF E-Commerce');
-        $this->mail->addAddress('mestreledark@gmail.com', 'Ricardo TestPhpMailer');     //Add a recipient
-        $this->mail->addAddress('ricardo@bermejo.com.br');               //Name is optional
-        $this->mail->addReplyTo('another@rbframework.com.br', 'RBFrameworks');
-        $this->mail->addCC('rbmestre@yahoo.com.br');
-        $this->mail->addBCC('dragaodefogo@hotmail.com');
-        
-    
-        /*
-        //Attachments
-        $this->mail->addAttachment('/var/tmp/file.tar.gz');         //Add attachments
-        $this->mail->addAttachment('/tmp/image.jpg', 'new.jpg');    //Optional name
-        */
-    
-        //Content
+        $this->mail->SMTPDebug = SMTP::DEBUG_SERVER;
         $this->mail->isHTML(true);                                  //Set email format to HTML
         $this->mail->Body    = 'Essa é uma mensagem de teste para confirmar o envio do e-mail.';
         $this->mail->AltBody = strip_tags($this->mail->Body);
         return $this;
     }
 
+    private function addDefaultRecipients(string $collection) {
+        $recipients = Config::get($collection);
+        if(!count($recipients)) return;
+        switch($collection) {
+            case 'mail.from':
+                foreach($recipients as $mail => $name) {
+                    $this->mail->setFrom($mail, $name);
+                }
+            break;
+            case 'mail.to':
+                foreach($recipients as $mail => $name) {
+                    $this->mail->addAddress($mail, $name);
+                }
+            break;
+            case 'mail.reply':
+                foreach($recipients as $mail => $name) {
+                    $this->mail->addReplyTo($mail, $name);
+                }
+            break;
+            case 'mail.cc':
+                foreach($recipients as $mail => $name) {
+                    $this->mail->addCC($mail, $name);
+                }
+            break;
+            case 'mail.bcc':
+                foreach($recipients as $mail => $name) {
+                    $this->mail->addBCC($mail, $name);
+                }
+            break;
+        }
+    }
+
+    public function getUnscribeLink():string {
+        return Config::get('mail.baseuri').'';
+    }
+
+    public function getTemplate():string {
+        ob_start();
+        include(__DIR__."/../Templates/{$this->template}.html");
+        $template = ob_get_clean();
+        return (new Replace($template, [
+            'title' => $this->mail->Subject,
+            'body' => $this->mail->Body,
+            'unscribelink' => $this->getUnscribeLink(),
+        ]))
+            ->whenLiteral( function($matches) { return ''.$matches[1].''; } )
+            ->setBrackets(['\[\[', '\]\]'])
+            ->render(true);
+    }
 
     public function send() {
         try {
-            ob_start();
+            $originalBody = $this->mail->Body;
+            $this->mail->Body = $this->getTemplate();
             $this->mail->send();
-            Debug::log(ob_get_clean());
+            $this->mail->Body = $originalBody;
+        } catch (Exception $e) {
+            $this->errors[] = "Message could not be sent. Mailer Error: {$this->mail->ErrorInfo} $e->errorMessage();";
         } catch (\Exception $e) {
-           echo "Message could not be sent. Mailer Error: {$this->mail->ErrorInfo}";
+            $this->errors[] = "PHP err exception: {$e->getMessage()}";
         }
+    }
+
+    public function getErrors():array {
+        return $this->errors;
     }
 
 }
