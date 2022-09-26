@@ -1,7 +1,5 @@
 <?php 
 
-namespace Core;
-
 use PHPUnit\Framework\TestCase;
 use RBFrameworks\Core\Template;
 

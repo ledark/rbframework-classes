@@ -120,7 +120,7 @@ abstract class Auth {
 
     /**
      * Em qualquer requisição, seja GET ou POST ou qualquer outra use o código:
-     * \Core\Auth::hasBearerToken('qualquer-string');
+     * \RBFrameworks\Core\Auth::hasBearerToken('qualquer-string');
      * 
      * Essa função verifica se foi enviado o determinado Bearer Token igual a qualquer-string, e devolve sim se verdadeiro.
      * Útil para testes de aplicações que você pode amazenar essa string nelas.

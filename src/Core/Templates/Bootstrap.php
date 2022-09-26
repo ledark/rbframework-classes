@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Templates;
+namespace RBFrameworks\Core\Templates;
 
 class Bootstrap
 {
