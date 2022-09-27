@@ -8,6 +8,12 @@ use RBFrameworks\Core\Assets;
 class Css
 {
 
+    /**
+     * includeFile(string $file)
+     *  - include a css file in inline style
+     * @param string $file
+     * @return void
+     */
     public static function includeFile(string $file) {
         $FileObject = new File($file);
         $FileObject->clearSearchExtensions();
