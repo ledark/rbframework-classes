@@ -11,11 +11,20 @@ class Config
     public static function getCollectionDir():string {
         if(is_dir(__DIR__.'/../../collections')) return __DIR__.'/../../collections/'; //_app/class/Core/ or src/Core/
         if(is_dir('./collections')) return './collections/';
+        if(is_dir('_app/collections/')) return '_app/collections/';
         if(!function_exists('get_collection_dir')) {
             throw new \Exception('Create get_collection_dir() function in project that returns the collection dir');
             function get_collection_dir():string { return '/_app/collections/'; }
         }
         return get_collection_dir();        
+    }
+
+    public static function print(string $name, string $collections_dir = null) {
+        echo self::get($name, $collections_dir);
+    }
+    
+    public static function echo(string $name, string $collections_dir = null) {
+        echo self::get($name, $collections_dir);
     }
 
     public static function get(string $name, string $collections_dir = null) {
@@ -36,33 +45,6 @@ class Config
         }
         
         return null;
-    }
-
-    private static function include_file_recursive(string $name, string $collections_dir = null) {
-
-
-
-        if(is_null($collections_dir)) $collections_dir  = self::getCollectionDir();
-
-        $finalFile = '';
-        $nameParts = explode('/', $name);
-        $cnameParts = count($nameParts);
-        for($i=0; $i<$cnameParts; $i++) {
-            $chunk = \array_pop($nameParts);
-            if(!count($nameParts)) continue;
-            $try = $collections_dir.implode('/', $nameParts).'.php';
-            /*
-            if(file_exists($try)) {
-                $data = include($try);
-                $finalFile = $try;
-                //return $data[$chunk];
-            }
-            */
-        }
-
-        return [
-            'template_dir' => $finalFile.'aaa', 'template_filename' => 'aaa'];
-
     }
 
     private static function include_collection_file(string $filename, callable $errorCallback = null, string $collections_dir = null) { //array or null

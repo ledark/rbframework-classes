@@ -6,10 +6,20 @@
  * Revisado em 15/01/2021
  */
 
+ use RBFrameworks\Core\Utils\Tempo;
+
 namespace RBFrameworks\Core\Utils;
 
 class Strings {
 
+    public static function viewlimit($string, $limit = 100, $vermais = '...') {
+        return (strlen($string) > $limit) ? substr($string, 0, $limit-strlen($vermais)).$vermais : $string;
+    }
+
+    public static function vermais($string, $limit = 100, $vermais = '...') {
+        return (strlen($string) > $limit) ? substr($string, 0, $limit-strlen($vermais)).$vermais : $string;
+    }
+    
     public static function deformar_email(string $email): string {
 
         $emailStr = "";
@@ -494,11 +504,10 @@ class Strings {
     
 	
 	public function tempo($int, $tags = "atras") {
-		plugin("tempo");
 		$string = "";
 		$tags = explode('|', $tags);
 		foreach($tags as $tag){
-			if($tag == 'atras') 		$string = self::formatar_tempo($int);
+			if($tag == 'atras') 		$string = Tempo::formatar_tempo($int);
 		}
 		return $string;
 	}

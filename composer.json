@@ -28,7 +28,7 @@
     },
     "autoload": {
         "psr-4": {
-            "RBFrameworks\\": "src/"
+            "RBFrameworks\\": ["src/", "v0/"]
         },
         "files": [
             "_include.php"
