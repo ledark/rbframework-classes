@@ -10,9 +10,21 @@ use RBFrameworks\Core\Utils\Encoding;
  * Diversos Utilitário para tratar Input do Usuário
  * $userInput = new InputUser();
  * $userInput
- *  ->getFromPOST()
- *  ->sanitize()
- *  ->encodeUTF8() //or decode...
+ *  ->getFromPOST() //getFrom anywhere:     ->getFromPHP() for php://input ->getFromGET() ->getFromSESSION() ->getFromHeaders()
+ *  ->unsetFields(['btnEnviar']) //ignore fields that are not necessary
+ *  ->sanitize() //apply mysql_real_escape_string
+ *  ->customSanitizeField('nome', function($value) { return strtoupper($value); }) //apply custom sanitize
+ *  ->customSanitizeFields(['campo1', 'campo2'], function($value) { return strtoupper($value); }) //apply custom sanitize])
+ *  ->encodeUTF8() //or decode with ->decodeUTF8()
+ * 
+ *  ->preventNullFields(['campo1', 'campo2']) //to throw exception if any of these fields are not setted
+ *  ->preventEmptyFields(['campo1', 'campo2']) //to throw exception if any of these fields are empty (or not setted)
+ * 
+ *  ->validateField('campo1', function($value) { 
+ *   // yor custom rules here that return false to throw exception 
+ *  }, 'your custom message here when false on callback')
+ *  
+ * ->debugFields() //to throw a exception whit all fields in any point
  *  ->getResult()
  * ;
  */
@@ -34,6 +46,13 @@ class InputUser extends Input {
 
     public function debugFields() {
         throw new \Exception("debuggedFields: -- '".implode("', '", array_keys($this->data))."' -- ".Debug::getPrintableAsText($this->data));
+    }
+
+    public function unsetFields(array $fields):object {
+        foreach($fields as $field) {
+            if(isset($this->data[$field])) unset($this->data[$field]);
+        }
+        return $this;
     }
 
     /** Getters: getFrom... Chose one: PHP GET POST SESSION Headers */
