@@ -12,6 +12,7 @@ use RBFrameworks\Core\Utils\Encoding;
  * $userInput
  *  ->getFromPOST() //getFrom anywhere:     ->getFromPHP() for php://input ->getFromGET() ->getFromSESSION() ->getFromHeaders()
  *  ->unsetFields(['btnEnviar']) //ignore fields that are not necessary
+ *  ->unsetFieldsThatAreNotInList(['campo1', 'campos]) //or use onlune fields that are necessary
  *  ->sanitize() //apply mysql_real_escape_string
  *  ->customSanitizeField('nome', function($value) { return strtoupper($value); }) //apply custom sanitize
  *  ->customSanitizeFields(['campo1', 'campo2'], function($value) { return strtoupper($value); }) //apply custom sanitize])
@@ -51,6 +52,13 @@ class InputUser extends Input {
     public function unsetFields(array $fields):object {
         foreach($fields as $field) {
             if(isset($this->data[$field])) unset($this->data[$field]);
+        }
+        return $this;
+    }
+
+    public function unsetFieldsThatAreNotInList(array $fields):object {
+        foreach($this->data as $field => $value) {
+            if(!in_array($field, $fields)) unset($this->data[$field]);
         }
         return $this;
     }
