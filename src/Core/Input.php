@@ -4,6 +4,7 @@ namespace RBFrameworks\Core;
 
 use RBFrameworks\Core\Plugin;
 use RBFrameworks\Core\Utils\Encoding;
+use RBFrameworks\Core\Session;
 
 class Input {
 
@@ -32,13 +33,11 @@ class Input {
     }
 
     public function phpSessionGet(string $key, $default = null) {
-        Plugin::load("session");
-        session_init();
+        new Session();
         return isset($_SESSION[$key]) ? $_SESSION[$key] : $default;
     }
     public function phpSession():array {
-        Plugin::load("session");
-        session_init();
+        new Session();
         return isset($_SESSION) ? $_SESSION : array();
     }
 
