@@ -14,6 +14,7 @@
     'cache' => [
         'default' => 'log/cache/',
         'images' => 'log/cache/fotos',
+        'assets' => 'public/assets/',
     ],
     'search_folders' => [
         '',

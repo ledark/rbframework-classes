@@ -4,12 +4,20 @@ namespace RBFrameworks\Core\Assets;
 
 use RBFrameworks\Core\Http;
 use RBFrameworks\Core\Legacy\SmartReplace;
+use RBFrameworks\Core\Directory;
+use RBFrameworks\Core\Config;
 
 class Stream
 {
     public static function files()
     {
         return ['version' => 0.0, 'lastupdate' => '2020-02-28'];
+    }
+
+    public static function getCacheAssetsFolder():string {
+        $cache_assets = Config::get('location.cache.assets');
+        if(is_null($cache_assets)) $cache_assets = 'log/cache/'; //@deprecated throw excpetion in future versions
+        return Directory::rtrim($cache_assets);
     }
 
     /**
@@ -32,7 +40,8 @@ class Stream
     {
         self::filestreamclear();
         if (!file_exists($realfilepath)) trigger_error("file {$realfilepath} not exists");
-        if (!is_dir('log/cache/')) trigger_error("directory log/cache/ not exists");
+        Directory::mkdir(self::getCacheAssetsFolder()); 
+
 
         $extension = '';
         if (strpos($realfilepath, '.') !== false) {
@@ -41,7 +50,7 @@ class Stream
         }
         if ($method == 'nostore') $extension = '_nostore' . $extension;
 
-        $fakepath = 'log/cache/fnfiles_' . md5($realfilepath) . $extension;
+        $fakepath = self::getCacheAssetsFolder().'/fnfiles_' . md5($realfilepath) . $extension;
 
         if (count($replaces)) {
 
@@ -54,7 +63,7 @@ class Stream
                 $content = SmartReplace::smart_replace($content, $replaces, true);
             }
 
-            $fakepath = 'log/cache/fnfiles_' . md5($realfilepath) . '_repl' . md5($content) . $extension;
+            $fakepath = self::getCacheAssetsFolder().'/fnfiles_' . md5($realfilepath) . '_repl' . md5($content) . $extension;
             file_put_contents($fakepath, $content);
             return $fakepath;
         }
@@ -76,8 +85,10 @@ class Stream
     {
         if (isset($GLOBALS['filestreamclear_executed'])) return false;
         $clearAfterSecs = 60 * 60 * 24;
-        if (!is_dir('log/cache/')) trigger_error("directory log/cache/ not exists");
-        $files = glob('log/cache/fnfiles_*');
+        
+        Directory::mkdir(self::getCacheAssetsFolder());
+
+        $files = glob(self::getCacheAssetsFolder().'/fnfiles_*');
         $timenow = time();
         foreach ($files as $file) {
             if (strpos($file, '_nostore') !== false) {

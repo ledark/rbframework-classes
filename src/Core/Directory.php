@@ -2,6 +2,8 @@
 
 namespace RBFrameworks\Core;
 
+use RBFrameworks\Core\Types\Directory as DirectoryType;
+
 class Directory {
     
     private $path;
@@ -12,7 +14,72 @@ class Directory {
         return $this;
     }
 
+    public static function mkdir(string $path, int $mode = 0755, bool $recursive = true):void {
+        if(!is_dir($path)) {        
+            $parts = explode('/', $path);
+            foreach($parts as $key => $part) {
+                if($part == '') continue;
+                $path = implode('/', array_slice($parts, 0, $key+1));
+                if(!is_dir($path)) {
+                    mkdir($path, $mode, $recursive);
+                }
+            }
+        }
+
+        if(!is_dir($path)) {
+            throw new \Exception("Directory {$path} not exists");
+        }
+    }
+
+    public static function rmdir(string $path, bool $deltree = false):void {
+        if(is_dir($path)) {
+            $parts = explode('/', $path);
+            foreach($parts as $key => $part) {
+                if($part == '') continue;
+                $path = implode('/', array_slice($parts, 0, $key+1));
+                if(is_dir($path)) {
+                    self::deltree($path, $deltree);
+                }
+            }
+        }
+    }
+
+    private static function deltree(string $src, bool $deltree = true) {
+        $dir = opendir($src);
+        while(false !== ( $file = readdir($dir)) ) {
+            if (( $file != '.' ) && ( $file != '..' )) {
+                $full = $src . '/' . $file;
+                if ( is_dir($full) ) {
+                    self::deltree($full);
+                }
+                else {
+                    return;
+                    if($deltree) unlink($full);
+                }
+            }
+        }
+        closedir($dir);
+        rmdir($src);
+    }
+
+    
+    public static function existsDirectory(string $directoryPath):bool {
+        return DirectoryType::existsDirectory($directoryPath);
+    }
+    public static function needsDirectory(string $directoryPath) {
+        return DirectoryType::needsDirectory($directoryPath);
+    }
+    public static function trimPath(string $path):string {
+        return DirectoryType::trimPath($path);
+    }
+    public static function rtrim(string $path):string {
+        $path = rtrim($path, '/');
+        $path = rtrim($path, '\\');
+        return $path;
+    }
+
     public function isDir() {
+        
         return true;
     }
     public function isValidDir() {
