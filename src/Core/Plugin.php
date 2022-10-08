@@ -77,7 +77,7 @@ class Plugin
 
             
 
-            Exception::throw(implode("\r\n", Debug::getFileBacktrace())."fn $functionname not founded in [" . implode('], [', $include_class_paths) . ']');
+            Exception::throw(implode("\r\n", Debug::getFileBacktrace())."fn $functionname not founded in [" . implode('],'."\r\n".' [', $include_class_paths) . ']');
         }
     }
 

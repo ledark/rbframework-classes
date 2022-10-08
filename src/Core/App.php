@@ -67,6 +67,7 @@ class App {
 
         //Create Instances
         $this->router = is_null($routerService) ? new Router() : $routerService;
+        $this->router->get('/'.uniqid(), function(){}); //Fix Router Bug
         $this->mainFile = new File($mainFile);
 
         //Set Default Options
@@ -191,7 +192,7 @@ class App {
         }
     }
 
-    public static function loadFolder(string $projectFolder) {
+    public static function loadFolder(string $projectFolder, $mountOn = '') {
 
         if(!Directory::existsDirectory($projectFolder)) return;
         
@@ -218,10 +219,10 @@ class App {
     public static function handleRequestUri(string $when, string $appFolder) {
         $uri = Http::getRequestUri();
         if(substr($uri, 0, strlen($when)) == $when) {
-            self::loadFolder($appFolder);
+            self::loadFolder($appFolder, $when);
         }
         if(strpos(($uri), $when) !== false) {
-            self::loadFolder($appFolder);
+            self::loadFolder($appFolder, $when);
         }
     }
 

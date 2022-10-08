@@ -172,10 +172,10 @@ CARD;
             $res[$level] = '';
             if(isset($prop['file']) and isset($prop['line'])) {
                 $res[$level] = $prop['file'].':'.$prop['line'];
-            } else
-            if(isset($prop['function'])) $res[$level] = 'fn:'.$prop['function'];
-            if(isset($prop['args'])) $res[$level] = '('.implode(', ',$prop['args']).')';
-            if(isset($prop['class'])) $res[$level] = ' ['.$prop['class'].']';
+            } else {
+                if(isset($prop['function']) and is_string($prop['function']) ) $res[$level].= 'fn:'.$prop['function'];
+                if(isset($prop['class']) and is_string($prop['function'])) $res[$level].= ' ['.$prop['class'].']';
+            }
             if(empty($res[$level])) unset($res[$level]);
         }
         return $res;
