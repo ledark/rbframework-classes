@@ -120,7 +120,7 @@ CARD;
      * @return array
      */
     private static function logIgnoreGroup():array {
-        Plugin::load("helper");
+        //Plugin::load("helper");
         $ignored = Config::get('debug.ignore_groups');
         if(!is_array($ignored)) $ignored = [];
         return array_merge($ignored, []);        
@@ -138,7 +138,7 @@ CARD;
 
     //WriteFile
     public static function log($message, array $context = [], string $group = 'log', string $filename_backtrace = null, int $backtrace_level = 0) {
-        Plugin::load('utf8_encode_deep');
+        //Plugin::load('utf8_encode_deep');
         $uid = uniqid();
         $message = new Variables($message);
         if(is_null($filename_backtrace)) {

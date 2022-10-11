@@ -18,6 +18,7 @@ trait QueryVariables {
     public $type = "SELECT";
     private $logfolder = "log/cache/";
     public $name = "query"; //nome para fins de log
+    public $write_log = true; //flag para ativar ou desativar a escrita de logs.
 
     //Prefix
 
@@ -26,7 +27,15 @@ trait QueryVariables {
     }
 
     public function setPrefixo(string $prefixo):object {
-        $this->$prefixo = $prefixo;
+        $this->prefixo = $prefixo;
         return $this;
-    }
+    } 
+
+    //For Retrocompatibility
+    public function setPrefix(string $prefix = null):object {
+        if(!is_null($prefix)) {
+            $this->prefixo = $prefix;
+        }
+        return $this;
+    }    
 }
