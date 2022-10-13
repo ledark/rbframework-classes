@@ -10,7 +10,7 @@ namespace RBFrameworks\Core\Utils;
 
 class EncodingJS
 {
-    function encodeURIComponent($string)
+    public static function encodeURIComponent($string)
     {
         $result = "";
         for ($i = 0; $i < strlen($string); $i++) {
@@ -20,7 +20,7 @@ class EncodingJS
     }
 
 
-    function encodeURIComponentbycharacter($char)
+    public static function encodeURIComponentbycharacter($char)
     {
         if ($char == "+") {
             return "%20";
@@ -430,7 +430,7 @@ class EncodingJS
         return $char;
     }
 
-    function decodeURIComponent($string)
+    public static function decodeURIComponent($string)
     {
         $result = "";
         for ($i = 0; $i < strlen($string); $i++) {
@@ -445,7 +445,7 @@ class EncodingJS
         return $result;
     }
 
-    function decodeURIComponentbycharacter($str)
+    public static function decodeURIComponentbycharacter($str)
     {
 
         $char = $str;
@@ -871,7 +871,7 @@ class EncodingJS
         }
     }
 
-    function encodeURI($string)
+    public static function encodeURI($string)
     {
         $result = "";
         for ($i = 0; $i < strlen($string); $i++) {
@@ -880,7 +880,7 @@ class EncodingJS
         return $result;
     }
 
-    function encodeURIbycharacter($char)
+    public static function encodeURIbycharacter($char)
     {
         if ($char == "+") {
             return "%20";
@@ -1323,7 +1323,7 @@ class EncodingJS
         return $char;
     }
 
-    function decodeURI($string)
+    public static function decodeURI($string)
     {
         $result = "";
         for ($i = 0; $i < strlen($string); $i++) {
@@ -1338,7 +1338,7 @@ class EncodingJS
         return $result;
     }
 
-    function decodeURIbycharacter($str)
+    public static function decodeURIbycharacter($str)
     {
 
         $char = $str;
@@ -1797,7 +1797,7 @@ class EncodingJS
         }
     }
 
-    function escape($string)
+    public static function escape($string)
     {
         $result = "";
         for ($i = 0; $i < strlen($string); $i++) {
@@ -1806,7 +1806,7 @@ class EncodingJS
         return $result;
     }
 
-    function escapebycharacter($char)
+    public static function escapebycharacter($char)
     {
         if ($char == '+') {
             return '%20';
@@ -1906,7 +1906,7 @@ class EncodingJS
         }
         return $char;
     }
-    function unescape($string)
+    public static function unescape($string)
     {
         $result = "";
         for ($i = 0; $i < strlen($string); $i++) {
@@ -1921,7 +1921,7 @@ class EncodingJS
         return $result;
     }
 
-    function unescapebycharacter($str)
+    public static function unescapebycharacter($str)
     {
 
         $char = $str;
@@ -2035,12 +2035,12 @@ class EncodingJS
         }
     }
 
-    function decode($variavel)
+    public static function decode($variavel)
     {
         return self::mysql_escape_mimic(self::decodeURIComponent(utf8_decode($variavel)));
     }
 
-    function mysql_escape_mimic($inp)
+    public static function mysql_escape_mimic($inp)
     {
         if (is_array($inp))
             return array_map(__METHOD__, $inp);

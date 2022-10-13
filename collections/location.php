@@ -29,5 +29,5 @@
         '.css',
         '.js',
     ],
-    'log_file' => __DIR__."/../../log/debug.[filename_backtrace].log",    
+    'log_file' => __DIR__."/../log/debug.[filename_backtrace].log",    
 ];

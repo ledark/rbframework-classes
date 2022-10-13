@@ -1,15 +1,21 @@
 <?php
 /*
-26/09/2016 - MÈtodo set() interpreta como WHERE se o $param2 for uma string
- * 25/05/2018 - Ajustes gerais para adataÁ„o ao RBFramewors v9.2
- * 21/11/2019 - Inclus„o das funÁıes replace, exists($key, $value) e cod_exists($key, $value)
+26/09/2016 - M√©todo set() interpreta como WHERE se o $param2 for uma string
+ * 25/05/2018 - Ajustes gerais para adata√ß√£o ao RBFramewors v9.2
+ * 21/11/2019 - Inclus√£o das fun√ß√µes replace, exists($key, $value) e cod_exists($key, $value)
 */
 
 namespace RBFrameworks\Storage\Database;
 
-class doDBv4 extends PDO {
+use RBFrameworks\Core\Plugin;
+use RBFrameworks\Core\Config;
+use RBFrameworks\Core\Legacy\SmartReplace as fn1;
+use PDO;
+use PDOException;
 
-	//Conex„o e geraÁ„o das Vari·veis
+class doDBv4 extends \PDO {
+
+	//Conex√£o e gera√ß√£o das Vari√°veis
 	public function __construct($arrayModel, $strconn = null) {
         $clonemodel = $arrayModel;
         //Constructor
@@ -31,7 +37,7 @@ class doDBv4 extends PDO {
         $PDOErrors      = $RBVars['database']['PDOErrors'];
         $ADDErrors      = $RBVars['database']['ADDErrors'];
 
-		//Recuperar Vari·veis
+		//Recuperar Vari√°veis
         $this->database = $database;
 		$this->tabela = $prefixo.key($arrayModel);
 		$this->prefixo = $prefixo;
@@ -40,7 +46,7 @@ class doDBv4 extends PDO {
 		//Constructor
 		parent::__construct("mysql:host=$server;dbname=$database", "$login", "$senha");
 		
-		//FinalizaÁ„o
+		//Finaliza√ß√£o
 			$this->check_table();
 			$this->walk_model();
 		if($GLOBALS['PDOConstruct']) {
@@ -48,10 +54,10 @@ class doDBv4 extends PDO {
 	}
 	
     /**
-     * A ideia dessa funÁ„o È inserir ou atualizar os dados, verificando a existÍncia prÈvia deles no banco de dados
-     * Para isso, vocÍ precisa passar dois par‚metros ARRAY, sendo:
-     * O primeiro È o array dos dados que vocÍ deseja inserir/atualizar e o segundo par‚metro contÈm as chaves
-     * Por exemplo: $this->replace($_POST, ['nome' => 'Ricardo']); //Ir· cadastrar caso n„o exista um nome igual a Ricardo
+     * A ideia dessa fun√ß√£o √© inserir ou atualizar os dados, verificando a exist√™ncia pr√©via deles no banco de dados
+     * Para isso, voc√™ precisa passar dois par√¢metros ARRAY, sendo:
+     * O primeiro √© o array dos dados que voc√™ deseja inserir/atualizar e o segundo par√¢metro cont√©m as chaves
+     * Por exemplo: $this->replace($_POST, ['nome' => 'Ricardo']); //Ir√° cadastrar caso n√£o exista um nome igual a Ricardo
      * 
      * @param array $dados
      * @need 
@@ -131,7 +137,7 @@ class doDBv4 extends PDO {
 			foreach($param1 as $campo => $valor){
 				if( !array_key_exists($campo, $this->model) ) {
 					if($GLOBALS['ADDErrors']) file_put_contents("log/logs/doDBv4.OUTHERADDERRORS", serialize($this->model)."\r\n", FILE_APPEND );
-					if($GLOBALS['ADDErrors']) file_put_contents("log/logs/doDBv4.ADDERRORS", "[$this->tabela][$campo] N„o Existe\r\n", FILE_APPEND );
+					if($GLOBALS['ADDErrors']) file_put_contents("log/logs/doDBv4.ADDERRORS", "[$this->tabela][$campo] N√£o Existe\r\n", FILE_APPEND );
 					continue;
 				} 
 				switch($return) {
@@ -279,19 +285,19 @@ class doDBv4 extends PDO {
 		return $this->exe($query, array(), 'NUM');
 	}	
 	
-	//Retornar um ˙nico valor usando um campo e o ID da chave prim·ria
+	//Retornar um √∫nico valor usando um campo e o ID da chave prim√°ria
 	public function getValue($campo, $cod) {
 		$a = $this->farray("SELECT `$campo` FROM `$this->tabela` WHERE `$this->primary` = $cod LIMIT 1");
 		return $a[0][$campo];
 	}
 	
-	//Retornar um ˙nico valor de uma query
+	//Retornar um √∫nico valor de uma query
 	public function push($query) {
 		$a = $this->exe($query, array(), 'NUM');
 		return $a[0][0];		
 	}
     
-    //Retorna o prÛximo valor do AUTO_INCREMENT
+    //Retorna o pr√≥ximo valor do AUTO_INCREMENT
     public function getNextAutoIncrement() {
         
         global $database;
@@ -305,7 +311,7 @@ class doDBv4 extends PDO {
         return $this->push($q);
     }
 	
-	//Retornar uma tabela padr„o de qualquer array
+	//Retornar uma tabela padr√£o de qualquer array
 	function ftable($array = null, $error = '<div class="alert alert-danger">Nenhum resultado encontrado.</div>', $table_attr = 'class="table"') {
 		if( is_null($array) ) {
 			$array = $this->farray("SELECT * FROM `$this->tabela` LIMIT 1000");
@@ -343,16 +349,16 @@ class doDBv4 extends PDO {
 				}
 				echo '
 					</tr>';				
-				echo smart_replace(null, $dados);
+				echo fn1::smart_replace(null, $dados);
 			}
 			echo '</tbody></table>';
 		}
 	}	
 	
 	
-	//Analisar se a tabela existe, para ent„o cri·-la
+	//Analisar se a tabela existe, para ent√£o cri√°-la
 	private function check_table() {
-        plugin("scope");
+        Plugin::load("scope");
 		$query = "SHOW TABLES LIKE '{$this->tabela}'";
 		$r = $this->exe($query);
 
@@ -360,7 +366,7 @@ class doDBv4 extends PDO {
 		if(count($r)) {
 			$last = false;
 			foreach($this->model as $campo => $type) {
-                $type = resetscope($type);
+                $type = self::resetscope($type);
                 if(substr($type, 0, 4) == 'null') continue;
 				if(!$this->field_exists($campo)) {
 					if($last)
@@ -372,7 +378,7 @@ class doDBv4 extends PDO {
 			}
 			
 			
-		//Tabela N„o Existe
+		//Tabela N√£o Existe
 		} else {
 			global $prefixo;
 			$this->create_table(array(substr($this->tabela, strlen($prefixo)) => $this->model));
@@ -383,7 +389,8 @@ class doDBv4 extends PDO {
 	//Criar Tabela
 	private function create_table($array, $index = null, $unique = null, $key = null, $tipo = null) {
 	
-		if($tipo == 'temp') mysql_unbuffered_query('DROP TABLE '.$prefixo.key($array).'');
+		if(!isset($prefixo)) $prefixo = Config::get('database.prefixo');
+		if($tipo == 'temp') $this->exe('DROP TABLE '.$prefixo.key($array).'');
 		
 		global $prefixo;
 		foreach($array as $table => $params) {
@@ -430,5 +437,28 @@ class doDBv4 extends PDO {
 			return true;
 		}
 	}
+
+	public static function scope($string, $scope = '|') {
+		$array = explode($scope, $string);
+		return $array;
+	}
+	
+	public static function resetscope($string, $scope = '|') {
+		if( strpos($string, $scope) !== false ) {
+			$array = self::scope($string);
+			return $array[0];
+		} else {
+			return $string;
+		}
+	}
+	public static function secondscope($string, $scope = '|') {
+		if( strpos($string, $scope) !== false ) {
+			$array = self::scope($string);
+			array_shift($array);
+			return implode($scope, $array);
+		} else {
+			return $string;
+		}
+	}	
 	
 }
