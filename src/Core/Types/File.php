@@ -390,6 +390,8 @@ class File {
     }
 
     public static function readFile(string $filename) {
+        if(!file_exists($filename)) return false;
+        if(is_dir($filename)) return false;        
         $mime = self::getMimeType($filename);
         header('Content-Type: '.$mime);
         header('Content-Length: ' . filesize($filename));

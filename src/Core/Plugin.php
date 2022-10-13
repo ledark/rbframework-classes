@@ -53,6 +53,8 @@ class Plugin
             if(!function_exists('get_functions_dir')) {
                 $location_functions_dir = Config::get('location.functions_dir');
                 if(!is_dir($location_functions_dir)) Exception::throw("functions dir {$location_functions_dir} not found. Check if collection [location.functions_dir] exists.");
+            }
+            if(!function_exists('get_functions_dir')) {
                 function get_functions_dir():string { return Config::get('location.functions_dir'); }
             }
 

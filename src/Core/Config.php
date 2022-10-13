@@ -27,6 +27,11 @@ class Config
         echo self::get($name, $collections_dir);
     }
 
+    public static function assigned(string $name, $default = '', $collections_dir = null) {
+        $res = self::get($name, $collections_dir);
+        return is_null($res) ? $default : $res;
+    }
+
     public static function get(string $name, string $collections_dir = null) {
         $dados = self::include_file($name, $collections_dir);
         if(is_array($dados)) return $dados;
