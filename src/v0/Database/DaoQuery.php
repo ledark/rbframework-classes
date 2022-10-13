@@ -2,6 +2,9 @@
 
 namespace RBFrameworks\Database;
 
+use RBFrameworks\Core\Config;
+use RBFrameworks\Core\Legacy\SmartReplace;
+
 trait DaoQuery {
     
     public $registredQuerys = [];
@@ -16,7 +19,7 @@ trait DaoQuery {
     }
     
     public function applyVariables(string $string) {
-        return smart_replace($string);
+        return SmartReplace::smart_replace($string);
     }
     
     public function getRegistredQuery(string $name) {
@@ -29,6 +32,10 @@ trait DaoQuery {
     private function getRegistredFolder():string {
         return __DIR__."/Querys";
     }
+
+    private function getRegistredFolders():array {
+        return Config::assigned('database.queryFolders', []);
+    }
     
     private function getRegistredFile(string $name):string {
         return $this->searchRegistredFile($name);
@@ -36,7 +43,7 @@ trait DaoQuery {
     }
     
     private function searchRegistredFile(string $name) {
-        $patterns = [];
+        $patterns = $this->getRegistredFolders();
         $patterns[] = $this->getRegistredFolder()."/$name.sql";
         
         $backtrace = debug_backtrace();

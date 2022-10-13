@@ -2,7 +2,8 @@
 
 namespace RBFrameworks;
 
-plugin('utf8_encode_deep');
+use RBFrameworks\Core\Utils\Encoding;
+use Countable;
 
 class Response {
     
@@ -12,7 +13,7 @@ class Response {
 
 
     public static function toUtf8(&$mixed) {
-		utf8_encode_deep($mixed);
+        Encoding::DeepEncode($mixed);
     }
     
     public static function json($mixed) {
@@ -61,7 +62,7 @@ class Response {
     
     public static function text($text) {
         header("Content-Type: text/plain"); 
-        switch(\Encoding::detect($text)) {
+        switch(Encoding::detect($text)) {
             case 'ISO-8859-1':
                 $text = utf8_encode($text);
             break;
@@ -71,7 +72,7 @@ class Response {
 
     public static function xml($text) {
         header("Content-Type: application/xml"); 
-        switch(\Encoding::detect($text)) {
+        switch(Encoding::detect($text)) {
             case 'ISO-8859-1':
                 $text = utf8_encode($text);
             break;
