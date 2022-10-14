@@ -34,6 +34,7 @@ class Stream
      *  '' O padrão é vazio como destrito em filestream/httpfilestream
      *  'javascript' faz o mesmo como descrito em filestreamjs/httpfilestreamjs
      *  'nostore' garante a exclusão prematura do arquivo, excluindo na próxima requisição de qualquer chamada a função filestream
+     *  'qualquer outro nome irá servir como nome do arquivo em fakepath'
      * @return string
      */
     public static function filestream(string $realfilepath, array $replaces = [], string $method = ''): string
@@ -50,7 +51,22 @@ class Stream
         }
         if ($method == 'nostore') $extension = '_nostore' . $extension;
 
-        $fakepath = self::getCacheAssetsFolder().'/fnfiles_' . md5($realfilepath) . $extension;
+        if(!empty($method) and $method != 'javascript' and $method != 'nostore') {
+            $fakepath = self::getCacheAssetsFolder().'/'.$method.$extension;
+            if(strpos($method.$extension, '.js.js')) {
+                $fakepath = self::getCacheAssetsFolder().'/'.$method;
+            }
+
+            if(strpos($method, '/') !== false) {
+                $parts = explode('/', $method);
+                array_pop($parts);
+                Directory::mkdir(self::getCacheAssetsFolder().'/'.implode('/', $parts));
+            }
+
+
+        } else {
+            $fakepath = self::getCacheAssetsFolder().'/fnfiles_' . md5($realfilepath) . $extension;
+        }
 
         if (count($replaces)) {
 
@@ -104,9 +120,9 @@ class Stream
     }
 
 
-    public static function httpfilestream(string $realfilepath, array $replaces = [])
+    public static function httpfilestream(string $realfilepath, array $replaces = [], $method = '')
     {
-        return Http::getSite() . self::filestream($realfilepath, $replaces);
+        return Http::getSite() . self::filestream($realfilepath, $replaces, $method);
     }
 
     public static function filestreamjs(string $realfilepath, array $replaces = []): string

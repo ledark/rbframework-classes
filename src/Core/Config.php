@@ -44,7 +44,7 @@ class Config
             return include($collections_dir.$name.'.php');
         }
         $name = str_replace('.', '/', $name);
-        
+
         if (file_exists($collections_dir.$name.'.php')) {
             return include($collections_dir.$name.'.php');
         }
@@ -67,10 +67,24 @@ class Config
 
     private static function get_collection(string $name, string $collections_dir = null) {
 
+        //Tentativa 1) MultiDirectory
+        if(is_null($collections_dir)) $collections_directory  = self::getCollectionDir();
+        $collections_filename = str_replace('.', '/', $name);
+        $collections_filepath = $collections_directory.dirname($collections_filename).'.php';
+        if(file_exists($collections_filepath)) {
+            $collections_data = include($collections_filepath);
+            if(is_array($collections_data)) {
+                return Arrays::getValueByDotKey(basename($collections_filename, '.php'), $collections_data, null, '.');
+            }
+        }
+        unset($collections_directory, $collections_filename, $collections_filepath, $collections_data);
+        
+        //Tentativa 2) NameWithoutDot
         if(strpos($name, '.') !== false) {
             return self::get_collection_withdot($name, $collections_dir);
         }
 
+        //Tentativa 3) NameinFile
         return self::include_collection_file($name, function(){
             return null;
         }, $collections_dir);
