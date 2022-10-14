@@ -2,11 +2,13 @@
 
 namespace RBFrameworks\Core\Utils;
 
+use RBFrameworks\Core\Utils\Arrays;
+
 trait ArraysDatabase {
 
     /**
      * extractFields extrair campo de uma array associativa ['field' => 'value', 'field2' => 'value', 'field3' => 'value'] 
-     * para field1, field2, field3. Voc� pode passar um campo com * para n�o retornar `delimitado`.
+     * para field1, field2, field3. Você pode passar um campo com * para não retornar `delimitado`.
      * @param array $dados
      * @return string
      */
@@ -198,6 +200,10 @@ trait ArraysDatabase {
 
         $fieldValue = "'$fieldValue'";
         return '=';
+    }
+
+    public static function sanitize($inp) {
+        return Arrays::sanitize($inp);
     }
     
 }
