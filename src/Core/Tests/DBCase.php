@@ -4,7 +4,7 @@ namespace RBFrameworks\Core\Tests;
 
 use PHPUnit\Framework\TestCase;
 use RBFrameworks\Core\Database;
-use RBFrameworks\Core\Utils\ArraysDatabase;
+use RBFrameworks\Core\Utils\Arrays as ArraysDatabase;
 use RBFrameworks\Core\Database\Legacy\Model as LegacyModel;
 
 /**

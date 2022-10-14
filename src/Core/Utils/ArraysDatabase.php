@@ -2,8 +2,6 @@
 
 namespace RBFrameworks\Core\Utils;
 
-use RBFrameworks\Core\Utils\Arrays;
-
 trait ArraysDatabase {
 
     /**
@@ -200,10 +198,6 @@ trait ArraysDatabase {
 
         $fieldValue = "'$fieldValue'";
         return '=';
-    }
-
-    public static function sanitize($inp) {
-        return Arrays::sanitize($inp);
     }
     
 }

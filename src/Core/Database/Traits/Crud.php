@@ -4,7 +4,6 @@ namespace RBFrameworks\Core\Database\Traits;
 
 use RBFrameworks\Core\Debug;
 use RBFrameworks\Core\Utils\Arrays;
-use RBFrameworks\Core\Utils\ArraysDatabase;
 
 trait Crud {
 
@@ -27,23 +26,23 @@ trait Crud {
     private function convertArray_toQuery(array $dados):object {
         $dados = $this->extractValidFields($dados);
 
-        $fields = ArraysDatabase::extractFields($dados);
-        $bindedValues = ArraysDatabase::extractBindNamedParams($dados);
-        $values = ArraysDatabase::extractValuesAsArray($dados);
-        $valuesRaw = ArraysDatabase::extractValues($dados);
+        $fields = Arrays::extractFields($dados);
+        $bindedValues = Arrays::extractBindNamedParams($dados);
+        $values = Arrays::extractValuesAsArray($dados);
+        $valuesRaw = Arrays::extractValues($dados);
         return (object) [
             'query_fields' => $fields,
             'query_values' => $valuesRaw,
-            'query_values_binded' => ArraysDatabase::extractBindParams($dados),
-            'query_field_binded' => ArraysDatabase::extractBindNamedParams($dados),
-            'query_update_binded' => ArraysDatabase::extractUpdateBinded($dados),
-            'query_update_raw' => ArraysDatabase::extractUpdateRaw($dados),
+            'query_values_binded' => Arrays::extractBindParams($dados),
+            'query_field_binded' => Arrays::extractBindNamedParams($dados),
+            'query_update_binded' => Arrays::extractUpdateBinded($dados),
+            'query_update_raw' => Arrays::extractUpdateRaw($dados),
             /*
             'query_insert' => "INSERT INTO `{$this->getTabela()}` ($fields) VALUES ($bindedValues)",
             'fields' => $fields,
             'bindedValues' => $bindedValues,
             'values' => $valuesRaw,
-            'bindedFieldsValues' => ArraysDatabase::extractBindNamedParamsWithValues($dados),
+            'bindedFieldsValues' => Arrays::extractBindNamedParamsWithValues($dados),
             */
             'validFields' => $dados,
         ];
@@ -57,7 +56,7 @@ trait Crud {
     }
     
     public function set(array $dados, array $keys):bool {        
-        $this->update($this->getTabela(), $this->extractValidFields($dados), ArraysDatabase::extractWhereAnd($this->extractValidFields($keys)));
+        $this->update($this->getTabela(), $this->extractValidFields($dados), Arrays::extractWhereAnd($this->extractValidFields($keys)));
         return ($this->affectedRows() > 0) ? true : false;
     }
     
@@ -75,9 +74,9 @@ trait Crud {
     public function get(array $dados = [], array $criterias = [], string $querySufix = ""):array {
         $dados = $this->extractValidFields($dados);
         $criterias = $this->extractValidFields($criterias);
-        $fields = ArraysDatabase::extractFields($dados);
+        $fields = Arrays::extractFields($dados);
         $fields = empty($fields) ? "*" : $fields;
-        $query = "SELECT ".$fields." FROM `{$this->getTabela()}` WHERE 1=1 AND ".ArraysDatabase::extractWhereAnd($criterias);
+        $query = "SELECT ".$fields." FROM `{$this->getTabela()}` WHERE 1=1 AND ".Arrays::extractWhereAnd($criterias);
         $query = rtrim($query, "AND ");
         $query = rtrim($query, "OR ");
         $query = $query." {$querySufix}";
@@ -87,7 +86,7 @@ trait Crud {
     }
     
     public function del(array $keys)    {
-        $this->delete($this->getTabela(), ArraysDatabase::extractWhereAnd($this->extractValidFields($keys)));
+        $this->delete($this->getTabela(), Arrays::extractWhereAnd($this->extractValidFields($keys)));
         return ($this->affectedRows() > 0) ? true : false;
     }
 
