@@ -45,9 +45,13 @@ use RBFrameworks\Core\Http;
 use RBFrameworks\Core\Utils\Encoding;
 use RBFrameworks\Core\Exceptions\DefaultException as Exception;
 use GuzzleHttp\Psr7\MessageTrait;
+use RBFrameworks\Core\Session\MessageTrait as SessionMessageTrait;
 
 class Session
 {
+
+    use MessageTrait;
+    use SessionMessageTrait;    
 
     /**
      * session_id() as default ou sobrescrito no constructor
@@ -101,10 +105,5 @@ class Session
         $session_id = is_null($session_id) ? session_id() : $session_id;
         $this->session_id = $session_id === false ? uniqid('_') : $session_id;
     }
-
-    use MessageTrait;
-
- 
-
 
 }
