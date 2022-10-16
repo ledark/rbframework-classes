@@ -10,7 +10,7 @@ class DatabaseFacadeTest extends TestCase
 {
     public function testQuerys() {
         
-
+        $this->assertNotNull(DatabaseFacade::getPrefixo());
         $this->assertEquals(DatabaseFacade::getPrefixo(), Config::get('database.prefixo'));
 
         

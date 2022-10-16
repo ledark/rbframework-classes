@@ -3,6 +3,7 @@
 namespace RBFrameworks\Storage;
 
 use MeekroDB;
+use RBFrameworks\Core\Config;
 
 class Database {
     
@@ -14,13 +15,18 @@ class Database {
         $this->DB = new MeekroDB($config['server'], $config['login'], $config['senha'], $config['database']);
         $this->prefixo = $config['prefixo'];
     }
+
+    public static function getDBInstance() {
+        $config = self::extractConfig(null);
+        return new MeekroDB($config['server'], $config['login'], $config['senha'], $config['database']);        
+    }
     
     public function __call (string $name, array $arguments) {
         return call_user_func_array(array($this->DB, $name), $arguments);
     }
     
     public static function __callStatic (string $name, array $arguments) {
-        return call_user_func_array(array($this->DB, $name), $arguments);
+        return call_user_func_array(array(self::getDBInstance(), $name), $arguments);
         
     }
     
@@ -49,7 +55,7 @@ class Database {
                 throw new \Exception("Tipo float (ou double) n?o possui uma configura??o de banco de dados v?lida");
             break;
             case "string":
-                return get_config($mixed);
+                return Config::get($mixed);
             break;
             case "object":
                 throw new \Exception("Tipo object n?o possui uma configura??o de banco de dados implementada");
@@ -58,7 +64,7 @@ class Database {
                 throw new \Exception("Tipo object n?o possui uma configura??o de banco de dados implementada");
             break;
             case "NULL":
-                return get_config('database');
+                return Config::get('database');
             break;
             case "unknown type":
                 throw new \Exception("Tipo desconhecido que n?o possui uma configura??o de banco de dados detecada");

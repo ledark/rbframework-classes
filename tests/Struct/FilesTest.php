@@ -14,7 +14,7 @@ class FilesTest extends TestCase
         $this->assertTrue(file_exists(self::getPath($path)), "struct not exists: {$path}");
         return $this;
     }
-    public function notestFiles()
+    public function testFiles()
     {   
         $this
             
@@ -24,10 +24,14 @@ class FilesTest extends TestCase
             ->assertPath('src/Core/Auth/')
             
             ->assertPath('src/Core/Database/')
-                ->assertPath('src/Core/Database/Doctrine/')
                 ->assertPath('src/Core/Database/Legacy/')
                 ->assertPath('src/Core/Database/Sql/')
                 ->assertPath('src/Core/Database/Traits/')
+                ->assertPath('src/Core/Database/Doctrine/')
+                ->assertPath('src/Core/Database/Medoo/')
+                ->assertPath('src/Core/Database/Meekro/')
+                ->assertPath('src/Core/Database/Rbdbv4/')
+                ->assertPath('src/Core/Database/Rbdbv6/')
 
             ->assertPath('src/Core/Exceptions/')
             ->assertPath('src/Core/Http/')
@@ -73,6 +77,7 @@ class FilesTest extends TestCase
             ->assertPath('collections/server.php')
             ->assertPath('collections/session.php')
             ->assertPath('collections/symfony.php')
+            ->assertPath('collections/mail.php')
 
         ->assertPath('_include.php')
         ->assertPath('.gitignore')

@@ -42,7 +42,7 @@ use RBFrameworks\Core\Interfaces\isCrudable;
 use RBFrameworks\Core\Database\Traits\Crud as CrudTrait;
 use RBFrameworks\Core\Config;
 
-class Database
+class Database implements isCrudable
 {
 
     public $DB;
@@ -100,7 +100,6 @@ class Database
     {
 
         //Configs
-        if (!function_exists('get_collection')) Plugin::load('helper');
         $config = $this->extractConfig($config);
 
         //ServerDatabaseConn
