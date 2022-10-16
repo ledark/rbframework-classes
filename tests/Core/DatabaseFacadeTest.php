@@ -12,7 +12,14 @@ class DatabaseFacadeTest extends TestCase
         
         $this->assertNotNull(DatabaseFacade::getPrefixo());
         $this->assertEquals(DatabaseFacade::getPrefixo(), Config::get('database.prefixo'));
+        
+        DatabaseFacade::setPrefixo('gametest160521_');
+        $this->assertEquals(DatabaseFacade::getPrefixo(), 'gametest160521_');
 
+        /*
+        $x = DatabaseFacade::query("SELECT * FROM gametest160521_gameareas");
+        print_r($x);
+        */
         
     }
 }

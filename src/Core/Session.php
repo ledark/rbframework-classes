@@ -84,7 +84,14 @@ class Session
         }
     }     
 
-    public static function get(bool $utf8_encode = null):array {
+    public static function get($mixed = null) {
+        $utf8_encode = null;
+        if(is_bool($mixed)) {
+            $utf8_encode = $mixed;
+        }
+        if(is_string($mixed)) {
+            return isset($_SESSION[$mixed]) ? $_SESSION[$mixed] : null;
+        }
         $sess = new self();
         $dados = $_SESSION;
         if($utf8_encode === true) {
@@ -94,6 +101,10 @@ class Session
             Encoding::DeepDecode($dados);
         }
         return $dados;
+    }
+
+    public static function set(string $chave, $valor):void {
+        $_SESSION[$chave] = $valor;
     }
 
     /**
