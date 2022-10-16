@@ -16,11 +16,11 @@ class MedooTest extends TestCase
 
         $database = new Medoo([
             'type' => 'sqlite',
-            'database' => __DIR__.'/../../database.sqlite',
+            'database' => __DIR__.'/../../rbframework.sqlite',
             'testMode' => false,
         ]);
 
-        $res = $database->query("SELECT * FROM `data`")->fetchAll();;
+        $res = $database->query("SELECT * FROM `framework`")->fetchAll();;
         $this->assertGreaterThan(5, count($res));
     
     }

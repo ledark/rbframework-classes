@@ -2,6 +2,8 @@
 
 use PHPUnit\Framework\TestCase;
 use RBFrameworks\Core\Template;
+use RBFrameworks\Core\Templates\Custom\Template as TemplateCustom;
+use RBFrameworks\Core\Templates\Bootstrapv5\Template as TemplateBs5;
 
 class TemplateTest extends TestCase
 {
@@ -13,7 +15,34 @@ class TemplateTest extends TestCase
         $tmpl = new Template(__DIR__.'/../../src/Core/Templates/bs5-boilerplate.html');
         $this->assertTrue($tmpl->isFile(), 'template not as file');
     }
+    public function testExtendindTemplate()
+    {
 
+        ob_start();
+        (new TemplateBs5())->render(__DIR__.'/../Samples/my-custom-simple-page.php');
+        $content = ob_get_clean();
+        $this->assertStringContainsString('bootstrap', $content);
+        $this->assertStringContainsString('this is my-custom-simple-page', $content);
+        
+    }
+
+    public function testCustomTemplate() {
+        ob_start();
+        ////__DIR__.'/../Samples/my-custom-simple-page.php'
+        (new TemplateCustom(__DIR__.'/../Samples/my-custom-template.html'))->setPage(__DIR__.'/../Samples/my-custom-simple-page.php')->render();
+        $content = ob_get_clean();
+        $this->assertStringContainsString('<head>...</head>', $content);
+        $this->assertStringContainsString('this is my-custom-simple-page', $content);
+    }
+
+    public function testCustomTemplate2() {
+        ob_start();
+        ////__DIR__.'/../Samples/my-custom-simple-page.php'
+        (new TemplateCustom(__DIR__.'/../Samples/my-custom-template.html'))->setVar(['content' => __DIR__.'/../Samples/my-custom-simple-page.php'])->render();
+        $content = ob_get_clean();
+        $this->assertStringContainsString('<head>...</head>', $content);
+        $this->assertStringContainsString('this is my-custom-simple-page', $content);
+    }
 
     /*
     public function testHello()

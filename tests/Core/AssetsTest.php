@@ -10,8 +10,27 @@ use RBFrameworks\Core\Config;
 class AssetsTest extends TestCase
 {
 
+    public function setUp():void {
+        foreach (new DirectoryIterator(Config::get('location.cache.assets')) as $fileInfo) {
+            if($fileInfo->isDot()) continue;
+            unlink($fileInfo->getPathname());
+        }
+        Directory::rmdir(Config::get('location.cache.assets'));
+    }
+
+    public function tearDown():void {
+        foreach (new DirectoryIterator(Config::get('location.cache.assets')) as $fileInfo) {
+            if($fileInfo->isDot()) continue;
+            unlink($fileInfo->getPathname());
+        }
+        Directory::rmdir(Config::get('location.cache.assets'));        
+    }
+
     public function testAssets()
     {
+
+        
+        
 
         $this->assertFileNotExists(Config::get('location.cache.assets'));
 
@@ -23,7 +42,7 @@ class AssetsTest extends TestCase
 
         unlink($filename);
 
-        Directory::rmdir(Config::get('location.cache.assets'));
+        //Directory::rmdir(Config::get('location.cache.assets'));
 
         ;
     }
