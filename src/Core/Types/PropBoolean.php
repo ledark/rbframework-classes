@@ -10,7 +10,7 @@ class PropBoolean implements TypeInterface, PropInterface {
     private $name;
     private $value;
 
-    public function __construct(string $name, mixed $value = null) {
+    public function __construct(string $name, $value = null) {
         $this->name = $name;
         $this->value = self::forceBoolean($value);
     }
@@ -34,7 +34,7 @@ class PropBoolean implements TypeInterface, PropInterface {
         return (bool) $this->value;
     }
 
-    public static function forceBoolean(mixed $mixed):bool {
+    public static function forceBoolean($mixed):bool {
         $mixed = new Common($mixed);
 
         $string = $mixed->getString();

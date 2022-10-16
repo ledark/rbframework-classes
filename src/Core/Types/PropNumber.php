@@ -10,7 +10,7 @@ class PropNumber implements TypeInterface, PropInterface{
     private $name;
     private $value;
 
-    public function __construct(string $name, mixed $value = null) {
+    public function __construct(string $name, $value = null) {
         $this->name = $name;
         $this->value = self::forceNumber($value);
     }
@@ -30,7 +30,7 @@ class PropNumber implements TypeInterface, PropInterface{
         return (string) $this->value;
     }
 
-    public static function forceNumber(mixed $mixed):int {
+    public static function forceNumber($mixed):int {
         $mixed = new Common($mixed);
 
         $string = $mixed->getString();

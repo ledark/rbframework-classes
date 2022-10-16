@@ -11,19 +11,23 @@ class AssetsTest extends TestCase
 {
 
     public function setUp():void {
-        foreach (new DirectoryIterator(Config::get('location.cache.assets')) as $fileInfo) {
-            if($fileInfo->isDot()) continue;
-            unlink($fileInfo->getPathname());
+        if(is_dir(Config::get('location.cache.assets'))) {
+            foreach (new DirectoryIterator(Config::get('location.cache.assets')) as $fileInfo) {
+                if($fileInfo->isDot()) continue;
+                unlink($fileInfo->getPathname());
+            }
+            Directory::rmdir(Config::get('location.cache.assets'));
         }
-        Directory::rmdir(Config::get('location.cache.assets'));
     }
 
     public function tearDown():void {
-        foreach (new DirectoryIterator(Config::get('location.cache.assets')) as $fileInfo) {
-            if($fileInfo->isDot()) continue;
-            unlink($fileInfo->getPathname());
-        }
-        Directory::rmdir(Config::get('location.cache.assets'));        
+        if(is_dir(Config::get('location.cache.assets'))) {
+            foreach (new DirectoryIterator(Config::get('location.cache.assets')) as $fileInfo) {
+                if($fileInfo->isDot()) continue;
+                unlink($fileInfo->getPathname());
+            }
+            Directory::rmdir(Config::get('location.cache.assets'));
+        }     
     }
 
     public function testAssets()

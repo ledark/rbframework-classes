@@ -4,6 +4,8 @@ use PHPUnit\Framework\TestCase;
 use RBFrameworks\Core\Template;
 use RBFrameworks\Core\Templates\Custom\Template as TemplateCustom;
 use RBFrameworks\Core\Templates\Bootstrapv5\Template as TemplateBs5;
+use RBFrameworks\Core\Directory;
+use RBFrameworks\Core\Config;
 
 class TemplateTest extends TestCase
 {
@@ -43,6 +45,16 @@ class TemplateTest extends TestCase
         $this->assertStringContainsString('<head>...</head>', $content);
         $this->assertStringContainsString('this is my-custom-simple-page', $content);
     }
+
+    public function tearDown():void {
+        if(is_dir(Config::get('location.cache.assets'))) {
+            foreach (new DirectoryIterator(Config::get('location.cache.assets')) as $fileInfo) {
+                if($fileInfo->isDot()) continue;
+                unlink($fileInfo->getPathname());
+            }
+            Directory::rmdir(Config::get('location.cache.assets'));
+        }
+    }    
 
     /*
     public function testHello()

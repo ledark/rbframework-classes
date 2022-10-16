@@ -121,12 +121,34 @@ class Directory {
         return $list;
     }
 
-    public function getRecursiveFiles(string $path = null):array {
+    /**
+     * getListFromDirectory function
+     *
+     * @param string $filename
+     * @param callable|null $callback
+     * @return array
+     */
+    public static function getListFrom(string $filename, callable $callback = null):array {
+        $list = [];
+        foreach (new \DirectoryIterator($filename) as $fileInfo) {
+            if($fileInfo->isDot()) continue;
+            if($callback) {
+                $callback($fileInfo);
+            }
+            $list[] = $fileInfo->getPathname();
+        }
+        return $list;
+    }
+
+    public function getRecursiveFiles(string $path = null, callable $callback = null):array {
         if(is_null($path)) $path = $this->getDirectory();
         $list = [];
         foreach (new \DirectoryIterator($path) as $fileInfo) {
             if($fileInfo->isDot()) continue;
             if($fileInfo->isDir()) $list[] = $this->getRecursiveFiles($fileInfo->getBasename());
+            if($callback) {
+                $callback($fileInfo);
+            }            
             $list[] = $fileInfo->getPathname();
         }
         sort($list);

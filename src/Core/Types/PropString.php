@@ -10,7 +10,7 @@ class PropString implements TypeInterface, PropInterface{
     private $name;
     private $value;
 
-    public function __construct(string $name, mixed $value = null) {
+    public function __construct(string $name, $value = null) {
         $this->name = $name;
         $this->value = self::forceString($value);
     }
@@ -30,7 +30,7 @@ class PropString implements TypeInterface, PropInterface{
         return (string) $this->value;
     }
 
-    public static function forceString(mixed $mixed):string {
+    public static function forceString($mixed):string {
         $mixed = new Common($mixed);
         return $mixed->getString();
     }
