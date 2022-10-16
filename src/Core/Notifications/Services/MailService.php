@@ -14,6 +14,8 @@ class MailService extends Service {
     public $mail;
     private $errors = [];
     public $template = 'sample';
+    public $templateDir = null;
+    public $templateExtension = '.html';
 
     public function __construct() {
 
@@ -61,9 +63,25 @@ class MailService extends Service {
         
     }
 
+    public function setTemplateDir(string $templateDir):object {
+        $this->templateDir = $templateDir;
+        return $this;
+    }
+
+    public function getTemplateDir():string {
+        if(is_null($this->templateDir)) {
+            return __DIR__."/../Templates/";
+        }
+        return $this->templateDir;
+    }
+
+    public function getTemplateExtension():string {
+        return $this->templateExtension;
+    }
+
     public function useTemplate(string $message, string $subject = "", string $template = "sample" ):object {
         ob_start();
-        include(__DIR__."/../Templates/{$template}.html");
+        include($this->getTemplateDir().$template.$this->getTemplateExtension());
         $template = ob_get_clean();
         
         $content = (new Replace($template, [
@@ -127,7 +145,7 @@ class MailService extends Service {
 
     public function getTemplate():string {
         ob_start();
-        include(__DIR__."/../Templates/{$this->template}.html");
+        include($this->getTemplateDir().$template.$this->getTemplateExtension());
         $template = ob_get_clean();
         return (new Replace($template, [
             'title' => $this->mail->Subject,
