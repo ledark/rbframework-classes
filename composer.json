@@ -24,11 +24,12 @@
         "eftec/bladeonehtml": "^1.4",
         "bramus/router": "^1.6",
         "symfony/cache": "^5.4",
-        "phpmailer/phpmailer": "^6.6"
+        "phpmailer/phpmailer": "^6.6",
+        "catfan/medoo": "^2.1"
     },
     "autoload": {
         "psr-4": {
-            "RBFrameworks\\": ["src/", "src/v0/"]
+            "RBFrameworks\\": ["src/", "src/v1/", "src/v0/"]
         },
         "files": [
             "_include.php"
