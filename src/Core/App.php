@@ -159,6 +159,8 @@ class App {
 
         //AllParts
         if($this->includePagePartPhp('filter')) exit();
+        $this->includeRootPartPhp('_filter');
+        $this->includeRootPartPhp('_config');
         $this->includePagePartPhp('config');
 
         if(!$this->includePagePartPhp('head')) $this->includePagePartHtml('head');

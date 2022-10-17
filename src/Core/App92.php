@@ -329,7 +329,14 @@ class App92 {
                 }
                 if(empty($pag)) $pag = $_GET['pag'];
                 //logdebug($RBFolders['dirRB'].$pag.'.php incluído');
-                include($RBFolders['dirRB'].$pag.'.php');
+                if(file_exists($RBFolders['dirRB'].$pag.'.php')) {
+                    include($RBFolders['dirRB'].$pag.'.php');
+                } else {
+                    if(file_exists(str_replace('htm', 'sys', $RBFolders['dirRB']).$pag.'.php')) {
+                        include(str_replace('htm', 'sys', $RBFolders['dirRB']).$pag.'.php');
+                    }
+                }
+                
             break;
             case 'isEval':
                 if( !empty($_GET['doExec']) ) {
@@ -476,8 +483,6 @@ class App92 {
                 }
                 
                 ob_start();
-                print_r($RBFolders);
-                print_r($toInclude);
                 //logdebug("Processamento da v88 index \r\n".ob_get_clean()."\r\n$includehash");
                 
                         if($toRedirLogin) {

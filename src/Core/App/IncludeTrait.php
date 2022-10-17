@@ -40,6 +40,15 @@ namespace RBFrameworks\Core\App;
 
 trait IncludeTrait
 {
+    private function includeRootPartPhp(string $rootpartname):bool {
+        $file2include = rtrim($this->page->getFolderPath(), '/').'/'.$rootpartname.'.php';
+        if(file_exists($file2include)) {
+            include($file2include);
+            return true;
+        }
+        return false;
+    }
+
     private function getPageComponent(string $subExtension = '', string $finalExtension = null):string {
         $baseDir = rtrim($this->page->getFolderPath(), '/');
         $fileName = ltrim($this->page->getName(), '/');

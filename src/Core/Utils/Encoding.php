@@ -437,6 +437,9 @@ class Encoding
     }
   }
 
+  public static function encodeDeep(&$input) { self::DeepEncode($input); }
+  public static function decodeDeep(&$input) { self::DeepDecode($input); }
+
   public static function DeepEncode(&$input)
   {
     if (is_string($input)) {

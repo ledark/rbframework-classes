@@ -6,6 +6,7 @@ use RBFrameworks\Request as req;
 use RBFrameworks\Database as DatabaseConnection;
 use RBFrameworks\Database\Model as Model;
 use RBFrameworks\Helpers\FileFinder as FileFinder;
+use RBFrameworks\Core\Config as CoreConfig;
 
 class SQLGetter {
     
@@ -30,6 +31,7 @@ class SQLGetter {
             $contents = (new FileFinder($name))
                 ->clearSearchExtensions()
                 ->addSearchExtension('.sql')
+                ->addSearchFolder( CoreConfig::get('database.queryFolders') )
                 ->addSearchFolder(__DIR__.'/Querys/')
                 ->search()
                 ->getContents()

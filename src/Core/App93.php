@@ -116,18 +116,18 @@ class App93 {
         $RBVars['httpLink'] = ($RBVars['configs']['url_clean']) ? $RBVars['httpSite'] : $RBVars['httpHost'] . $_SERVER['SCRIPT_NAME'] . '?pag=';
         $RBVars['httpFile'] = $RBVars['httpSite'].'default/';
         
-        define('HTTPSITE', $RBVars['httpSite']);
+        if(!defined('HTTPSITE')) define('HTTPSITE', $RBVars['httpSite']);
         
         
         if($_SERVER['REQUEST_SCHEME'] == 'https://') {
-            define('IS_HTTPS', true); 
-            define('HTTPSITESSL', $RBVars['httpSite']);
-            define('HTTPSITENOSSL', str_replace('https://', 'http://', $RBVars['httpHost']) . substr($_SERVER['SCRIPT_NAME'], 0, -9));
+            if(!defined('IS_HTTPS')) define('IS_HTTPS', true); 
+            if(!defined('HTTPSITESSL')) define('HTTPSITESSL', $RBVars['httpSite']);
+            if(!defined('HTTPSITENOSSL')) define('HTTPSITENOSSL', str_replace('https://', 'http://', $RBVars['httpHost']) . substr($_SERVER['SCRIPT_NAME'], 0, -9));
         
         } else { 
-            define('IS_HTTPS', false); 
-            define('HTTPSITENOSSL', $RBVars['httpSite']);
-            define('HTTPSITESSL', str_replace('http://', 'https://', $RBVars['httpHost']) . substr($_SERVER['SCRIPT_NAME'], 0, -9));
+            if(!defined('IS_HTTPS')) define('IS_HTTPS', false); 
+            if(!defined('HTTPSITENOSSL')) define('HTTPSITENOSSL', $RBVars['httpSite']);
+            if(!defined('HTTPSITESSL')) define('HTTPSITESSL', str_replace('http://', 'https://', $RBVars['httpHost']) . substr($_SERVER['SCRIPT_NAME'], 0, -9));
         }
 
         //Unsets
