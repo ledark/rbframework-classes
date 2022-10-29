@@ -40,6 +40,23 @@ class Cache {
         }        
     }
 
+    /**
+     * @sample
+     * $value = Cache::stored(function(){ 
+     *      return 'value after long process...  
+     * });
+     * @param string $callback que deve retornar o valor processado
+     * @param string $cachedid opcional com o nome do cachedid
+     * @param int $ttl in seconds, default to 3600 [1 hour]
+     * @return mixed
+     */
+	public static function stored(callable $callback, string $cacheid = null, int $ttl = 3600) {
+		if(is_null($cacheid)) $cacheid = md5(serialize(debug_backtrace()));
+        return (new FilesystemAdapter('symfony', $ttl, Config::get('location.cache.default')))->get($cacheid, function (ItemInterface $item) use ($callback) {
+			return $callback();
+        });		
+	}
+
     private function hasOpcache() {
         return is_array(opcache_get_configuration()) ? true : false;
     }

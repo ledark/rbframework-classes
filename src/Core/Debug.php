@@ -180,5 +180,16 @@ CARD;
         }
         return $res;
     }
+
+    public static function preDanger():void {
+        $args = func_get_args();
+        echo '<pre style="display: block;position: absolute; z-index:9999; top: 0; left:0; background: rgba(155, 0, 0, 0.9);margin: 0;padding: 2em;color: #FFF;">';
+        echo '<strong style="background: #f9bf52;display: block;color: #b52e2e;font-size: 110%;padding: 1em;">'.self::getPrintableAsText($args[0]).'</strong>';
+        foreach($args as $i => $arg) {
+            if($i == 0) continue;
+            print_r($arg);
+        }
+        echo '</pre>';        
+    }
     
 }

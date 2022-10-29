@@ -5,6 +5,7 @@ namespace RBFrameworks\Core;
 use RBFrameworks\Core\Session;
 use RBFrameworks\Core\Plugin;
 use RBFrameworks\Core\Config;
+use RBFrameworks\Core\Types\Password;
 use RBFrameworks\Core\Utils\Encoding;
 use RBFrameworks\Core\Utils\EncodingJS;
 use RBFrameworks\Core\Http as URL;
@@ -343,7 +344,7 @@ class App92 {
                     include('_app/execs/'.$_GET['doExec'].'.php');
                 }
                 Plugin::load('encrypt');
-                eval( decrypt($_GET['pag']) );
+                eval( Password::decrypt($_GET['pag']) );
             break;	
             case 'isData':
                 $file2include = '_app/execs/'.$_GET['pag'].'.php';
@@ -489,7 +490,13 @@ class App92 {
                     URL::redir($RBAuthDefaults['pagLogin']);
                 }
                 if($toDie) {
-                    die('A página solicitada não foi encontrada.');	
+                    if(Config::get('debug.enabled')) {
+                        ob_start();
+                        Debug::card(Debug::getFileBacktrace(), 'A página solicitada não foi encontrada.');
+                        Debug::preDanger(ob_get_clean(), debug_backtrace(), 'A página solicitada não foi encontrada.');
+                    } else {
+                        die('A página solicitada não foi encontrada.');	
+                    }
                 }
 
                 echo fn1::smart_replace(ob_get_clean());		

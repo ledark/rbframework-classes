@@ -40,6 +40,40 @@ class Password {
 
     public function getEncrypted():string {
         return password_hash($this->getValue(), PASSWORD_DEFAULT);
-    }    
+    }
+
+    /*
+    public static function encrypt($string) {
+        $output = false;
+        $encrypt_method = "AES-256-CBC";
+        $secret_key = 'r55i33c54mi9d61ia1';
+        $secret_iv = 'R3i4C11aKRd0O';
+        $key = hash('sha256', $secret_key);
+        $iv = substr(hash('sha256', $secret_iv), 0, 16);
+        $output = openssl_encrypt($string, $encrypt_method, $key, 0, $iv);
+        $output = base64_encode($output);
+        return $output;				
+    }
+    
+    public static function decrypt($string) {
+        $output = false;
+        $encrypt_method = "AES-256-CBC";
+        $secret_key = 'r55i33c54mi9d61ia1';
+        $secret_iv = 'R3i4C11aKRd0O';
+        $key = hash('sha256', $secret_key);
+        $iv = substr(hash('sha256', $secret_iv), 0, 16);
+        $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $iv);
+        return $output;					
+    }
+    */
+    public static function encrypt(string $string, string $cryptKey  = 'qJB0rGtIn5UB1xG03efyCp'):string {
+        $qEncoded = openssl_encrypt($string, 'aes-128-gcm', $cryptKey);
+        return $qEncoded;
+    }
+
+    public static function decrypt(string $string, string $cryptKey  = 'qJB0rGtIn5UB1xG03efyCp'):string {
+        $qDecoded = openssl_decrypt($string, 'aes-128-gcm', $cryptKey);
+        return $qDecoded;
+    }
 
 }
