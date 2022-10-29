@@ -28,14 +28,18 @@ class SQLGetter {
         } else {
             $this->name = $name;
             
+            $queryFolders = CoreConfig::get('database.queryFolders');
+
             $contents = (new FileFinder($name))
                 ->clearSearchExtensions()
                 ->addSearchExtension('.sql')
-                ->addSearchFolder( CoreConfig::get('database.queryFolders') )
-                ->addSearchFolder(__DIR__.'/Querys/')
-                ->search()
-                ->getContents()
             ;
+
+            foreach($queryFolders as $queryFolder) {
+                $contents->addSearchFolder($queryFolder);
+            }
+
+            $contents = $contents->addSearchFolder(__DIR__.'/Querys/')->search()->getContents();
             
             $this->setOriginalQuery($contents);
         }

@@ -21,7 +21,7 @@ class Model {
                 ->setTableName($tabela)
                 ->walk($info)
             ;
-        } catch(Exception $e) {
+        } catch(\Exception $e) {
             exit();
         }
     }

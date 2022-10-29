@@ -36,9 +36,20 @@ class FileFinder {
         $this->search_extensions = [];
         return $this;
     }
+
+    public function addSearchFolders($folders) {
+        foreach($folders as $folder) {
+            $this->addSearchFolder($folder);
+        }
+        return $this;
+    }
     
-    public function addSearchFolder(string $path) {
-        $this->search_folders[] = $path;
+    public function addSearchFolder($path) {
+        if(is_array($path)) {
+            $this->addSearchFolders($path);
+        } else {
+            $this->search_folders[] = $path;
+        }
         return $this;
     }
     

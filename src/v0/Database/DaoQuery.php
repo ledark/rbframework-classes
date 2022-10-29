@@ -4,6 +4,7 @@ namespace RBFrameworks\Database;
 
 use RBFrameworks\Core\Config;
 use RBFrameworks\Core\Legacy\SmartReplace;
+use RBFrameworks\Core\Types\Directory;
 
 trait DaoQuery {
     
@@ -29,12 +30,12 @@ trait DaoQuery {
         return (isset($this->registredQuerys[$name])) ? $this->registredQuerys[$name] : $this->Query->render();
     }
     
-    private function getRegistredFolder():string {
-        return __DIR__."/Querys";
+    public function getRegistredFolder():string {
+        return $this->getRegistredFolders()[0];
     }
 
     private function getRegistredFolders():array {
-        return Config::assigned('database.queryFolders', []);
+        return Config::assigned('database.queryFolders', [__DIR__.'/']);
     }
     
     private function getRegistredFile(string $name):string {
@@ -44,18 +45,20 @@ trait DaoQuery {
     
     private function searchRegistredFile(string $name) {
         $patterns = $this->getRegistredFolders();
-        $patterns[] = $this->getRegistredFolder()."/$name.sql";
+        $patterns[] = rtrim($this->getRegistredFolder(), '/')."/{$name}.sql";
         
+        
+
         $backtrace = debug_backtrace();
         foreach($backtrace as $trace) {
             if(isset($trace['file'])) {
-                $patterns[] = dirname($trace['file'])."/$name.sql";
+                $patterns[] = dirname($trace['file'])."/{$name}.sql";
             }
         }
-        
-        foreach($patterns as $file) {
-            if(file_exists($file)) {
-                return $file;
+
+        foreach($patterns as $i => $patternfile) {
+            if(file_exists($patternfile) and !is_dir($patternfile)) {
+                return $patternfile;
             }
         }
         
