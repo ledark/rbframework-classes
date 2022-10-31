@@ -16,6 +16,7 @@ namespace RBFrameworks\Core\Legacy;
 
 use RBFrameworks\Core\Plugin;
 use RBFrameworks\Core\Utils\Replace;
+use RBFrameworks\Core\Types\Php\Parse;
 use Exception;
 
 class Template {
@@ -71,7 +72,6 @@ class Template {
                 $content = self::chunk($content, $chunk);
             }
         }
-        Plugin::load("parse");
 		ob_start();
 		self::parse($content);
 		return self::replace(null, $replaces, true);
