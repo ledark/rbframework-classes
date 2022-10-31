@@ -60,3 +60,4 @@ uploads/
 # Very Specific Projects
 /~working- sys/
 ~working
+.phpunit.result.cache
