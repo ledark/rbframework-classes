@@ -168,7 +168,7 @@ class Database implements isCrudable
     public function __call(string $name, array $arguments)
     {
         if (in_array($name, ['table_exists'])) return call_user_func_array(array($this, $name), $arguments);
-        if (in_array($name, ['query', 'queryFirstField', 'queryFirstRow'])) $this->improveArgs($arguments);
+        if (in_array($name, ['query', 'queryFirstField', 'queryFirstRow', 'queryFirstList', 'queryFirstColumn', 'queryFullColumns', 'queryWalk'])) $this->improveArgs($arguments);
         if (in_array($name, ['insert', 'update', 'delete'])) $this->improveFirstArgs($arguments);
         return call_user_func_array(array($this->DB, $name), $arguments);
     }
