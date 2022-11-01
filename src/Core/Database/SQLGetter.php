@@ -83,7 +83,13 @@ class SQLGetter {
             
             $file = new \RBFrameworks\Core\Types\File($name);
 
-            $file                
+            $searchFolders = Config::get('database.queryFolders');
+            if(!is_array($searchFolders)) throw new \Exception("Need database.queryFolders as array");
+            foreach($searchFolders as $searchFolder) {
+                $file->addSearchFolder($searchFolder);
+            }
+
+            $file
             ->addSearchExtension('.sql')
             ->addSearchFolder( dirname(debug_backtrace()[0]['file']).'/' )
             ->addSearchFolder( dirname(debug_backtrace()[1]['file']).'/' )
