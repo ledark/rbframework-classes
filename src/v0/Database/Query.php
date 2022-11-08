@@ -3,18 +3,20 @@
 /**
  * 180712 - Mais Completo
  * 190712 - Adicionado multiplos setOrders e possibilidade de editar a tabela em FROM..
- * 190509 - Sync para garantir que essa é a última versão (09/05/2019)
- * 190605 - Adicionado Sistema de Logs. Padrão de gravação em log/cache/ checar existência dessa página antes de usar essa classe
+ * 190509 - Sync para garantir que essa Ã© a Ãºltima versÃ£o (09/05/2019)
+ * 190605 - Adicionado Sistema de Logs. PadrÃ£o de gravaÃ§Ã£o em log/cache/ checar existÃªncia dessa pÃ¡gina antes de usar essa classe
  */
 
 namespace RBFrameworks\Database;
+
+use RBFrameworks\Core\Legacy\SmartReplace;
 
 class Query {
     
     public $prefixo;
     public $tables = array(); //Alias para os nomes das tabelas
     public $fields = array();
-    public $clauses = array(); //Array de Condições para Execução da Query
+    public $clauses = array(); //Array de CondiÃ§Ãµes para ExecuÃ§Ã£o da Query
     public $groupby = null;  
     public $from = null;
     
@@ -42,7 +44,7 @@ class Query {
     
     public function writeLog($message) {
         
-        //Definição do Nome do Arquivo
+        //DefiniÃ§Ã£o do Nome do Arquivo
         $id = $this->name;
         $filename = $this->logfolder.'QueryLogs_'. $id.'.sql';
         
@@ -58,7 +60,7 @@ class Query {
     }
     
     public function setGroup($campo) {
-        $this->groupby = smart_replace($campo, $this->tables, true);
+        $this->groupby = SmartReplace::smart_replace($campo, $this->tables, true);
         return $this;
     }
     
@@ -71,12 +73,12 @@ class Query {
     
     /**
      * Informe quantos nomes de tabela desejar usar, com ou sem prefixo.
-     * A função irá colocar todos os nomes das tabelas e uma abreviação para chamá-las mais facilmente no resto do escopo.
-     * Por padrão, a abreviação é simplesmente {tA}, {tB}, {tC} e assim por diante.
-     * Para invocar um nome de abreviação personalizado, use nomeTabela|suaAbreviação como parâmetro
-     * A primeira dessas tabelas precisa ser a principal, ou seja, a que será utilizada em FROM.
+     * A funÃ§Ã£o irÃ¡ colocar todos os nomes das tabelas e uma abreviaÃ§Ã£o para chamÃ¡-las mais facilmente no resto do escopo.
+     * Por padrÃ£o, a abreviaÃ§Ã£o Ã© simplesmente {tA}, {tB}, {tC} e assim por diante.
+     * Para invocar um nome de abreviaÃ§Ã£o personalizado, use nomeTabela|suaAbreviaÃ§Ã£o como parÃ¢metro
+     * A primeira dessas tabelas precisa ser a principal, ou seja, a que serÃ¡ utilizada em FROM.
      * @param string nomeTabela
-     * @param string nomeTabela|minhaAbreviação
+     * @param string nomeTabela|minhaAbreviaÃ§Ã£o
      * @return $this
      */
     public function useTables() {
@@ -112,13 +114,13 @@ class Query {
             }
         }
         if(substr(strtoupper($query), 0, 7) == "SELECT ") $query = "($query)";
-        $this->fields[smart_replace($campo, $this->tables, true)] = smart_replace($query, $this->tables, true);
+        $this->fields[SmartReplace::smart_replace($campo, $this->tables, true)] = SmartReplace::smart_replace($query, $this->tables, true);
         return $this;
     }
     
 
     /**
-     * Alias para um setField simples, ou seja, sem subquerys. Por isso, é possível passar múltiplos campos no parâmetro
+     * Alias para um setField simples, ou seja, sem subquerys. Por isso, Ã© possÃ­vel passar mÃºltiplos campos no parÃ¢metro
      * @example $Query->setFields("cod", "nome", "description");
      * @example $Query->setFields("cod, nome, description");
      * @return $this
@@ -145,7 +147,7 @@ class Query {
     }
     
     /**
-     * Use essa função para limpar alguns atributos. Útil para usar um SELECT COUNT em que você só deseja manter os Wheres
+     * Use essa funÃ§Ã£o para limpar alguns atributos. Ãštil para usar um SELECT COUNT em que vocÃª sÃ³ deseja manter os Wheres
      */
     public function clear(array $manter = []) {
         $manter = array_flip($manter);
@@ -167,18 +169,18 @@ class Query {
     }
     
     public function setFrom(string $tabela) {
-        $this->from = smart_replace($tabela, $this->tables, true);
+        $this->from = SmartReplace::smart_replace($tabela, $this->tables, true);
         return $this;
     }
 
     public function leftJoin(string $tabela, string $where) {
-        $this->from.= smart_replace("\r\n\tLEFT JOIN $tabela \r\n\tON \r\n\t$where", $this->tables, true);
+        $this->from.= SmartReplace::smart_replace("\r\n\tLEFT JOIN $tabela \r\n\tON \r\n\t$where", $this->tables, true);
         return $this;
     }
     
     /**
-     * As funções $Query->setWhereAnd e $Query->setWhereOr 
-     * são exatamente iguais a $Query->setWhere, execeto por colorarem o sufixo
+     * As funÃ§Ãµes $Query->setWhereAnd e $Query->setWhereOr 
+     * sÃ£o exatamente iguais a $Query->setWhere, execeto por colorarem o sufixo
      * AND e OR respectivamente.
      */
     public function setWhereAnd($p1, $p2 = null, $p3 = null) {
@@ -195,15 +197,15 @@ class Query {
     }
     
     public function setWhereFree($condicao) {
-        $this->clauses[] = smart_replace(" $condicao ", $this->tables, true);
+        $this->clauses[] = SmartReplace::smart_replace(" $condicao ", $this->tables, true);
         return $this;
     }
     
     /**
-     * Executa a cláusula do Where mediante $expression ser true
+     * Executa a clÃ¡usula do Where mediante $expression ser true
      * Seria equivalente a usar, por exemplo:
      * if($expression == true) $minhaQuery->setWhere($condicao, $param2, $param3);
-     * O método setWhereBool existe para manter o aspecto chainable de classe Query
+     * O mÃ©todo setWhereBool existe para manter o aspecto chainable de classe Query
      */
     public function setWhereBool($expression, $condicao, $param2 = null, $param3 = null) {
         if($expression) $this->setWhere ($condicao, $param2, $param3);
@@ -253,26 +255,26 @@ class Query {
             }
         }
             
-        $this->clauses[] = smart_replace($condicao, $this->tables, true);
+        $this->clauses[] = SmartReplace::smart_replace($condicao, $this->tables, true);
         return $this;
     }
     
     /**
      * Informa uma clausula WHERE campo IN (values)
      * @create 2020-02-06
-     * @param string $field que será um campo para fazer a consulta com o $seach no banco de dados
-     * @param array $search que será um array com os dados da consulta against o campo $field
+     * @param string $field que serÃ¡ um campo para fazer a consulta com o $seach no banco de dados
+     * @param array $search que serÃ¡ um array com os dados da consulta against o campo $field
      * @return object $this
      */
     public function setWhereIn(string $field, array $search): object {
         $values = "'".implode("','", $search)."'";
         $condicao = "`$field` IN ($values)";
-        $this->clauses[] = smart_replace($condicao, $this->tables, true);
+        $this->clauses[] = SmartReplace::smart_replace($condicao, $this->tables, true);
         return $this;
     }
     
     public function setGroupBy($string) {
-        $this->groupby = smart_replace($string, $this->tables, true);
+        $this->groupby = SmartReplace::smart_replace($string, $this->tables, true);
         return $this;
     }
     
@@ -285,9 +287,9 @@ class Query {
         
         if(!$ignoreBracket) {
             $field = str_replace('`', '', $field);
-            $this->order.= smart_replace("`$field` $order, ", $this->tables, true);
+            $this->order.= SmartReplace::smart_replace("`$field` $order, ", $this->tables, true);
         } else {
-            $this->order.= smart_replace("$field $order, ", $this->tables, true);
+            $this->order.= SmartReplace::smart_replace("$field $order, ", $this->tables, true);
         }
         return $this;
     }
@@ -315,7 +317,7 @@ class Query {
     }
 
     /**
-     * Renderiza o código, utilizando as configurações especificadas anteriormente.
+     * Renderiza o cÃ³digo, utilizando as configuraÃ§Ãµes especificadas anteriormente.
      * @return string
      */
     public function render() {
@@ -452,11 +454,11 @@ class Query {
 
     /**
      * Essa ideia foi tirada de https://stackoverflow.com/questions/28295756/replace-into-without-checking-auto-increment-primary-key 
-     * Porém, ainda não está implementada, e talvez o local da Query nem esteja no local certo.
+     * PorÃ©m, ainda nÃ£o estÃ¡ implementada, e talvez o local da Query nem esteja no local certo.
      * @return string
      */
     public function get_upsert():string {
-        
+      /*  
         $tabela = reset($this->tables);
         
         return "INSERT INTO ".$tabela.' '.
@@ -464,6 +466,8 @@ class Query {
     ' VALUES ('.$EstoqueEcom->walk_query(['cod_produto'   => $cod_produto, 'qtd' => $estoque_in_erp['disponivel']], 'values').')'.
     ' ON DUPLICATE KEY UPDATE '.
     parent::walk_query(['cod_produto'   => $cod_produto], 'update_values');
+    */
+    return "SHOW TABLES";
     }
 
     
