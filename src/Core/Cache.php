@@ -51,7 +51,7 @@ class Cache {
      * @return mixed
      */
 	public static function stored(callable $callback, string $cacheid = null, int $ttl = 3600) {
-		if(is_null($cacheid)) $cacheid = md5(serialize(debug_backtrace()));
+		if(is_null($cacheid)) $cacheid = md5(serialize(debug_backtrace(2)));
         return (new FilesystemAdapter('symfony', $ttl, Config::get('location.cache.default')))->get($cacheid, function (ItemInterface $item) use ($callback) {
 			return $callback();
         });		
