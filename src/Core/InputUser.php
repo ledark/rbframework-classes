@@ -134,7 +134,33 @@ class InputUser extends Input {
             $this->customSanitizeField($field, $callback);
         }
         return $this;
-    }    
+    }
+    
+    /**
+     * assigned function para atribuir um valor a um campo que não exista
+     *
+     * @param string $field
+     * @param string $value
+     * @return object
+     */
+    public function assigned(string $field, string $value):object {
+        if(!isset($this->data[$field])) {
+            $this->data[$field] = $value;
+        }
+        return $this;
+    }
+
+    /**
+     * set function para atribuir um valor a um campo independente se existe ou não
+     *
+     * @param string $field
+     * @param string $value
+     * @return object
+     */
+    public function set(string $field, string $value):object {
+        $this->data[$field] = $value;
+        return $this;
+    }
 
     //FinalData
     public function getResult():array {
