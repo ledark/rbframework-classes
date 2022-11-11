@@ -10,6 +10,7 @@ abstract class Selector {
      */
     public static function select():array {
         $errorCount = 0;
+        $errorLastMessage = '';
         $args = func_get_args();
         foreach($args as $config) {
             try {
@@ -20,11 +21,12 @@ abstract class Selector {
                 new \PDO('mysql:host='.$config['server'].';dbname='.$config['database'], $config['login'], $config['senha']);
                 return $config;
             } catch (\PDOException $e) {
+                $errorLastMessage = $e->getMessage();
                 $errorCount++;
             }
         }
         if($errorCount === count($args)) {
-            throw new \Exception('No connection available');
+            throw new \Exception('No connection available. '.$errorLastMessage);
         }        
     }
 
