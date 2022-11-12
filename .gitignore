@@ -3,3 +3,6 @@ tests/
 vendor/
 composer.lock
 .metadata/
+log/
+.phpunit.result.cache
+*.bak
