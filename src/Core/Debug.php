@@ -34,11 +34,22 @@ class Debug {
     //Errors Control
     public static function displayErrors(bool $display) {
         
-        ini_set('display_errors', ($display) ? 1 : 'Off');
-        ini_set('display_startup_errors', ($display) ? 1 : 'Off');
-        if($display) error_reporting(E_ALL); else error_reporting(0);
+        if($display) {
+
+            ini_set('display_errors', 1);
+            ini_set('display_startup_errors', 1);
+            error_reporting(E_ALL);    
+            set_time_limit(50);                
+
+        } else {
+
+            ini_set('display_errors', 0);
+            ini_set('display_startup_errors', 0);
+            error_reporting(0);
+            set_time_limit(30);
+            
+        }
         
-        set_time_limit(50);
     }
 
     //Getter
