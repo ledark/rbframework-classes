@@ -28,7 +28,7 @@ class Files {
      * @return void apenas um include de tudo
      * @throws \Exception
      */
-    public function include_all(string $directory):void {
+    public function include_all(string $directory) {
         
         if(!is_dir($directory)) throw new \Exception("Diretorio {$directory} informado invalido");
 
@@ -70,7 +70,7 @@ class Files {
         return false;
     }
     
-    public function include(string $filepath):void {
+    public function include(string $filepath) {
         extract($this->globals);
         if(file_exists($filepath)) {
             include($filepath);

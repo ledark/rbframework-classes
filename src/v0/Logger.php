@@ -6,7 +6,7 @@ class Logger {
     
     public static $err404 = 'log/error/httpResponses';
     
-    public static function res200(string $httpurl):void {
+    public static function res200(string $httpurl) {
         $append = isset($_SERVER['HTTP_X_REQUESTED_WITH']) ? $_SERVER['HTTP_X_REQUESTED_WITH'] : '';
         file_put_contents(self::$err404.$append, date('Y-m-d H:i:s [').$_SERVER['REMOTE_ADDR'].'] 200 '.$httpurl."\r\n", FILE_APPEND);
     }

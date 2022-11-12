@@ -248,7 +248,7 @@ class Http {
         return Config::get('server.http_host');
     }
     
-    public static function redir(string $uri):void {
+    public static function redir(string $uri) {
         header('Location: ' . $uri);
         exit();
     }

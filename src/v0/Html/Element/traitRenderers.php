@@ -7,7 +7,7 @@ trait traitRenderers {
         
         return $this->getBefore()."<{$this->getName()}{$this->getAttr()}>{$this->getValue()}</{$this->getName()}>".$this->getAfter();
     }
-    public function renderOutput():void {
+    public function renderOutput() {
         echo $this->render();
     }  
 

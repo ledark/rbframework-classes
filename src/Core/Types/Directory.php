@@ -51,7 +51,7 @@ class Directory {
      *
      * @return void
      */
-    public function includeAll():void {
+    public function includeAll() {
         extract($this->getVariables());
         foreach (new \DirectoryIterator($this->getDirectory()) as $fileInfo) {
             if($fileInfo->isDot()) continue;

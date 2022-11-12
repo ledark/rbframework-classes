@@ -67,20 +67,20 @@ class WirePusher {
         $this->message_id = 0;
     }
 
-    public function clear(int $message_id):void {
+    public function clear(int $message_id) {
         $this->clearAllParams();
         $this->type = 'wirepusher_clear_notification';
         $this->message_id = $message_id;
         $this->send();
     }
 
-    public function clearAll():void {
+    public function clearAll() {
         $this->clearAllParams();
         $this->type = 'wirepusher_clear_all_notifications';
         $this->send();
     }
 
-    public function send():void {
+    public function send() {
         $this->checkID();
         $uri = 'https://wirepusher.com/send?';
         $params = [

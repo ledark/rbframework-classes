@@ -73,7 +73,7 @@ class Json implements TypeInterface {
     }
 
     /*
-    private function beforeProcess():void {
+    private function beforeProcess() {
         Plugin::load("utf8_encode_deep");
     }
 

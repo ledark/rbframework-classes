@@ -188,7 +188,7 @@ class Database implements isCrudable
         }
     }
 
-    private function improveFirstArgs(&$arguments):void {
+    private function improveFirstArgs(&$arguments) {
         $count = 0;
         foreach($arguments as &$arg) {
             if($count == 0 and is_string($arg)) $arg = preg_replace('/(\?_)/m', $this->getPrefixo(), $arg);

@@ -2845,7 +2845,7 @@ $this->datetime_out = 'd/m/Y H:i';
         return array('regexp' => $regexp, 'error_msg' => $error_msg, 'placeholder' => $placeholder, 'optional' => $optional);
     }
 
-    public function displayCssStyle():void {
+    public function displayCssStyle() {
         echo '<style>';
         echo file_get_contents(__DIR__.'/Lazymofo.css');
         echo '</style>';

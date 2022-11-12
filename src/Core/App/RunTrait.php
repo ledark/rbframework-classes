@@ -43,7 +43,7 @@ use RBFrameworks\Core\Types\File;
 use RBFrameworks\Core\Utils\Replace;
 
 trait RunTrait {
-    private function end():void {
+    private function end() {
         $router = $this->getRouter();
         $app = $this;
         $router->set404(function() use ($router, $app) {
@@ -71,7 +71,7 @@ trait RunTrait {
     }
 
     //FinalRun
-    public function run():void {
+    public function run() {
 
 
         //AutoStart Session
@@ -98,7 +98,7 @@ trait RunTrait {
     }
 
     //FinalRun: on notMount
-    public function runRouter():void {
+    public function runRouter() {
         $router = $this->getRouter();
         $app = $this;
         if($this->getOption('testMode')) {

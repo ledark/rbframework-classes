@@ -34,7 +34,7 @@ class Common implements Mockable {
     }
 
     //Depends on Mocks\ResponseCommon
-    public static function success(string $message, array $additionalData = [], bool $forceEncodeUTF8 = false):void {
+    public static function success(string $message, array $additionalData = [], bool $forceEncodeUTF8 = false) {
         if(is_object($additionalData)) $additionalData = ['object' => (array) $additionalData ];
         if(is_string($additionalData)) $additionalData = ['string' => $additionalData ];
         if(is_int($additionalData)) $additionalData = ['int' => $additionalData ];    
@@ -42,14 +42,14 @@ class Common implements Mockable {
     }
 
     //Depends on Mocks\ResponseCommon
-    public static function error(string $message, array $additionalData = [], bool $forceEncodeUTF8 = false):void {
+    public static function error(string $message, array $additionalData = [], bool $forceEncodeUTF8 = false) {
         if(is_object($additionalData)) $additionalData = ['object' => (array) $additionalData ];
         if(is_string($additionalData)) $additionalData = ['string' => $additionalData ];
         if(is_int($additionalData)) $additionalData = ['int' => $additionalData ];
         self::json(self::getMockError($message, $additionalData), $forceEncodeUTF8);
     }
 
-    public static function json(array $dados, bool $forceEncodeUTF8 = false):void {
+    public static function json(array $dados, bool $forceEncodeUTF8 = false) {
         ResponseJson::json($dados, $forceEncodeUTF8);
     }
 

@@ -106,7 +106,7 @@ class TemplateController {
         return $this->page;
     }
 
-    public function renderPage():void {
+    public function renderPage() {
         $page = new File($this->page);
         $page->clearSearchFolders();
         $page->addSearchFolder($this->getTemplateDir());

@@ -10,7 +10,7 @@ use RBFrameworks\Core\Config;
 class AssetsTest extends TestCase
 {
 
-    public function setUp():void {
+    public function setUp() {
         if(is_dir(Config::get('location.cache.assets'))) {
             foreach (new DirectoryIterator(Config::get('location.cache.assets')) as $fileInfo) {
                 if($fileInfo->isDot()) continue;
@@ -20,7 +20,7 @@ class AssetsTest extends TestCase
         }
     }
 
-    public function tearDown():void {
+    public function tearDown() {
         if(is_dir(Config::get('location.cache.assets'))) {
             foreach (new DirectoryIterator(Config::get('location.cache.assets')) as $fileInfo) {
                 if($fileInfo->isDot()) continue;

@@ -103,7 +103,7 @@ class Session
         return $dados;
     }
 
-    public static function set(string $chave, $valor):void {
+    public static function set(string $chave, $valor) {
         $_SESSION[$chave] = $valor;
     }
 
@@ -111,7 +111,7 @@ class Session
      * createSessionID 
      * @return void
      */
-    public function createSessionID(string $session_id = null):void
+    public function createSessionID(string $session_id = null)
     {
         $session_id = is_null($session_id) ? session_id() : $session_id;
         $this->session_id = $session_id === false ? uniqid('_') : $session_id;

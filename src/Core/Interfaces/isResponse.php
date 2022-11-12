@@ -4,5 +4,5 @@ namespace RBFrameworks\Core\Interfaces;
 
 interface isResponse
 {
-    public function flush():void;
+    public function flush();
 }

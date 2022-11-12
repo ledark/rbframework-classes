@@ -9,11 +9,11 @@ use RBFrameworks\Core\Types\PropProps;
 trait Connection {
 
 
-    private function resolvePrefixo(string $prefixo):void {
+    private function resolvePrefixo(string $prefixo) {
         $this->prefixo = $prefixo;
     }
 
-    private function resolveTabela(string $tabela):void {
+    private function resolveTabela(string $tabela) {
         if(substr($tabela, 0, strlen($this->prefixo)) == $this->prefixo) {
             $this->tabela = $tabela;
         } else {
@@ -21,7 +21,7 @@ trait Connection {
         }
     }
 
-    private function resolveModel(array $model):void {
+    private function resolveModel(array $model) {
         $this->model = $model;        
         $this->modelCheckStructure();
         if(count($this->model)) { 

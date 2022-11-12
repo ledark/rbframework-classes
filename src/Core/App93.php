@@ -32,7 +32,7 @@ class App93 {
         $this->router = new Router();
     }
 
-    private function registerErrorCallback():void {
+    private function registerErrorCallback() {
         set_error_handler(function ($severity, $message, $file, $line) {
             if (!(error_reporting() & $severity)) {
                 // This error code is not included in error_reporting
@@ -42,7 +42,7 @@ class App93 {
         });
     }
 
-    public function extractRBVars():void {
+    public function extractRBVars() {
         global $RBVars;
         $RBVars = [
             'cliente' => [
@@ -137,7 +137,7 @@ class App93 {
     }
 
     //ForceHTTPS Condicionalmente
-    public function forceHTTPs(bool $force = true):void {        
+    public function forceHTTPs(bool $force = true) {        
         if(!$force) return;
         global $RBVars;
         if(!isset($RBVars['configs']['forceHTTPs'])) $RBVars['configs']['forceHTTPs'] = false;
@@ -160,7 +160,7 @@ class App93 {
         }
     }
 
-    public function startRouter():void {
+    public function startRouter() {
         //InitBasic
         $this->startRouter_onCore();
 
@@ -187,14 +187,14 @@ class App93 {
 
     }
 
-    private function skipRouter():void {
+    private function skipRouter() {
         foreach($this->router_justinc as $file) {
             include($file); 
             //logdebug("\$router_justinc fez o include de $file");
         }
     }
 
-    private function startRouter_onCore():void {
+    private function startRouter_onCore() {
         //Requisições Especiais na URL v93.1.0
         if(strtoupper(substr(INPUT_URL, 0, 5)) == 'CORE/' ) {
             logdebug("Requisição por CORE/");
@@ -207,7 +207,7 @@ class App93 {
         }
     }
 
-    private function startRouter_onMVC():void {
+    private function startRouter_onMVC() {
 //Procurar por Classe com base na URL
 $requestClass = INPUT_URL;
 $requestClass = explode('/', $requestClass);
@@ -241,7 +241,7 @@ CODE;
 }
     }
 
-    private function startRouter_onInputUrl():void {
+    private function startRouter_onInputUrl() {
 
         if(file_exists("_app/routers/".INPUT_URL.'.php')) {
 	
@@ -287,7 +287,7 @@ CODE;
         }        
     }
 
-    private function startRouter_onFiles():void {
+    private function startRouter_onFiles() {
         foreach($this->router_customfiles as $file) {
             if(file_exists($file)) {
                 require_once $file;
@@ -295,7 +295,7 @@ CODE;
         }
     }
 
-    private function startRouter_onDirectories():void {
+    private function startRouter_onDirectories() {
         foreach($this->router_customdirectories as $directory) {
             foreach (new \DirectoryIterator($directory) as $fileInfo) {
                 if($fileInfo->isDot()) continue;
@@ -321,7 +321,7 @@ CODE;
         }
     }
     
-    public function startRouter_capture_Postback(string $route, $callback = null):void {
+    public function startRouter_capture_Postback(string $route, $callback = null) {
         $this->router->all($route, function() use($callback, $route) {
             $content = file_get_contents("php://input");
             $content.= "\r\nREQUEST_URI: ".$_SERVER['REQUEST_URI']."\r\n";
@@ -348,7 +348,7 @@ CODE;
         });
     }
     
-    public function addCustomRouteFile(string $file):void {
+    public function addCustomRouteFile(string $file) {
         if(!file_exists($file)) {
             Debug::log("Arquivo de Rotas Customizadas não encontrado: $file");
             return;
@@ -356,7 +356,7 @@ CODE;
         $this->router_customfiles[] = $file;
     }
 
-    public function addCustomRouteDirectory(string $directory):void {
+    public function addCustomRouteDirectory(string $directory) {
         if(!is_dir($directory)) {
             Debug::log("Diretório de Rotas Customizadas não encontrado: $directory");
             return;

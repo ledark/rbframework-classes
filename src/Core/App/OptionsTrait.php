@@ -85,7 +85,7 @@ trait OptionsTrait {
     private $mainContent = "";
 
 
-    private function checkOptions():void {
+    private function checkOptions() {
 
         if(strpos($this->getOption('mount'), '/') !== 0) Exception::throw('O mount é a base da url para o app e deve começar com /');
 

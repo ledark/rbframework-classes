@@ -30,14 +30,14 @@ class ResponseJson implements isResponse, isJsonResponse
         }
     }
 
-    public function flush():void {
+    public function flush() {
         $this->setJsonHeader();
         $this->handleEncoding();
         echo json_encode($this->dados);
         exit();
     }
 
-    public static function json(array $dados, bool $forceEncodeUTF8 = false):void {
+    public static function json(array $dados, bool $forceEncodeUTF8 = false) {
         $response = new self($dados, $forceEncodeUTF8);
         $response->flush();
     }

@@ -47,7 +47,7 @@ class Api {
         };
     }
 
-    private function addSmartRoute(\ReflectionMethod $method, $api):void {
+    private function addSmartRoute(\ReflectionMethod $method, $api) {
         $args = $method->getParameters();
         $partUriName = Str\Dispatcher::camelcased2sef($method->name);
         $partsUriName = explode('-', $partUriName);

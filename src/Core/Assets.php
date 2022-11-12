@@ -136,7 +136,7 @@ abstract class Assets {
     }
 */
 
-    private static function RenderInjector(string $component_name, array $replaces = [], string $prefix = "", string $sufix = "", string $scope = 'footer'):void {
+    private static function RenderInjector(string $component_name, array $replaces = [], string $prefix = "", string $sufix = "", string $scope = 'footer') {
 
         //$components_directories = Config::get('location.assets');
         $components_directories = [
@@ -222,7 +222,7 @@ abstract class Assets {
     }
     */
 
-    public static function RenderJs(string $component_name, array $replaces = [], string $scope = 'footer'):void {
+    public static function RenderJs(string $component_name, array $replaces = [], string $scope = 'footer') {
         if(substr($component_name, -3) != '.js') $component_name.= '.js';
         self::RenderInjector($component_name, $replaces, "<script data-rel=\"".$component_name."\">\r\n", "\r\n</script>", $scope);
         /*
@@ -232,7 +232,7 @@ abstract class Assets {
             */
     }
 
-    public static function RenderCss(string $component_name, array $replaces = [], string $scope = 'footer'):void {
+    public static function RenderCss(string $component_name, array $replaces = [], string $scope = 'footer') {
         if(substr($component_name, -3) != '.css') $component_name.= '.css';
         self::RenderInjector($component_name, $replaces, '<style>', '</style>', $scope);
     }

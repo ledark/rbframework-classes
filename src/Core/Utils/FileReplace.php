@@ -40,7 +40,7 @@ class FileReplace
     public static function get(string $filename, array $replaces = []):string {
         return (new self($filename, $replaces))->render(true);
     }
-    public static function display(string $filename, array $replaces = []):void {
+    public static function display(string $filename, array $replaces = []) {
         echo self::get($filename, $replaces);
     }
 

@@ -14,7 +14,7 @@ class Directory {
         return $this;
     }
 
-    public static function mkdir(string $path, int $mode = 0755, bool $recursive = true):void {
+    public static function mkdir(string $path, int $mode = 0755, bool $recursive = true) {
         if(!is_dir($path)) {        
             $parts = explode('/', $path);
             foreach($parts as $key => $part) {
@@ -31,7 +31,7 @@ class Directory {
         }
     }
 
-    public static function rmdir(string $path, bool $deltree = false):void {
+    public static function rmdir(string $path, bool $deltree = false) {
         if(is_dir($path)) {
             $parts = explode('/', $path);
             foreach($parts as $key => $part) {
@@ -103,7 +103,7 @@ class Directory {
         return $this->variables;
     }
 
-    public function includeAll():void {
+    public function includeAll() {
         extract($this->getVariables());
         foreach (new \DirectoryIterator($this->getDirectory()) as $fileInfo) {
             if($fileInfo->isDot()) continue;

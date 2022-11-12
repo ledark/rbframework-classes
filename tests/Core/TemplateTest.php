@@ -46,7 +46,7 @@ class TemplateTest extends TestCase
         $this->assertStringContainsString('this is my-custom-simple-page', $content);
     }
 
-    public function tearDown():void {
+    public function tearDown() {
         if(is_dir(Config::get('location.cache.assets'))) {
             foreach (new DirectoryIterator(Config::get('location.cache.assets')) as $fileInfo) {
                 if($fileInfo->isDot()) continue;

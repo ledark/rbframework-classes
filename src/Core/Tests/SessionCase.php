@@ -11,7 +11,7 @@ class SessionCase extends CommonCase {
 
     protected const CORE_TESTS_WRITELOCKER = false;
 
-    protected function setUp():void {
+    protected function setUp() {
         parent::setUp();
         if(self::CORE_TESTS_WRITELOCKER) {
             file_put_contents('log/tests/session.lock', 'LAST TESTING RUNNING:'.date('Y-m-d H:i:s')."\r\n", FILE_APPEND);

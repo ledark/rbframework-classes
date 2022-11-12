@@ -28,7 +28,7 @@ class Pattern {
         }
     }
 
-    public function setPattern(string $pattern):void {
+    public function setPattern(string $pattern) {
         $this->pattern = $pattern;
     }
 

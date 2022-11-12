@@ -16,7 +16,7 @@ class Exception extends \Exception {
         print $this; // This will print the return from the above method __toString()
     }
     
-    public static function logErrorBlock(array $info):void {
+    public static function logErrorBlock(array $info) {
         $uid = session_id();
         $text = date('Y-m-d H:i:s').'[';
         $text.= $_SERVER['REMOTE_ADDR'];

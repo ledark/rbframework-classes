@@ -66,7 +66,7 @@ class Cache {
         $this->cache_folder = $directory;
     }
 
-    public function save($mixed):void {
+    public function save($mixed) {
         $this->set($mixed);
     }
 

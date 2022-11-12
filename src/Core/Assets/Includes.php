@@ -58,7 +58,7 @@ class Includes
         return false;       
     }
 
-    private static function registerAsIncluded(string $arg):void {
+    private static function registerAsIncluded(string $arg) {
         global $RBVars;
         $RBVars['Requireds'][] = $arg;       
     }

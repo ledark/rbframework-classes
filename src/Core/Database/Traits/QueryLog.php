@@ -12,7 +12,7 @@ trait QueryLog {
         return $this;
     }    
 
-    public function writeLog($message):void {
+    public function writeLog($message) {
         
         //Definição do Nome do Arquivo
         $id = $this->name;

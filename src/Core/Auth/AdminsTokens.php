@@ -119,7 +119,7 @@ class AdminsTokens extends Database {
 
     }
 
-    public function needsValidation(string $message = 'granted access', array $context =[]):void {
+    public function needsValidation(string $message = 'granted access', array $context =[]) {
         if(is_null($this->token)) {
             $token = is_null(Input::getAll()['token']) ? (new Input())->phpSessionGet('token', 'invalid-token') : get_input()['token'];
         } else {

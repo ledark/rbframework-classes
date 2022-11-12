@@ -98,7 +98,7 @@ class App {
     }
 
     //TemplateFile
-    private function prepareTemplate():void {
+    private function prepareTemplate() {
         $this->setTemplatePage( $this->mainFile->getFolderPath().$this->getOption('templatePage'));
     }    
     public function setTemplatePage(string $templatePage):object {
@@ -108,7 +108,7 @@ class App {
         return $this;
     }
 
-    public function prepareRouter():void {
+    public function prepareRouter() {
         if($this->getOption('setBasePath') != '') {
             $router = $this->getRouter();
             $router->setBasePath($this->getOption('setBasePath'));
@@ -128,7 +128,7 @@ class App {
         return false;
     }
 
-    private function redirMain():void {
+    private function redirMain() {
         if($this->getOption('main') != '' and $this->getOption('main') != '/' and $this->isMain()) {
             $path = str_replace('//', '/', $this->getOption('mount').$this->getOption('main'));
             $url = Http::getSite().$path;
@@ -178,7 +178,7 @@ class App {
     }
 
     //Utils
-    public function autoFileRouter():void {
+    public function autoFileRouter() {
         $router = $this->getRouter();
         $fileRouterName = $router->getCurrentUri();
         if(substr($fileRouterName, 0, 1) == '/') $fileRouterName = substr($fileRouterName, 1);

@@ -32,7 +32,7 @@ class Debug {
     }
 
     //Errors Control
-    public static function displayErrors(bool $display):void {
+    public static function displayErrors(bool $display) {
         
         ini_set('display_errors', ($display) ? 1 : 'Off');
         ini_set('display_startup_errors', ($display) ? 1 : 'Off');
@@ -61,13 +61,13 @@ class Debug {
         return ['debug' => self::getPrintableAsText($message)];
     }
 
-    public static function devValue($mixedValue, string $title = "Core\Debug\Card"):void {
+    public static function devValue($mixedValue, string $title = "Core\Debug\Card") {
         if(is_developer()) {
             $var = new Utils\Variables($mixedValue);
             echo "<span class=\"card p-3 d-inline-block\"><span class=\"d-inline\">{$title}: </span>".$var->getStringBadged()."</span>";
         }
     }
-    public static function devCard($message, string $title = "Core\Debug\Card", string $style = 'background: #D90707;color: #FFF;'):void {
+    public static function devCard($message, string $title = "Core\Debug\Card", string $style = 'background: #D90707;color: #FFF;') {
         if(is_developer()) {
             ob_start();
             self::message($message);
@@ -85,7 +85,7 @@ CARD;
         }
     }
 
-    public static function card($message, string $title = "Core\Debug\Card"):void {
+    public static function card($message, string $title = "Core\Debug\Card") {
         ob_start();
         self::message($message);
         $message = ob_get_clean();
@@ -107,7 +107,7 @@ CARD;
     }
 
     //DisplayInfo
-    public static function message($message, $css_class = ''):void {
+    public static function message($message, $css_class = '') {
         echo '<pre style="'.$css_class.'">';
         echo self::getPrintableAsText($message);
         echo '</pre>';
@@ -181,7 +181,7 @@ CARD;
         return $res;
     }
 
-    public static function preDanger():void {
+    public static function preDanger() {
         $args = func_get_args();
         echo '<pre style="display: block;position: absolute; z-index:9999; top: 0; left:0; background: rgba(155, 0, 0, 0.9);margin: 0;padding: 2em;color: #FFF;">';
         echo '<strong style="background: #f9bf52;display: block;color: #b52e2e;font-size: 110%;padding: 1em;">'.self::getPrintableAsText($args[0]).'</strong>';

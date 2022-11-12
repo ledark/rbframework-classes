@@ -20,7 +20,7 @@ class Message
         return $this;
     }
 
-    private function setDefault(string $message = '', string $cssclass = '', $prefix = '<div class="alert alert-info">', $sufix = '</div>'):void {
+    private function setDefault(string $message = '', string $cssclass = '', $prefix = '<div class="alert alert-info">', $sufix = '</div>') {
         $_SESSION[$this->blockname] = [
             'prefix' => $prefix,
             'cssclass' => $cssclass,
@@ -50,7 +50,7 @@ class Message
         return $this;
     }
 
-    public function clear():void {
+    public function clear() {
         $_SESSION[$this->blockname] = [
             'prefix' => '',
             'cssclass' => '',
@@ -66,7 +66,7 @@ class Message
         return empty($_SESSION[$this->blockname]['message']) ? false : true;
     }
 
-    public function render():void {
+    public function render() {
         if($this->hasMessage()) {
             echo $_SESSION[$this->blockname]['prefix'];
             echo '<span class="'.$_SESSION[$this->blockname]['cssclass'].'">'.$_SESSION[$this->blockname]['message'].'</span>';
