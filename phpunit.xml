@@ -26,5 +26,6 @@
   <php>
     <env name="APP_ENV" value="testing"/>
     <server name="REQUEST_URI" value="/"/>
+    <server name="REQUEST_METHOD" value="GET"/>
   </php>
 </phpunit>
