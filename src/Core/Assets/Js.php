@@ -5,6 +5,18 @@ namespace RBFrameworks\Core\Assets;
 class Js
 {
 
+    public static function getTag(string $uri, string $type):string {
+        return "<script src=\"{$uri}\" type=\"{$type}\" ></script>";
+    }
+
+    public static function getTagModule(string $uri):string {
+        return static::getTag($uri, 'module');
+    }
+
+    public static function getTagNormal(string $uri):string {
+        return static::getTag($uri, 'text/javascript');
+    }
+
     // JavaScript Minifier
     public static function minify_js($input, array $flags = ['comment', 'whitespace']) {
         //return $input;

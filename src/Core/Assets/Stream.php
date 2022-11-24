@@ -6,7 +6,7 @@ use RBFrameworks\Core\Http;
 use RBFrameworks\Core\Legacy\SmartReplace;
 use RBFrameworks\Core\Directory;
 use RBFrameworks\Core\Config;
-
+//need tests
 class Stream
 {
     public static function files()
