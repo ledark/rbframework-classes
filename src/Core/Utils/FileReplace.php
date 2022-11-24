@@ -11,16 +11,19 @@ class FileReplace
     public $file;
     public $replace;
 
-    public function __construct(string $filename, array $replaces = []) {
+    public function __construct(string $filename, array $replaces = [], bool $preferInclude = false) {
     
         //DefineFile
         $this->file = new File($filename);
         $this->file->addSearchFolder(__DIR__.'/../Templates/');
         $this->file->addSearchExtension('.tmpl');
+        
+        if($preferInclude) $this->file->preferInclude();
 
         //UseReplaces
         $this->replace = new Replace($this->file->getFileContents(), $replaces);
         
+        $this->preferInclude = $preferInclude;
     }
 
     public function addSearchFolder(string $folder) {
@@ -36,6 +39,7 @@ class FileReplace
     public function inputEncoding(string $encoding = '') {
         return $this;
     }
+
 
     public static function get(string $filename, array $replaces = []):string {
         return (new self($filename, $replaces))->render(true);

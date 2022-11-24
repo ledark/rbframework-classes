@@ -24,6 +24,7 @@ class File {
     private $handleDirectory = null;
     public $replaces = [];
     public $cache = null;
+    public $preferInclude = false;
     
     //Constructor
     public function __construct(string $string, array $replaces = [], bool $cacheResult = false) {
@@ -199,10 +200,20 @@ class File {
     }
 
     public function getFileContents():string {
+        if($this->hasFile() and $this->preferInclude) {
+            ob_start();
+            include $this->getFilePath();
+            $contents = ob_get_contents();
+            ob_end_clean();
+            return $contents;
+        }
         return $this->hasFile() ? file_get_contents($this->getFilePath()) : '';
     }
 
-
+    public function preferInclude(bool $preferInclude = true):object {
+        $this->preferInclude = $preferInclude;
+        return $this;
+    }
 
 
     
@@ -290,7 +301,7 @@ class File {
     }
 
     /**
-     * static needsFile retorna o objeto File, ou falha se n√£o conseguir.
+     * static needsFile retorna o objeto File, ou falha se n„o conseguir.
      *
      * @param string $filePath
      * @param string|null $message
