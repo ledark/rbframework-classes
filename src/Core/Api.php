@@ -1,6 +1,6 @@
 <?php
 
-namespace Core;
+namespace RBFrameworks\Core;
 
 use RBFrameworks\Core\Response;
 use RBFrameworks\Core\Config;
