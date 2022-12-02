@@ -146,6 +146,16 @@ class UserDadosMock {
 		];
 	}
 
+	public static function getModelWithFieldMysql():array {
+		$res = [];
+		$model = self::getModel();
+		foreach($model as $field => $props) {
+			if(!isset($props['mysql'])) continue;
+			$res[$field] = $props['mysql'];
+		}
+		return $res;
+	}	
+
 	public static function getFieldList():array {
 		$res = [];
 		$model = self::getModel();

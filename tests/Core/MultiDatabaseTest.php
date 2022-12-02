@@ -32,7 +32,7 @@ class MultiDatabaseTest extends TestCase {
         }
 
 
-        $this->assertEquals($result['database'], 'bermejo_gametest');
+        $this->assertEquals($result['database'], 'bermejo_sandbox');
 
     }
 

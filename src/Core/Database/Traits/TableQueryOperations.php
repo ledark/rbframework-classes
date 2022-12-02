@@ -2,6 +2,8 @@
 
 namespace RBFrameworks\Core\Database\Traits;
 
+use RBFrameworks\Core\Types\PropProps;
+
 trait TableQueryOperations {
 
     private function getQueryOperation_addField(string $field, array $props):string {
@@ -41,6 +43,8 @@ trait TableQueryOperations {
         }
 
         $model = $this->getModelObject()->model;
+        $modelOriginal = $model;
+        //expected $model = ['table' => ['field' => 'value', 'field2' => 'value2']]
         $hasString = 0;
         foreach(array_keys($model) as $key => $value) {
             if(is_string($key)) $hasString++;
@@ -49,6 +53,13 @@ trait TableQueryOperations {
         if($hasString == 0) {
             $model = reset($model);
             $model = reset($model);
+        }
+
+        if($model instanceof PropProps) {
+            $model = $model->getValue();
+        }
+        if(!is_array($model)) {
+            $model = reset($modelOriginal);
         }
         
         foreach($model as $field => $props) { 
@@ -60,6 +71,10 @@ trait TableQueryOperations {
             if(substr($sintaxe, 0, 4) == 'null') continue;
 			if(strpos($sintaxe, ' INDEX') !== false) { $index = $field; $sintaxe = rtrim($sintaxe, ' INDEX');}
 			if(strpos($sintaxe, ' ADDKEY') !== false) { $key = $field; $sintaxe = rtrim($sintaxe, ' ADDKEY');}
+			if(strpos($sintaxe, ' PRIMARY') !== false) { 
+                $sintaxe = str_replace(' PRIMARY', '', $sintaxe); 
+                $primary = "$field";
+            }
             
             //Query Final
             $query.= "`{$field}` {$sintaxe}, ";
@@ -67,6 +82,11 @@ trait TableQueryOperations {
         
         if(isset($this->modelObject->uncaught['PRIMARY'])) {
             $query.= " PRIMARY KEY (`{$this->modelObject->uncaught['PRIMARY']}`)";
+        } else 
+        if(isset($primary)) {
+            $query.= " PRIMARY KEY (`{$primary}`)";
+        } else {
+            $query = rtrim($query, ', ');
         }
         
         if(is_null($index) and is_null($unique) and is_null($key)) $sintaxe = rtrim($sintaxe, ',');
@@ -79,7 +99,7 @@ trait TableQueryOperations {
         } else {
             $index = '';
         }
-		if(!is_null($key)) {
+		if(!is_null($key) and is_string($key)) {
 			$key = trim($key);
 			$key = (substr($key, 0, 1) != '`') ? '`'.$key.'`' : $key;
 			$key = 'KEY ( '.$key.' ) ';

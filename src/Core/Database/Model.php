@@ -13,10 +13,16 @@ class Model extends Modelv2{
 
   use Modelv1;
 
-  public function __construct(PropProps $model) {
-    foreach ($model->getValue() as $key => $value) {
-      $this->model[] = [$key => $value];
+  public function __construct($model) {
+    if($model instanceof PropProps) {
+      foreach ($model->getValue() as $key => $value) {
+        $this->model[] = [$key => $value];
+      }
+    } else
+    if(is_array($model)) {
+      $this->model = $model;
     }
+
     parent::__construct($this->model);
   }
 
