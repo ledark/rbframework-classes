@@ -21,6 +21,7 @@ class Api {
     
     public $namespaces = [];
     public $prefix = '';
+    public $fn404 = null;
 
     public function addRoutePrefix(string $prefix) {
         $this->prefix = $prefix;
@@ -51,6 +52,8 @@ class Api {
                     $routeUri = $this->prefix.trim($routeUri);
 
                     $router->match($routeMethod, $routeUri, function() use ($namespace, $method) {
+                        $forceEncodeUTF8 = false; 
+                        $responseCode = 200;                             
                         $annotation = $method->getDocComment();
                         if($annotation !== false) {
 
@@ -74,10 +77,7 @@ class Api {
                         }
                         $class = new $namespace();
                         $method = $method->getName();
-                        $result = $class->$method();
-
-                        $forceEncodeUTF8 = false; 
-                        $responseCode = 200;                        
+                        $result = $class->$method();                   
 
                         if(is_array($result)) {
                             Response::json($result, $forceEncodeUTF8, $responseCode);
@@ -94,6 +94,8 @@ class Api {
 
             }
         }
+        $fn404 = ($this->fn404 !== null) ? $this->fn404 : function() {};
+        $router->set404($fn404);
         $router->run();
     }
 
