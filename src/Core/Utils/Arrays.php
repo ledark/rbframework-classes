@@ -3,7 +3,7 @@
 namespace RBFrameworks\Core\Utils;
 
 /**
- * isWorking and Updated in: 10-09-2022
+ * Updated in: 10-09-2022
  */
 
 abstract class Arrays {
@@ -18,7 +18,7 @@ abstract class Arrays {
         
         if (strpos($key, '.') !== false) {
             $keys = explode('.', $key);
-            $code = "if(isset( \$data['".implode("']['", $keys)."'] )) { \$data['".implode("']['", $keys)."'] = \$newValue; return true; }";
+            $code = "if(!isset( \$data['".implode("']['", $keys)."'] )) { \$data['".implode("']['", $keys)."'] = \$newValue; return true; }";
             eval($code);
             return false;
         }
@@ -64,11 +64,17 @@ abstract class Arrays {
     return array_key_exists($key, $data) ? $data[$key] : $default;
 }
    
+    /**
+     * @testFunction testArraysIs_assoc
+     */
     public static function is_assoc(array $arr) {
         if (array() === $arr) return false;
         return array_keys($arr) !== range(0, count($arr) - 1);
     }
 
+    /**
+     * @testFunction testArraysSanitize
+     */
     public static function sanitize($inp) {
         if(is_array($inp))
             return array_map(__METHOD__, $inp);
@@ -80,6 +86,9 @@ abstract class Arrays {
         return $inp;
     }     
     
+    /**
+     * @testFunction testArraysExtractKeysFromAssocArray
+     */
     public static function extractKeysFromAssocArray(array $model, string $filter = 'mysql') {
         $validFields = [];
         foreach($model as $field => $props) {
@@ -141,7 +150,7 @@ abstract class Arrays {
         if (strpos($key, $separator) !== false)
         {
             $keys = explode($separator, $key);
-            $code = "if(isset( \$data['".implode("']['", $keys)."'] )) { \$data['".implode("']['", $keys)."'] = \$overwriteValue; return \$data; }";
+            $code = "\$data['".implode("']['", $keys)."'] = \$overwriteValue; return \$data; ";
             eval($code);            
     
             foreach ($keys as $innerKey)
