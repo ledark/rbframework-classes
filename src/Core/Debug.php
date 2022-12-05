@@ -153,7 +153,7 @@ CARD;
         if(in_array($filename_backtrace, self::logIgnoreFilenames()) == true) return;
 
 
-        $filename = Config::get('location.log_file');
+        $filename = Config::assigned('location.log_file', 'debug.[filename_backtrace].log');
         $filename = str_replace('[filename_backtrace]', $filename_backtrace, $filename);
         Encoding::DeepEncode($context);
         file_put_contents($filename, date('Y-m-d H:i:s').'['.$uid.']'.$group.': '.$message->getString().' --'.json_encode($context)."\r\n", FILE_APPEND);
