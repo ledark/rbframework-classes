@@ -7,7 +7,7 @@ use RBFrameworks\Core\Types\PropProps;
 trait TableQueryOperations {
 
     private function getQueryOperation_addField(string $field, array $props):string {
-
+            if(!isset($props['mysql'])) return "";
             if($this->field_exists($field)) return "";
             $query = "ALTER TABLE `{$this->getTabela()}` ADD `{$field}` {$props['mysql']} ";
             $previousField = $this->getModelObject()->getPreviousField($field);
@@ -112,8 +112,6 @@ trait TableQueryOperations {
         $query = rtrim($query, ',');
         $query.= " {$index} {$key}  ";
         $query.= ' ) ENGINE =  '.$engine;
-
-        echo $query;
 
        // $query.= ($tipo == 'temp') ? ' ) ENGINE = MEMORY ' : ' ) ENGINE =  '.$engine;
         return $query;

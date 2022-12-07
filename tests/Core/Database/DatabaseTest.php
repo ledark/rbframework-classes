@@ -86,19 +86,53 @@ class DatabaseTest extends TestCase {
         $this->assertEquals('[Fld->Sql]', (new Model($this->getModelWithPropMysql()))->getType());
         $this->assertEquals('[Tab->Fld->Sql]', (new Model($this->getModelWithTableAndPropMysql()))->getType());
     }
-    
-    public function testConnection() {
+
+    private function getConnection() {
         $model = RBFrameworks\Core\Database\Model\UserDadosMock::getModel();
         $model = new Model($model);
-        //$modelType = (new Model($model))->getType();
-        $conn = new Database('untitled_table', $model->getFldSql());
+        return new Database('untitled_table', $model->getFldSql());
+    }
+    
+    public function testConnection() {
+        
+        $conn = $this->getConnection();
+        $prefix = $conn->getPrefixo();
+        $table_name = $prefix.'untitled_table';          
 
-        $tables = $conn->query("SHOW TABLES");
-        $this->assertIsArray($tables);
+        $getTableList = function() use($conn):array {
+            $tables = $conn->query("SHOW TABLES");
+            $this->assertIsArray($tables);
+            $tablesList = [];
+            foreach($tables as $table) {
+                $this->assertIsArray($table);
+                $table = array_values($table);
+                $table = $table[0];
+                $tablesList[] = $table;
+            }
+            return $tablesList;
+        };
+        //InitialState:Table is Not Exists
+        $tablesList = $getTableList();
+        $this->assertNotContains($table_name, $tablesList);
 
+        //Create
         $conn->build();
+        $tablesList = $getTableList();
+        
+        $table_key = array_search($table_name, $tablesList);
+        $this->assertContains($table_name, $tablesList);
+        $this->assertEquals($table_name, $tablesList[$table_key]);        
+        $this->assertEquals($table_name, $conn->getTabela());
 
-        print_r($tables);
+        //Remove
+        $conn->drop_table();
+
+        $tablesList = $getTableList();
+        $this->assertNotContains($table_name, $tablesList);
+
+
+        
+        
     }
     
 }

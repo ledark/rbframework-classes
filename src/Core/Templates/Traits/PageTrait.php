@@ -36,7 +36,8 @@ trait PageTrait {
         }        
     }
 
-    public function renderPage(string $page = null, array $replaces = []) {
+    
+    public function renderTemplate(string $page = null, array $replaces = []) {
         if(!is_null($page)) $this->setPage($page);
         $this->setVar($replaces);
         $template = $this->getTemplateFile();
@@ -46,10 +47,11 @@ trait PageTrait {
         $this->renderTemplateFile();
         return ob_get_clean();
     }
+    
 
     //This is Original RenderPage
-    /*
-    public function renderTemplate(string $template = null, array $var = []) {
+    
+    public function renderPage(string $template = null, array $var = []) {
         if(is_null($template)) $template = $this->getTemplateFile();
         $template = new File($template);
 
@@ -62,7 +64,7 @@ trait PageTrait {
         }
         return ob_get_clean();
     }
-    */
+    
     
     public function displayPage(string $template = null, array $var = []) {
         echo $this->renderPage($template, $var);
