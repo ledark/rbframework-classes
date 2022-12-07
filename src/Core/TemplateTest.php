@@ -19,6 +19,6 @@ class TemplateTest extends TestCase {
     }
 
     public function testContentFileInsideTemplate() {
-        $this->assertEquals('<template>Teste Conteúdo #3</template>', (new Template(__DIR__.'/Templates/Legacy/test-sample-2'))->renderPage(__DIR__.'/Templates/Legacy/test-sample-3'));
+        $this->assertEquals('<template>Teste Conteúdo #3</template>', (new Template(__DIR__.'/Templates/Legacy/test-sample-2'))->renderTemplate(__DIR__.'/Templates/Legacy/test-sample-3'));
     }
 }
