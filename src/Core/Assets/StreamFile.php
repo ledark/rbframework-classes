@@ -6,6 +6,7 @@ use RBFrameworks\Core\Http;
 use RBFrameworks\Core\Legacy\SmartReplace;
 use RBFrameworks\Core\Directory;
 use RBFrameworks\Core\Config;
+use RBFrameworks\Core\Utils\Strings\Dispatcher;
 
 class StreamFile {
 
@@ -48,6 +49,20 @@ class StreamFile {
         }
     }
 
+    public static function getFileNameFrom($name, $replaces = []):string {
+        if(is_array($replaces) and count($replaces) > 0) {
+            $sufix = '__'.md5(serialize($replaces));
+        } else {
+            $sufix = '';
+        }
+        $name = Dispatcher::file($name);
+        $name = str_replace('\\', '/', $name);
+        $name = str_replace('.', '-', $name);
+        $parts = explode('/', $name);
+        $finalname = array_pop($parts);
+        return $finalname.$sufix;
+    }
+
     private function getFakepath():string {
         if(!empty($this->fakepath)) return $this->fakepath;
         $overname = $this->filename;
@@ -58,7 +73,8 @@ class StreamFile {
                 $fakepath = $cache_assets.'/fnfiles_'.$overname;
             }
         } else {
-            $fakepath = $cache_assets.'/fnfiles_'.md5($this->realfilepath).$this->getExtension();
+            $fakepath = $cache_assets.'/fnfiles_'.self::getFileNameFrom($this->realfilepath, $this->replaces).$this->getExtension();
+            //$fakepath = $cache_assets.'/fnfiles_'.md5($this->realfilepath).$this->getExtension();
         }
         
         //Genera se Nao Existir
