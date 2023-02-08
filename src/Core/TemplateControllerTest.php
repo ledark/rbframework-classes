@@ -2,8 +2,11 @@
 
 namespace RBFrameworks\Core;
 
-class TemplateController extends Template {
+use PHPUnit\Framework\TestCase;
 
+class TemplateControllerTest extends TestCase {
+
+    /*
     public $headerPage;
     public $footerPage;
     public $templatePage = 'bootstrap5';
@@ -11,6 +14,9 @@ class TemplateController extends Template {
     public $sufixContent = '</div>';
 
     public function __construct(string $headerPage, string $footerPage) {
+
+        
+
         $this->headerPage = $headerPage;
         $this->footerPage = $footerPage;
     }
@@ -27,13 +33,14 @@ class TemplateController extends Template {
     }
 
     public function renderPages(array $pages = []) {
-        $return = $this->renderTemplate($this->headerPage);
+        $return = $this->renderPage($this->headerPage);
         $return.= $this->prefixContent;
         foreach($pages as $page) {
-            $return .= $this->renderTemplate($page);
+            $return .= $this->renderPage($page);
         }
         $return.= $this->sufixContent;
-        $return.= $this->renderTemplate($this->footerPage);
-        return $this->renderTemplate($this->templatePage, ['page' => $return]);
+        $return.= $this->renderPage($this->footerPage);
+        return $this->renderPage($this->templatePage, ['page' => $return]);
     }
+    */
 }

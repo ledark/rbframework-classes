@@ -67,13 +67,13 @@ class Template {
         $content = file_get_contents($tmpl);
         if(is_string($chunk) and !empty($chunk)) {
             if(strpos($chunk, ':') !== false) {
-            $content = self::chunkcomment($content, $chunk);
+                $content = self::chunkcomment($content, $chunk, $replaces);
             } else {
-                $content = self::chunk($content, $chunk);
+                $content = self::chunk($content, $chunk, $replaces);
             }
         }
 		ob_start();
-		self::parse($content);
+		self::parse($content, $replaces);
 		return self::replace(null, $replaces, true);
 	}
 	
@@ -98,9 +98,9 @@ class Template {
     
     /*
      * Para utilizar apenas uma tag específica de uma $string, a função chunk pode ser utilizada.
-     * Se a tag a ser puxada (chunkada), for prefixada em :php, então um eval erá utilizado ao invés do padrão self::replace.
+     * Se a tag a ser puxada (chunkada), for prefixada em :php, então um eval será utilizado ao invés do padrão self::replace.
      */
-    public static function chunk($string, $tag) {
+    public static function chunk($string, $tag, array $replaces = []) {
         preg_match("/<$tag>(.*?)<\/$tag>/is", $string, $Matches);
         
         //Requisições php <tagname:php></tagname:php>
@@ -117,7 +117,7 @@ class Template {
         
     }
     
-    public static function chunkcomment($string, $tag) {
+    public static function chunkcomment($string, $tag, array $replaces = []) {
         preg_match("/<!--$tag-->(.*?)<!--$tag-->/is", $string, $Matches);
         
         //Requisições php <tagname:php></tagname:php>
@@ -145,12 +145,12 @@ class Template {
         return $replace->render(true);
     }
 
-    public static function parse($code) {
+    public static function parse($code, $vars = array()) {
         try {
             if(substr($code, 0, 6) != '<?php ') {
-                return self::parse_as_php($code, false);
+                return self::parse_as_php($code, false, null, $vars);
             } else {
-                return self::parse_as_php($code);
+                return self::parse_as_php($code, true, null,  $vars);
             }
         } catch(Exception $e) {
             return $e->getMessage();
@@ -176,7 +176,7 @@ class Template {
     }
     
     
-    //Essa fun��o insere o c�digo em um arquivo, mas retorna o local do arquivo
+    //Essa função insere o código em um arquivo, mas retorna o local do arquivo
     public static function parsed_file($code, $name = 'once', $ext = '.php') {
         
         $arr = glob("log/cache/{$name}_*{$ext}");
