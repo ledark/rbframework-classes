@@ -44,7 +44,8 @@ class StreamTest extends TestCase {
             'sample' => 'sample',
             'path/sample' => 'path_sample',
             'path/another/Sample' => 'path_another_sample',
-            'path/Another/sample.txt' => 'path_another_sample-txt',
+            'path/Another/sample.txt' => 'path_another_sample',
+            __DIR__.'/path/Another/sample.txt' => 'tests_core_assets_path_another_sample',
         ];
         foreach($namesExpected as $name => $expected) {
             $this->assertEquals(StreamFile::getFileNameFrom($name), $expected);

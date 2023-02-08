@@ -8,6 +8,14 @@ use RBFrameworks\Core\Assets;
 class Css
 {
 
+    public static function getTag(string $uri):string {
+        return '<link rel="stylesheet" href="'.$uri.'">';
+    }
+
+    public static function getTagNormal(string $uri):string {
+        return self::getTag($uri);
+    }
+
     /**
      * includeFile(string $file)
      *  - include a css file in inline style

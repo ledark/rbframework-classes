@@ -55,8 +55,24 @@ class StreamFile {
         } else {
             $sufix = '';
         }
-        $name = Dispatcher::file($name);
+
+        $path = empty($_SERVER['DOCUMENT_ROOT']) ? dirname($_SERVER['SCRIPT_FILENAME']) : $_SERVER['DOCUMENT_ROOT'];
+        $path = str_replace('\\', '/', $path);
+        $path = rtrim($path, '/').'/';
+        $path = str_replace('/vendor/bin', '', $path);
         $name = str_replace('\\', '/', $name);
+        
+        
+        $name = str_replace($path, '', $name);
+
+        //cut extension off
+        if(strpos($name, '.') !== false) {
+            $name = explode('.', $name);
+            array_pop($name);
+            $name = implode('.', $name);            
+        }
+
+        $name = Dispatcher::file($name);
         $name = str_replace('.', '-', $name);
         $parts = explode('/', $name);
         $finalname = array_pop($parts);

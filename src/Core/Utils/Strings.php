@@ -2,13 +2,14 @@
 
 /**
  * Desenvolvido por: Ricardo[at]Bermejo.com.br
- * Última Atualização: 06/02/2019
- * Revisado em 15/01/2021
+ * 12/12/2022 Namespace Bugfixed
+ * 15/01/2021 Revised
+ * 06/02/2019 Created
  */
 
- use RBFrameworks\Core\Utils\Tempo;
-
 namespace RBFrameworks\Core\Utils;
+
+use RBFrameworks\Core\Utils\Tempo;
 
 class Strings {
 
