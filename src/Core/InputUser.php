@@ -40,6 +40,43 @@ class InputUser extends Input {
         $this->data = $this->instance->get();
     }
 
+    /**
+     * static getInputUser
+     * @return object clean
+     */
+    public static function getInputUser():object {
+        return new self();
+    }
+
+    /**
+     * static getSanitizedInputUser
+     * @param array $assignedAssocValues sample: ['param1' => 'value1', 'param2' => 'value2']
+     * @return object
+     */
+    public static function getSanitizedInputUser(array $assignedAssocValues):object {
+        $input = new self();
+        $input->sanitize();
+        foreach($assignedAssocValues as $field => $value) {
+            $input->assigned($field, $value);
+        }        
+        return $input;
+    }
+
+    /**
+     * static getSanitizedResult
+     * @param array $assignedAssocValues sample: ['param1' => 'value1', 'param2' => 'value2']
+     * @sample: InputUser::getSanitizedResult(['param1' => 'value1', 'param2' => 'value2']); //return array
+     * @return array
+     */
+    public static function getSanitizedResult(array $assignedAssocValues):array {
+        $input = new self();
+        $input->sanitize();
+        foreach($assignedAssocValues as $field => $value) {
+            $input->assigned($field, $value);
+        }
+        return $input->getResult();        
+    }
+
     public function sanitize():object {
         $this->data = Strings::mysql_escape_mimic($this->data);
         return $this;
