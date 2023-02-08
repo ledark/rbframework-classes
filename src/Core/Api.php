@@ -6,6 +6,7 @@ use RBFrameworks\Core\Response;
 use RBFrameworks\Core\Config;
 use Bramus\Router\Router;
 use ReflectionClass;
+use ReflectionException;
 
 /**
  * Example of Use API
@@ -22,6 +23,11 @@ class Api {
     public $namespaces = [];
     public $prefix = '';
     public $fn404 = null;
+    public $router = null;
+
+    public function __construct() {
+        $this->router = new Router();
+    }
 
     public function addRoutePrefix(string $prefix) {
         $this->prefix = $prefix;
@@ -32,11 +38,11 @@ class Api {
     }
 
     public function run() {
-        $router = new Router();
+        $router = $this->router;
         foreach($this->namespaces as $namespace) {
             try {
                 $class = new ReflectionClass($namespace);
-            } catch (\ReflectionException $e) {
+            } catch (ReflectionException $e) {
                 continue;
             }
             foreach($class->getMethods() as $method) {
