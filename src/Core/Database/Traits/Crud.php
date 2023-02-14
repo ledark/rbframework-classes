@@ -3,6 +3,7 @@
 namespace RBFrameworks\Core\Database\Traits;
 
 use RBFrameworks\Core\Debug;
+use RBFrameworks\Core\Config;
 use RBFrameworks\Core\Utils\Arrays;
 
 trait Crud {
@@ -48,8 +49,46 @@ trait Crud {
         ];
     }
 
+    public static function findCollectionModel(string $tablename, string $prefixo = ''):array {
+        $possibleNames = [
+            $tablename,
+            $prefixo.$tablename,
+            str_replace($prefixo, '', $tablename),
+            'model.'.$tablename,
+            'model.'.$prefixo.$tablename,
+            'model.'.str_replace($prefixo, '', $tablename),
+            'models.'.$tablename,
+            'models.'.$prefixo.$tablename,
+            'models.'.str_replace($prefixo, '', $tablename),
+        ];
+
+        foreach ($possibleNames as $name) {
+            $collection = Config::get($name);
+            if($collection != null) {
+                return $collection;
+            }
+        }
+        return [];
+    }
+
+    public static function extractValidFieldsFromCollection(array $dados, string $tablename, string $prefixo = ''):array {
+        $collection = self::findCollectionModel($tablename, $prefixo);
+        if(!count($collection)) return [];        
+        $validFields = [];
+        foreach($collection as $chave => $props) {
+            if(isset($dados[$chave])) {
+                $validFields[$chave] = $dados[$chave];
+            }
+        }
+        return $validFields;
+    }
+
     public function add(array $dados) {
-        $this->insert($this->getTabela(), $this->extractValidFields($dados));
+        $extractedValidFields = self::extractValidFieldsFromCollection($dados, $this->getTabela(), $this->getPrefixo());
+        if(!count($extractedValidFields)) {
+            $extractedValidFields = $this->extractValidFields($dados); //fallback to old method
+        }
+        $this->insert($this->getTabela(), $extractedValidFields);
         if($this->affectedRows()) {
             return $this->insertId() > 0 ? $this->insertId() : true;
         }
