@@ -117,7 +117,30 @@ função smart_replace(conteudo:[string], [dados:array], [literal:bool])
         }
 
         if ($returnLiteral) {
-            $string = @preg_replace_callback('/{(\w+)}/', 'smart_replace_matches', $string);
+            if (version_compare(phpversion(), '7.4.0', '<')) {
+                $string = @preg_replace_callback('/{(\w+)}/', 'smart_replace_matches', $string);
+            } else {
+                $string = @preg_replace_callback('/{(\w+)}/', function($var){
+                    global $RBsmart_replace_returnLiteral;
+                    if (isset($GLOBALS[end($var)])) {
+                        return $GLOBALS[end($var)];
+                    } else 
+                    if (strpos($var[count($var) - 1], '|') !== false) {
+                        $var = explode('|', end($var));
+                        if (isset($GLOBALS[$var[0]])) {
+                            return $GLOBALS[$var[0]];
+                        } else {
+                            if ($var[1] == 'NULL') $GLOBALS[$var[0]] = '';
+                            if ($var[1] == 'uniqid()') $GLOBALS[$var[0]] = uniqid();
+                            if (!isset($GLOBALS[$var[0]])) $GLOBALS[$var[0]] = $var[1];
+                            return $GLOBALS[$var[0]];
+                        }
+                    } else {
+                        if ($RBsmart_replace_returnLiteral)
+                            return '{' . end($var) . '}';
+                    }
+                }, $string);
+            }            
         }
 
 
