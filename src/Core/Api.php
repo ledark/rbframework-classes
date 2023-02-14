@@ -43,6 +43,7 @@ class Api {
             try {
                 $class = new ReflectionClass($namespace);
             } catch (ReflectionException $e) {
+                throw new \Exception('Class '.$namespace.' not found'.$e->getMessage());
                 continue;
             }
             foreach($class->getMethods() as $method) {
