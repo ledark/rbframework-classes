@@ -130,6 +130,10 @@ class Directory {
      */
     public static function getListFrom(string $filename, callable $callback = null):array {
         $list = [];
+        if(!is_dir($filename)) {
+            $list[] = $filename;
+            return $list;
+        }        
         foreach (new \DirectoryIterator($filename) as $fileInfo) {
             if($fileInfo->isDot()) continue;
             if($callback) {
