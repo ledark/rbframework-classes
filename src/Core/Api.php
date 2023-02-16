@@ -10,13 +10,15 @@ use ReflectionException;
 
 /**
  * Example of Use API
- * use Api\Api;
+ * use RBFrameworks\Core\Api;
  * $routerApi = new Api();
  * $routerApi->addNamespace('\Api\Banners');
  * $routerApi->addNamespace('\Api\Produtos\Destaque');
  * $routerApi->addNamespace('\Api\Produtos\Busca');
  * $routerApi->addNamespace('\Api\Newsletter');
  * $routerApi->run();
+ * or...
+ * Api::RouteOn('\Api\Banners');
  */
 class Api {
     
@@ -64,7 +66,7 @@ class Api {
                     $routeUri = $this->prefix.trim($routeUri);
 
                     $router->match($routeMethod, $routeUri, function() use ($namespace, $method) {
-                        $forceEncodeUTF8 = false; 
+                        $forceEncodeUTF8 = null; 
                         $responseCode = 200;
                         $responseType = 'text';
                         $annotation = $method->getDocComment();
@@ -95,21 +97,31 @@ class Api {
                         }
                         $class = new $namespace();
                         $method = $method->getName();
-                        $result = $class->$method();                   
+                        $result = $class->$method();
+
+                        $charset = function() use($forceEncodeUTF8):string {
+                            if(is_null($forceEncodeUTF8)) {
+                                return ($forceEncodeUTF8 == true) ? '; charset=utf-8' : '; charset=iso-8859-1';
+                            } else {
+                                return '';
+                            }
+                        };
 
                         if(is_array($result) or $responseType == 'json') {
+                            if(is_null($forceEncodeUTF8)) $forceEncodeUTF8 = false;
                             Response::json($result, $forceEncodeUTF8, $responseCode);
                         } else if($responseType == 'html') {
-                            header('Content-Type: text/html');
+
+                            header('Content-Type: text/html'.$charset());
                             echo $result;
                         } else if($responseType == 'css') {
-                            header('Content-Type: text/css');
+                            header('Content-Type: text/css'.$charset());
                             echo $result;
                         } else if($responseType == 'javascript') {
-                            header('Content-Type: text/javascript');
+                            header('Content-Type: text/javascript'.$charset());
                             echo $result;                                                        
                         } else {
-                            header('Content-Type: text/plain');
+                            header('Content-Type: text/plain'.$charset());
                             echo $result;
                         }
 
