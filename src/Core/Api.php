@@ -25,6 +25,12 @@ class Api {
     public $fn404 = null;
     public $router = null;
 
+    public static function RouteOn(string $namespace) {
+        $router = new self();
+        $router->addNamespace($namespace);
+        $router->run();
+    }
+
     public function __construct() {
         $this->router = new Router();
     }
@@ -43,7 +49,6 @@ class Api {
             try {
                 $class = new ReflectionClass($namespace);
             } catch (ReflectionException $e) {
-                throw new \Exception('Class '.$namespace.' not found'.$e->getMessage());
                 continue;
             }
             foreach($class->getMethods() as $method) {
@@ -60,7 +65,8 @@ class Api {
 
                     $router->match($routeMethod, $routeUri, function() use ($namespace, $method) {
                         $forceEncodeUTF8 = false; 
-                        $responseCode = 200;                             
+                        $responseCode = 200;
+                        $responseType = 'text';
                         $annotation = $method->getDocComment();
                         if($annotation !== false) {
 
@@ -80,14 +86,28 @@ class Api {
                                     $statusCode = 200;
                                 }
                             }
+
+                            //response
+                            if(preg_match('/@response\s+(html|text|json|css|javascript)/', $annotation, $matches)) {
+                                $responseType = $matches[1];
+                            }
                             
                         }
                         $class = new $namespace();
                         $method = $method->getName();
                         $result = $class->$method();                   
 
-                        if(is_array($result)) {
+                        if(is_array($result) or $responseType == 'json') {
                             Response::json($result, $forceEncodeUTF8, $responseCode);
+                        } else if($responseType == 'html') {
+                            header('Content-Type: text/html');
+                            echo $result;
+                        } else if($responseType == 'css') {
+                            header('Content-Type: text/css');
+                            echo $result;
+                        } else if($responseType == 'javascript') {
+                            header('Content-Type: text/javascript');
+                            echo $result;                                                        
                         } else {
                             header('Content-Type: text/plain');
                             echo $result;
@@ -133,6 +153,7 @@ class Api {
 
     /**
      * @route GET /api/example/xyz anotherparam
+     * @response html
      */    
     public function sampleWrongRouted() {
         return 'this is never called because the route is wrong';
