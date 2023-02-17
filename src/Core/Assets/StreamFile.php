@@ -127,6 +127,17 @@ class StreamFile {
         return Http::getSite().$this->getFakepath();
     }
 
-
+    public static function getUri(string $path, array $replaces = []) {
+        $replaces = array_merge([
+            'httpSite' => Http::getSite(),
+        ],$replaces);
+        return (new self($path, $replaces))->getHttpPath();
+    }
+    public static function jsModule(string $path, array $replaces = []) {
+        echo '<script type="module" src="'.static::getUri($path, $replaces).'"></script>';
+    }
+    public static function css(string $path, array $replaces = []) {
+        echo '<link href="'.static::getUri($path, $replaces).'" rel="stylesheet">';
+    }
 
 }

@@ -6,6 +6,7 @@ class Common
 {
     private $originalValue = null;
     private $_value = null;
+    private $type = null;
 
     public function __construct($mixedValue) {
         $this->originalValue = $mixedValue;
@@ -93,6 +94,28 @@ class Common
                 return "";
             break;
         }
+    }
+
+    public function getBool():bool {
+        $mixed = $this->getValue();
+        if(is_bool($mixed)) return (bool) $mixed;
+        if(is_numeric($mixed)) return (bool) $mixed;
+        if(is_string($mixed)) {
+            $mixed = strtolower($mixed);
+            if($mixed == 'true') return true;
+            if($mixed == 'false') return false;
+            if($mixed == '1') return true;
+            if($mixed == '0') return false;
+            if($mixed == 'yes') return true;
+            if($mixed == 'no') return false;
+            if($mixed == 'y') return true;
+            if($mixed == 'n') return false;
+            if($mixed == 'sim') return true;
+            if($mixed == 'nao') return false;
+            if($mixed == 's') return true;
+            if($mixed == 'n') return false;
+        }
+        return false;        
     }
 
 }

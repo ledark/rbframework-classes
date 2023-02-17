@@ -10,15 +10,13 @@ use ReflectionException;
 
 /**
  * Example of Use API
- * use RBFrameworks\Core\Api;
+ * use Api\Api;
  * $routerApi = new Api();
  * $routerApi->addNamespace('\Api\Banners');
  * $routerApi->addNamespace('\Api\Produtos\Destaque');
  * $routerApi->addNamespace('\Api\Produtos\Busca');
  * $routerApi->addNamespace('\Api\Newsletter');
  * $routerApi->run();
- * or...
- * Api::RouteOn('\Api\Banners');
  */
 class Api {
     
@@ -87,6 +85,13 @@ class Api {
                                 if($statusCode < 100 || $statusCode > 599) {
                                     $statusCode = 200;
                                 }
+                            }
+
+                            //beforeMiddleware
+                            if(preg_match('/@before\s+(.+)/', $annotation, $matches)) {                                
+                                $beforeMiddleware = $matches[1];
+                                $beforeMiddleware = trim($beforeMiddleware);
+                                call_user_func($beforeMiddleware);
                             }
 
                             //response
