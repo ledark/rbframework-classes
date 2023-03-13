@@ -68,7 +68,7 @@ class Config
     private static function get_collection(string $name, string $collections_dir = null) {
 
         //Tentativa 1) MultiDirectory
-        if(is_null($collections_dir)) $collections_directory  = self::getCollectionDir();
+        $collections_directory = is_null($collections_dir) ? self::getCollectionDir() : './';
         $collections_filename = str_replace('.', '/', $name);
         $collections_filepath = $collections_directory.dirname($collections_filename).'.php';
         if(file_exists($collections_filepath)) {

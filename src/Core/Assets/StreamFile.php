@@ -79,6 +79,23 @@ class StreamFile {
         return $finalname.$sufix;
     }
 
+    private function parseAndCopy(string $originalPath, string $fakePath) {
+        if(in_array($this->getExtension(), ['.js', '.css', '.html'])) {
+            ob_start();
+            include($originalPath);
+            $content = ob_get_clean();
+
+            if(count($this->replaces)) {
+                foreach($this->replaces as $key => $value) {
+                    $content = str_replace('{'.$key.'}', $value, $content);
+                }
+            }
+            file_put_contents($fakePath, $content);
+        } else {
+            copy($originalPath, $fakePath);
+        }
+    }
+
     private function getFakepath():string {
         if(!empty($this->fakepath)) return $this->fakepath;
         $overname = $this->filename;
@@ -96,12 +113,12 @@ class StreamFile {
         //Genera se Nao Existir
         if(!file_exists($fakepath)) {
             $this->mkdir($fakepath);
-            copy($this->realfilepath, $fakepath);
+            $this->parseAndCopy($this->realfilepath, $fakepath);
         }
 
         //Regera se Tamanho for Diferente
         if (filesize($fakepath) != filesize($this->realfilepath)) {
-            copy($this->realfilepath, $fakepath);
+            $this->parseAndCopy($this->realfilepath, $fakepath);
         }
         $this->fakepath = $fakepath;
         return $fakepath;
@@ -109,11 +126,14 @@ class StreamFile {
 
     private function process() {
         if(count($this->replaces)) {
+            $this->parseAndCopy($this->realfilepath, $this->getFakepath());
+            /*
             $content = file_get_contents($this->realfilepath);
             foreach($this->replaces as $key => $value) {
                 $content = str_replace('{'.$key.'}', $value, $content);
             }
             file_put_contents($this->getFakepath(), $content);
+            */
         }
     }
 

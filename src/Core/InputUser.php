@@ -122,6 +122,11 @@ class InputUser extends Input {
         return $this;
     }    
 
+    //Get content from POST
+    public static function post(string $field) {
+        return self::getFromPOST()->getResult()[$field];
+    }
+
     /** Encode or Decode Things */
     public function encodeUTF8():object {
         Encoding::DeepEncode($this->data);

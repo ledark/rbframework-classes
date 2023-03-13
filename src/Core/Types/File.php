@@ -223,7 +223,7 @@ class File {
                 foreach($this->search['prefix'] as $prefix) {
                     foreach($this->search['extension'] as $extension) {
                         $file = $folder.$this->name.$extension;
-                        if(file_exists($file) and !is_dir($file)) {
+                        if(file_exists($file) and !is_dir($file)) {                            
                             $this->filepath = ($applyRealPath) ? realpath($file) : $file;
                             $this->folderpath = dirname(realpath($file));
                             $this->extension = $extension;

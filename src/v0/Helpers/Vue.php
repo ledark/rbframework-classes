@@ -2,6 +2,8 @@
 
 namespace RBFrameworks\Helpers;
 
+use RBFrameworks\Core\Plugin;
+
 /**
  * Utilização comum seria:
  * (new RBFrameworks\Helpers\Vue())->useComponents(['nome'])->run();
@@ -113,7 +115,7 @@ class Vue {
             }
             echo "\r\n".'</script>';
         } else {
-            plugin("files");
+            Plugin::load("files");
             foreach($this->components as $component_file) {
                 echo tagfilestream($component_file, array_merge($this->global_replaces, $this->components_replaces[$component_file]), 'js', 'language="javascript"');
             }

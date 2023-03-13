@@ -24,6 +24,7 @@ class Api {
     public $prefix = '';
     public $fn404 = null;
     public $router = null;
+    public $mountOn = '';
 
     public static function RouteOn(string $namespace) {
         $router = new self();
@@ -33,6 +34,10 @@ class Api {
 
     public function __construct() {
         $this->router = new Router();
+    }
+
+    public function mountOn(string $mountOn) {
+        $this->mountOn = $mountOn;
     }
 
     public function addRoutePrefix(string $prefix) {
@@ -55,13 +60,23 @@ class Api {
                 $annotation = $method->getDocComment();
                 if($annotation === false) continue;
 
-                $routeAnotation = preg_match_all('/@route\s+(GET|POST|PUT|DELETE)\s+(.*)/', $annotation, $matches);
+                $routeAnotation = preg_match_all('/@route\s+(GET|POST|PUT|DELETE)\s+(.*)/um', $annotation, $matches);
                 if($routeAnotation === false) continue;
                 if(count($matches) < 3) continue;
 
+                
+
                 foreach($matches[1] as $routeKey => $routeMethod) {
+                    
                     $routeUri = $matches[2][$routeKey];
                     $routeUri = $this->prefix.trim($routeUri);
+
+                    //if($_SERVER['REQUEST_METHOD'] != $routeMethod) continue;
+                    //if(strpos($_SERVER['REQUEST_URI'], $routeUri) === false) continue;
+
+               //     $router->mount($this->mountOn, function() use ($router, $namespace, $method, $routeMethod, $routeUri) {
+
+
 
                     $router->match($routeMethod, $routeUri, function() use ($namespace, $method) {
                         $forceEncodeUTF8 = null; 
@@ -95,7 +110,7 @@ class Api {
                             }
 
                             //response
-                            if(preg_match('/@response\s+(html|text|json|css|javascript)/', $annotation, $matches)) {
+                            if(preg_match('/@response\s+(html|text|json|css|javascript|file)/', $annotation, $matches)) {
                                 $responseType = $matches[1];
                             }
                             
@@ -125,23 +140,27 @@ class Api {
                         } else if($responseType == 'javascript') {
                             header('Content-Type: text/javascript'.$charset());
                             echo $result;                                                        
+                        } else if($responseType == 'file') {
+                            header('Content-Type: application/octet-stream');
+                            readfile($result);                        
                         } else {
                             header('Content-Type: text/plain'.$charset());
-                            echo $result;
+                            echo $result;                            
                         }
 
                         exit();
                     });
 
-                    
+                  //  });                   //end mount
                 }
 
             }
         }
-        $fn404 = ($this->fn404 !== null) ? $this->fn404 : function() {};
+        $fn404 = ($this->fn404 !== null) ? $this->fn404 : function() use ( $router) { echo "NOT FOUND". $router->getCurrentUri();  };
         $router->set404($fn404);
         $router->run();
     }
+
 
     /**
      * @route POST /api/banners/sample-json

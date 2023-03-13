@@ -4,6 +4,7 @@ namespace RBFrameworks\Core\Http;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\RequestOptions;
 use GuzzleHttp\Cookie\SessionCookieJar;
 use RBFrameworks\Core\Types\File;
 use RBFrameworks\Core\Config;
@@ -12,9 +13,10 @@ class Guzzle {
 
     public $client = null;
     public $headers = [];
+    public $uriPrefix = '';
 
     /**
-     * Por padrão, a uri é usada apenas como sufixo para Config::get('server.guzzle_preferences.base_url')
+     * Por padrÃ£o, a uri Ã© usada apenas como sufixo para Config::get('server.guzzle_preferences.base_url')
      * exemplo de uso:
      * $response = (new Guzzle())->get('uri'); //return array if json or string if body
      * $response = (new Guzzle())->post('uri', []); //return array if json or string if body
@@ -36,8 +38,17 @@ class Guzzle {
         $this->headers[$name] = $value;
     }
 
+    public function setUriPrefix(string $prefix) {
+        $this->uriPrefix = $prefix;
+        return $this;
+    }
+
     public function getRequest(string $method, string $url, array $headers = [], $body = null) {
-        $mountedUrl = Config::assigned('server.guzzle_preferences.base_url', '').$url;
+        if(!empty($this->uriPrefix)) {
+            $mountedUrl = $this->uriPrefix.$url;
+        } else {
+            $mountedUrl = Config::assigned('server.guzzle_preferences.base_url', '').$url;
+        }        
         $headers = array_merge(Config::assigned('server.guzzle_preferences.headers', []), $this->headers, $headers);
         return new Request($method, $mountedUrl, $headers, $body);
     }
@@ -132,6 +143,21 @@ class Guzzle {
         }
         $contentJson = json_decode($contentBody, true);
         return is_array($contentJson) ? $contentJson : $contentBody;     
+    }
+
+    public function postJson(string $uri, array $body = []) {
+        $this->addHeader('Content-Type', 'application/json');
+        $body = json_encode($body);
+        $options = [];
+        //$request = $this->getRequest('POST', $uri, $this->headers, ['json' => $body]);
+        $request = $this->getRequest('POST', $uri, $this->headers, $body);
+        $res = $this->client->sendAsync($request, $options)->wait();
+        $contentBody = $res->getBody()->getContents();
+        if(is_null($contentBody)) {
+            throw new \Exception('Content Body is null');
+        }
+        $contentJson = json_decode($contentBody, true);
+        return is_array($contentJson) ? $contentJson : $contentBody;
     }
 
     public function postBinary(string $uri, string $filepath) {
