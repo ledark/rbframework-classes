@@ -43,7 +43,7 @@ class Vue {
         return $this->configs[$name] ?? null;
     }
 
-    public function run():void {
+    public function run() {
         if($this->getConfig('capture')) ob_start();
         
         //createScriptTag
