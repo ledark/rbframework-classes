@@ -120,7 +120,16 @@ class InputUser extends Input {
     public function getFromHeaders():object {
         $this->data = $this->instance->phpRequestHeaders();
         return $this;
-    }    
+    }
+
+    public function getFromAnywhere():object {
+        $this->data = array_merge($this->data, $this->instance->get());
+        $this->data = array_merge($this->data, $this->instance->phpGet());
+        $this->data = array_merge($this->data, $this->instance->phpPost());
+        $this->data = array_merge($this->data, $this->instance->phpSession());
+        $this->data = array_merge($this->data, $this->instance->phpRequestHeaders());
+        return $this;
+    }
 
     //Get content from POST
     public static function post(string $field) {
@@ -202,6 +211,10 @@ class InputUser extends Input {
     public function set(string $field, string $value):object {
         $this->data[$field] = $value;
         return $this;
+    }
+
+    public function field(string $field, $defaultValue = null) {
+        return isset($this->data[$field]) ? $this->data[$field] : $defaultValue;
     }
 
     //FinalData
