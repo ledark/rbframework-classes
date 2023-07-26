@@ -6,11 +6,23 @@ namespace RBFrameworks\Core\Assets\Vue;
  * (new FastRender())->run();
  */
 
+ use RBFrameworks\Core\Assets\Js;
+
 class FastRender {
 
+    public $config = [];
     public $components = [];
     public $data = [];
     public $methods = [];
+
+    public function __construct() {
+        $this->config['resolveComponents'] = 'import'; //import|module|strict
+    }
+
+    public function setConfig(string $name, $value):object {
+        $this->config[$name] = $value;
+        return $this;
+    }
 
     public function addComponent(string $name, string $path) {
         $this->components[$name] = $path;
@@ -24,10 +36,43 @@ class FastRender {
         $this->methods[$name] = $value;
     }
 
+    public function getRenderedModules():string {
+        $componentsModules = "";
+        if($this->config['resolveComponents'] == 'module') {
+            foreach($this->components as $name => $path) {
+                $componentsModules .= Js::getTagModule($path);
+            }
+            $componentsModules .= "\r\n\t\t\t\t";
+        }
+        return $componentsModules;
+    }
+
+    public function getRenderedModulesImportDeclaration():string {
+        $componentsModules = "\r\n";
+        if($this->config['resolveComponents'] == 'module') {
+            foreach($this->components as $name => $path) {
+                $componentsModules .= "import {$name} from '{$path}';";
+            }
+            $componentsModules .= "\r\n\t\t\t\t";
+        }
+        return $componentsModules;
+    }
+
     public function getRenderedComponents() {
         $components = '';
         foreach($this->components as $name => $path) {
-            $components .= "{$name}: () => import('{$path}'),";
+            switch($this->config['resolveComponents']) {
+                case 'import':
+                    $components .= "{$name}: () => import('{$path}'),";
+                break;
+                case 'module':
+                    $components .= "{$name}: {$name}, ";
+                break;
+                case 'strict':
+                    $components .= $path;
+                break;
+            }
+            $components .= "\r\n\t\t\t\t";
         }
         return $components;
     }
@@ -53,8 +98,10 @@ class FastRender {
     }
 
     public function createApp(string $mountElement) {
+        echo $this->getRenderedModules();
         echo '<script type="module">';
         echo "import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'";
+        echo $this->getRenderedModulesImportDeclaration();
         echo "
         createApp({
             components: {
