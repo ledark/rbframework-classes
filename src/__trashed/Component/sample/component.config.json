@@ -1,6 +1,0 @@
-{
-    "name":"Nome do Component",
-    "src":"./",
-    "main":"index.html",
-    "dependences":[]
-}
