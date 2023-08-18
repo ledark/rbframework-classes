@@ -60,7 +60,7 @@ class Api {
                 $annotation = $method->getDocComment();
                 if($annotation === false) continue;
 
-                $routeAnotation = preg_match_all('/@route\s+(GET|POST|PUT|DELETE)\s+(.*)/um', $annotation, $matches);
+                $routeAnotation = preg_match_all('/@route\s+(GET|POST|PUT|DELETE|OPTIONS)\s+(.*)/um', $annotation, $matches);
                 if($routeAnotation === false) continue;
                 if(count($matches) < 3) continue;
 
@@ -131,20 +131,29 @@ class Api {
                             if(is_null($forceEncodeUTF8)) $forceEncodeUTF8 = false;
                             Response::json($result, $forceEncodeUTF8, $responseCode);
                         } else if($responseType == 'html') {
-
-                            header('Content-Type: text/html'.$charset());
+                            if(!headers_sent()) {
+                                header('Content-Type: text/html'.$charset());
+                            }
                             echo $result;
                         } else if($responseType == 'css') {
-                            header('Content-Type: text/css'.$charset());
+                            if(!headers_sent()) {
+                                header('Content-Type: text/css'.$charset());
+                            }
                             echo $result;
                         } else if($responseType == 'javascript') {
-                            header('Content-Type: text/javascript'.$charset());
+                            if(!headers_sent()) {
+                                header('Content-Type: text/javascript'.$charset());
+                            }
                             echo $result;                                                        
                         } else if($responseType == 'file') {
-                            header('Content-Type: application/octet-stream');
+                            if(!headers_sent()) {
+                                header('Content-Type: application/octet-stream');
+                            }
                             readfile($result);                        
                         } else {
-                            header('Content-Type: text/plain'.$charset());
+                            if(!headers_sent()) {
+                                header('Content-Type: text/plain'.$charset());
+                            }
                             echo $result;                            
                         }
 
