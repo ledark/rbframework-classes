@@ -10,7 +10,7 @@ use RBFrameworks\Core\Database\Form;
 use Medoo\Medoo;
 use RBFrameworks\Core\Database\Model\UserDadosMock;
 
-include(__DIR__.'/../Samples/Model/UserDados.php');
+//include(__DIR__.'/../Samples/Model/UserDados.php');
 
 class ModelTest extends TestCase {
 

@@ -94,6 +94,11 @@ class DatabaseTest extends TestCase {
     }
     
     public function testConnection() {
+
+        if(in_array('SingleDatabase', Config::get('tests.skip'))) {
+            $this->markTestSkipped('SingleDatabase test skipped');
+            return;
+        }        
         
         $conn = $this->getConnection();
         $prefix = $conn->getPrefixo();

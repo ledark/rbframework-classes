@@ -3,8 +3,19 @@
 namespace RBFrameworks\Core;
 
 use PHPUnit\Framework\TestCase;
+use RBFrameworks\Core\Template;
+use RBFrameworks\Core\TemplateController;
 
 class TemplateControllerTest extends TestCase {
+
+    public function testClassInterface() {
+
+        if(in_array('MultiDatabase', Config::get('tests.skip'))) {
+            $this->markTestSkipped('MultiDatabase test skipped');
+            return;
+        }
+        
+    }
 
     /*
     public $headerPage;

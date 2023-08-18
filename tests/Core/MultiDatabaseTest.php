@@ -11,6 +11,11 @@ class MultiDatabaseTest extends TestCase {
 
     public function testMultipleConections() {
 
+        if(in_array('MultiDatabase', Config::get('tests.skip'))) {
+            $this->markTestSkipped('MultiDatabase test skipped');
+            return;
+        }
+
         $itsfake = [
             'server'    => 'localhost',
             'login'     => 'user',

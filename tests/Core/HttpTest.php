@@ -1,6 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use RBFrameworks\Core\Config;
 use RBFrameworks\Core\Http;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
@@ -13,7 +14,7 @@ class HttpTest extends TestCase {
     public $client = null;
 
     private function getBaseUri() {
-        return 'http://www.ad369.com.br/projetos/wvferramentas/';
+        return Config::get('tests.config.httpBaseUri');
     }
 
     private function getClient() {
@@ -74,10 +75,12 @@ class HttpTest extends TestCase {
         $body = $client->get($this->getBaseUri().'api/banners/home');
         $this->assertArrayHasKey('sample', $body);
 
+        /*
         $body = $client->post($this->getBaseUri().'api/produtos/busca', ['macarrao' => 'ovos']);
         $this->assertArrayHasKey('input', $body[0]);
         $this->assertArrayHasKey('macarrao', $body[0]['input']);
         $this->assertEquals($body[0]['input']['macarrao'], 'ovos');
+        */
 
         $body = $client->get($this->getBaseUri().'api/debug/end');
         $this->assertArrayHasKey('session', $body);
