@@ -22,7 +22,7 @@ log/
 
 # Development IDE
 .phpintel/
-.vscode/
+
 nbproject/
 .metadata
 .phpintel

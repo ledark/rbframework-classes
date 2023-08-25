@@ -1,0 +1,53 @@
+{
+  "saveAndRun": {
+    "commands": [
+            /*
+          {
+            "match": ".*",
+            "cmd": "echo 'I run for all files.'",
+            "useShortcut": false,
+            "silent": false
+          },
+          */
+          {
+            "match": "\\.php$",
+            //"cmd": ".\\vendor\\bin\\phpunit --colors=\"always\" .\\tests\\Core\\Database\\DatabaseTest.php",
+            "cmd": ".\\vendor\\bin\\phpunit --colors=\"always\"",
+            "useShortcut": false,
+            "silent": false
+          }
+        ]
+      },
+      "workbench.colorTheme": "Tomorrow Night Blue",
+      "files.encoding": "iso88591",
+      "files.exclude": {
+        "vendor/symfony/**": true,
+    },      
+    "intelephense.files.exclude": [
+      "**/.git/**",
+      "**/.svn/**",
+      "**/.hg/**",
+      "**/CVS/**",
+      "**/node_modules/**",
+      "**/bower_components/**",
+      "**/vendor/**/{Tests,tests}/**",
+      "**/.history/**",
+      "_app//tests//routering/**",
+      "**/vendor/**/vendor/**",
+      "_app/class/composer/symfony/polyfill-intl-idn/**",
+      "**/~trashed/**"
+  ],
+  "search.useGlobalIgnoreFiles": false,
+  "php-implementor.autoloads": {
+    ""  : "_app/class/"
+  },
+  "intelephense.environment.phpVersion": "7.4.3",
+  "intelephense.references.exclude": [
+    "**/vendor/**",
+    "**/composer/**",
+  ],
+  "phpcs.ignorePatterns": [
+    "*/_app/class/composer/*",
+    "*/_app/class/*",
+  ]
+}
