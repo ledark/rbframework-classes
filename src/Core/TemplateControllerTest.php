@@ -3,55 +3,23 @@
 namespace RBFrameworks\Core;
 
 use PHPUnit\Framework\TestCase;
-use RBFrameworks\Core\Template;
-use RBFrameworks\Core\TemplateController;
+use ReflectionClass;
 
 class TemplateControllerTest extends TestCase {
 
+    private const Template              = 'RBFrameworks\Core\Template';
+    private const TemplateController    = 'RBFrameworks\Core\TemplateController' ;
+    private const VarTrait              = 'RBFrameworks\Core\Templates\Traits\VarTrait';
+    private const TemplateTrait         = 'RBFrameworks\Core\Templates\Traits\TemplateTrait';
+    private const PageTrait             = 'RBFrameworks\Core\Templates\Traits\PageTrait';
+
     public function testClassInterface() {
-
-        if(in_array('MultiDatabase', Config::get('tests.skip'))) {
-            $this->markTestSkipped('MultiDatabase test skipped');
-            return;
-        }
-        
+        $Template = new ReflectionClass(self::Template);
+        $TemplateController = new ReflectionClass(self::TemplateController);
+        $this->assertTrue($TemplateController->isSubclassOf(self::Template));
+        $this->assertTrue(in_array(self::VarTrait, $Template->getTraitNames()));
+        $this->assertTrue(in_array(self::TemplateTrait, $Template->getTraitNames()));
+        $this->assertTrue(in_array(self::PageTrait, $Template->getTraitNames()));
     }
 
-    /*
-    public $headerPage;
-    public $footerPage;
-    public $templatePage = 'bootstrap5';
-    public $prefixContent = '<div class="container">';
-    public $sufixContent = '</div>';
-
-    public function __construct(string $headerPage, string $footerPage) {
-
-        
-
-        $this->headerPage = $headerPage;
-        $this->footerPage = $footerPage;
-    }
-
-    public function setPrefixContent(string $content) {
-        $this->prefixContent = $content;
-    }
-    public function setSufixContent(string $content) {
-        $this->sufixContent = $content;
-    }
-
-    public function setTemplatePage(string $templatePage) {
-        $this->templatePage = $templatePage;
-    }
-
-    public function renderPages(array $pages = []) {
-        $return = $this->renderPage($this->headerPage);
-        $return.= $this->prefixContent;
-        foreach($pages as $page) {
-            $return .= $this->renderPage($page);
-        }
-        $return.= $this->sufixContent;
-        $return.= $this->renderPage($this->footerPage);
-        return $this->renderPage($this->templatePage, ['page' => $return]);
-    }
-    */
 }

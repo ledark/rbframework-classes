@@ -12,6 +12,7 @@ class StreamFile {
 
     public $realfilepath;
     public $replaces = [];
+    public $options = [];
     public $cache = false;
     public $filename = '';
 
@@ -23,12 +24,13 @@ class StreamFile {
      * @param string $realfilepath
      * @param array $replaces
      */
-    public function __construct(string $realfilepath, array $replaces = []) {
+    public function __construct(string $realfilepath, array $replaces = [], array $options = []) {
         if(!file_exists($realfilepath)) {
             throw new \Exception('File not found in Assets\StreamFile: '.$realfilepath);
         }
         $this->realfilepath = $realfilepath;
         $this->replaces = $replaces;
+        $this->options = $options;
     }
 
     private static function getCacheAssetsFolder():string {
@@ -86,8 +88,10 @@ class StreamFile {
             $content = ob_get_clean();
 
             if(count($this->replaces)) {
+                $bracketL = isset($this->options['bracketL']) ? $this->options['bracketL'] : '{';
+                $bracketR = isset($this->options['bracketR']) ? $this->options['bracketR'] : '}';                
                 foreach($this->replaces as $key => $value) {
-                    $content = str_replace('{'.$key.'}', $value, $content);
+                    $content = str_replace($bracketL.$key.$bracketR, $value, $content);
                 }
             }
             file_put_contents($fakePath, $content);
@@ -147,17 +151,17 @@ class StreamFile {
         return Http::getSite().$this->getFakepath();
     }
 
-    public static function getUri(string $path, array $replaces = []) {
+    public static function getUri(string $path, array $replaces = [], array $options = []) {
         $replaces = array_merge([
             'httpSite' => Http::getSite(),
         ],$replaces);
-        return (new self($path, $replaces))->getHttpPath();
+        return (new self($path, $replaces, $options))->getHttpPath();
     }
-    public static function jsModule(string $path, array $replaces = []) {
-        echo '<script type="module" src="'.static::getUri($path, $replaces).'"></script>';
+    public static function jsModule(string $path, array $replaces = [], array $options = []) {
+        echo '<script type="module" src="'.static::getUri($path, $replaces, $options).'"></script>';
     }
-    public static function css(string $path, array $replaces = []) {
-        echo '<link href="'.static::getUri($path, $replaces).'" rel="stylesheet">';
+    public static function css(string $path, array $replaces = [], array $options = []) {
+        echo '<link href="'.static::getUri($path, $replaces, $options).'" rel="stylesheet">';
     }
 
 }

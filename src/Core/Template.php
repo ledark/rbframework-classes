@@ -8,6 +8,61 @@ use RBFrameworks\Core\Templates\Traits\VarTrait;
 use RBFrameworks\Core\Templates\Traits\TemplateTrait;
 use RBFrameworks\Core\Templates\Traits\PageTrait;
 
+/**
+ * Descrição:
+ *  Prepara um arquivo qualquer para ser tratato como sendo um template.
+ *  Funções como ->setPage('path/to/file) e ->addVar('name', 'value') são utilizadas para preparar o template como um objeto.
+ *  Mas não fazem nada. Por isso, o mais útil é o uso dessa classe como uma classe a extender outra.
+ *  Um bom exemplo é a classe TemplateController que extende essa classe. Por isso, melhor uso é esse:
+ * 
+ *  use RBFrameworks\Core\Types\File;
+ *  
+ *  class Template extends \RBFrameworks\Core\Template {
+ *  
+ *      public function __construct(string $template = null, array $variables = []) {
+ *          $this->setVar($variables);
+ *          $this->addSearchFolder(__DIR__.'/../../tmpl/');
+ *          $this->addSearchFolder(__DIR__.'/../../../tmpl/');
+ *          $this->addSearchFolder(__DIR__.'/../tmpl/');
+ *          $this->addSearchExtension('html');
+ *          parent::__construct($template);
+ *      }
+ *  
+ *      public function display() {
+ *          $template = $this->getTemplateFile();
+ *          $template = new File($template);
+ *          if(!empty($template->getFilePath())) {       
+ *              include($template->getFilePath());   
+ *          } else {
+ *              echo $this->getTemplateContent();
+ *          }
+ *      }
+ *  
+ *  }
+ * 
+ * Fluxo:
+ *  Você inicia a instância passando um template ou não.
+ *  Caso você passe uma string, ele vai tentar encontrar o arquivo.
+ *  utiliza-se da collection (array) location.search_folders 
+ *  utiliza-se da collection (array) location.search_extensions
+ *  
+ * Example #1: Nothing is passed
+ * (new Template())
+ * 
+ * Example #2: Passing a any valid file (folders and search extensions are optional)
+ * (new Template('path/to/file.php'))
+ * 
+ * Example #2.1 (optional): Adding search folders or extensions
+ * (new Template('my_file'))
+ *     ->addSearchFolder('path/to/folder')
+ *     ->addSearchFolder('path/to/folder2')
+ *     ->addSearchExtension('.inc')
+ *     ->addSearchExtension('.templ')
+ * 
+ * Example #3: Passing a string
+ * (new Template('<h1>My String</h1>'))
+ */
+
 class Template {
 
     private $originalInput;

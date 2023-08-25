@@ -5,6 +5,7 @@ namespace RBFrameworks\Core;
 use RBFrameworks\Core\Response;
 use RBFrameworks\Core\Config;
 use Bramus\Router\Router;
+use RBFrameworks\Core\Types\File;
 use ReflectionClass;
 use ReflectionException;
 
@@ -110,7 +111,7 @@ class Api {
                             }
 
                             //response
-                            if(preg_match('/@response\s+(html|text|json|css|javascript|file)/', $annotation, $matches)) {
+                            if(preg_match('/@response\s+(html|text|json|css|javascript|file|redirect|image)/', $annotation, $matches)) {
                                 $responseType = $matches[1];
                             }
                             
@@ -149,7 +150,14 @@ class Api {
                             if(!headers_sent()) {
                                 header('Content-Type: application/octet-stream');
                             }
-                            readfile($result);                        
+                            readfile($result);
+                        } else if($responseType == 'image') {
+                            $image = new File($result);
+                            File::readFile($image->getFilePath());                            
+                        } else if($responseType == 'redirect') {
+                            if(!headers_sent()) {
+                                header('Location: '.$result);
+                            }
                         } else {
                             if(!headers_sent()) {
                                 header('Content-Type: text/plain'.$charset());
