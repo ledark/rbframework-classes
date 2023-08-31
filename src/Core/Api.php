@@ -8,6 +8,7 @@ use Bramus\Router\Router;
 use RBFrameworks\Core\Types\File;
 use ReflectionClass;
 use ReflectionException;
+use DirectoryIterator;
 
 /**
  * Example of Use API
