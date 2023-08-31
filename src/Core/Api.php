@@ -27,6 +27,24 @@ class Api {
     public $router = null;
     public $mountOn = '';
 
+    public static function autoload(string $directory, string $namespace = "", callable $on404 = null) {
+        $namespace = rtrim($namespace, '\\').'\\';
+        $router = new self();
+        foreach (new DirectoryIterator($directory) as $fileInfo) {
+            if($fileInfo->isDot()) continue;
+            if($fileInfo->isDir()) continue;
+            $name = basename($fileInfo->getFilename(), '.php');
+            $router->addNamespace($namespace.$name);
+        }
+        $router->fn404 = function() use ($router, $on404) {
+	    if(is_callable($on404)) {
+               $on404($router);
+            }
+	};
+        $router->run();
+    }
+
+
     public static function RouteOn(string $namespace) {
         $router = new self();
         $router->addNamespace($namespace);
