@@ -157,10 +157,13 @@ class StreamFile {
         ],$replaces);
         return (new self($path, $replaces, $options))->getHttpPath();
     }
-    public static function jsModule(string $path, array $replaces = [], array $options = []) {
+    public static function jsModule(string $path, array $replaces = [], array $options = []):void {
         echo '<script type="module" src="'.static::getUri($path, $replaces, $options).'"></script>';
     }
-    public static function css(string $path, array $replaces = [], array $options = []) {
+    public static function js(string $path, array $replaces = [], array $options = []):void {
+        echo '<script src="'.static::getUri($path, $replaces, $options).'"></script>';
+    }
+    public static function css(string $path, array $replaces = [], array $options = []):void {
         echo '<link href="'.static::getUri($path, $replaces, $options).'" rel="stylesheet">';
     }
 
