@@ -17,6 +17,10 @@ class Message
         if(!$this->hasMessage()) {
             $this->setDefault();
         }
+        if(!isset($_SESSION[$this->blockname]['prefix'])) $_SESSION[$this->blockname]['prefix'] = '';
+        if(!isset($_SESSION[$this->blockname]['cssclass'])) $_SESSION[$this->blockname]['cssclass'] = '';
+        if(!isset($_SESSION[$this->blockname]['message'])) $_SESSION[$this->blockname]['message'] = '';
+        if(!isset($_SESSION[$this->blockname]['sufix'])) $_SESSION[$this->blockname]['sufix'] = '';		
         return $this;
     }
 

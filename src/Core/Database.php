@@ -41,6 +41,7 @@ use MeekroDB;
 use RBFrameworks\Core\Interfaces\isCrudable;
 use RBFrameworks\Core\Database\Traits\Crud as CrudTrait;
 use RBFrameworks\Core\Config;
+use RBFrameworks\Core\Debug;
 
 class Database implements isCrudable
 {
@@ -131,11 +132,15 @@ class Database implements isCrudable
 
     private function resolveMeekroDB()
     {
-        $this->DB->error_handler = false; // disable standard error handler
-        $this->DB->nonsql_error_handler = false; // disable standard error handler
-        $this->DB->throw_exception_on_error = true; // throw exception on mysql query errors
-        $this->DB->throw_exception_on_nonsql_error = true; // throw exception on library errors (bad syntax, etc)        
-    }
+        try {            
+            $this->DB->error_handler = false; // disable standard error handler
+            $this->DB->nonsql_error_handler = false; // disable standard error handler
+            $this->DB->throw_exception_on_error = true; // throw exception on mysql query errors
+            $this->DB->throw_exception_on_nonsql_error = true; // throw exception on library errors (bad syntax, etc)        
+        } catch (\Exception $e) {
+            Debug::log($e->getMessage(), [], 'MeekroDB.Exception','MeekroDB');
+        }    
+     }
 
     /**
      * Example of usage:
@@ -183,6 +188,9 @@ class Database implements isCrudable
     {
         foreach ($arguments as &$arg) {
             if (is_string($arg)) {
+                if(Config::assigned('query.'.$arg, false) !== false) {
+                    $arg = Config::get('query.'.$arg);
+                }                
                 $arg = preg_replace('/(\?_)/m', $this->getPrefixo(), $arg);
             }
         }

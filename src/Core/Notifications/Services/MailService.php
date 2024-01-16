@@ -114,26 +114,41 @@ class MailService extends Service {
         switch($collection) {
             case 'mail.from':
                 foreach($recipients as $mail => $name) {
+                    if(is_numeric($mail) and is_string($name)) {
+                        $mail = $name;
+                    }
                     $this->mail->setFrom($mail, $name);
                 }
             break;
             case 'mail.to':
                 foreach($recipients as $mail => $name) {
+                    if(is_numeric($mail) and is_string($name)) {
+                        $mail = $name;
+                    }
                     $this->mail->addAddress($mail, $name);
                 }
             break;
             case 'mail.reply':
                 foreach($recipients as $mail => $name) {
+                    if(is_numeric($mail) and is_string($name)) {
+                        $mail = $name;
+                    }
                     $this->mail->addReplyTo($mail, $name);
                 }
             break;
             case 'mail.cc':
                 foreach($recipients as $mail => $name) {
+                    if(is_numeric($mail) and is_string($name)) {
+                        $mail = $name;
+                    }
                     $this->mail->addCC($mail, $name);
                 }
             break;
             case 'mail.bcc':
                 foreach($recipients as $mail => $name) {
+                    if(is_numeric($mail) and is_string($name)) {
+                        $mail = $name;
+                    }
                     $this->mail->addBCC($mail, $name);
                 }
             break;
