@@ -2,6 +2,7 @@
 
 namespace RBFrameworks\Core;
 
+use RBFrameworks\Core\Api\HandlerResponse;
 use RBFrameworks\Core\Response;
 use RBFrameworks\Core\Config;
 use Bramus\Router\Router;
@@ -116,9 +117,9 @@ class Api {
 
                             //getStatusCode
                             if(preg_match('/@status\s+(\d+)/', $annotation, $matches)) {
-                                $statusCode = intval($matches[1]);
-                                if($statusCode < 100 || $statusCode > 599) {
-                                    $statusCode = 200;
+                                $responseCode = intval($matches[1]);
+                                if($responseCode < 100 || $responseCode > 599) {
+                                    $responseCode = 200;
                                 }
                             }
 
@@ -147,6 +148,21 @@ class Api {
                             }
                         };
 
+                        $ApiHandlerResponse = new HandlerResponse();
+                        $ApiHandlerResponse
+                            ->setCharset($charset()) //canbe utf-8 | iso-8859-1 | empty
+                            ->setType($responseType) //canbe html|text|json|css|javascript|file|redirect|image
+                            ->setResult($result) //canbe mixed
+                            ->setResponseCode($responseCode); //canbe int
+
+                        if(isset($forceEncodeUTF8) and is_bool($forceEncodeUTF8)) {
+                            $ApiHandlerResponse->utf8 = $forceEncodeUTF8;
+                        }
+                        
+                        $ApiHandlerResponse
+                            ->send();
+
+                            /*
                         if(is_array($result) or $responseType == 'json') {
                             if(is_null($forceEncodeUTF8)) $forceEncodeUTF8 = false;
                             Response::json($result, $forceEncodeUTF8, $responseCode);
@@ -183,7 +199,7 @@ class Api {
                             }
                             echo $result;                            
                         }
-
+*/
                         exit();
                     });
 
