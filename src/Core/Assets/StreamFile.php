@@ -166,5 +166,42 @@ class StreamFile {
     public static function css(string $path, array $replaces = [], array $options = []):void {
         echo '<link href="'.static::getUri($path, $replaces, $options).'" rel="stylesheet">';
     }
+	
+   /**
+     * jsModules function 
+     *
+     * @param array $paths [name => path, ...]
+     * @param array $replaces
+     * @return void
+     */
+    public static function jsModules(array $paths = [], array $replaces = []) {
 
+        $scripts = [];
+        foreach($paths as $name => $path) {
+            if(!file_exists($path)) {
+                $path = StreamFile::getUri($path, $replaces);
+            }
+            $scripts[$name] = $path;
+        }
+        unset($name, $path);
+        
+        echo '<script type="importmap">';
+        echo '{
+            "imports": {';
+        $imports = '';
+        foreach($scripts as $name => $script) {
+            $imports.= '"'.$name.'": "'.$script.'",';
+        }
+        $imports = rtrim($imports, ',');
+        echo $imports;
+        echo '}}';
+        echo '</script>';
+        
+        foreach($scripts as $name => $script) {
+            StreamFile::jsModule($script, $replaces);
+            //echo '<script type="module" src="'.$script.'"></script>';
+        }
+
+    }
+	
 }
