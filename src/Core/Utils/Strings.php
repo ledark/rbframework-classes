@@ -528,7 +528,7 @@ class Strings {
 		Strings::geolocate_uf2estado('SP');
 		Strings::geolocate_estado2uf('São Paulo');
 	*/
-	private static function geolocate_getestados($invert = false) {
+	public static function geolocate_getestados($invert = false) {
 		$estados = array(
 			'AC'	=>	'Acre'
 		,	'AL'	=>	'Alagoas'

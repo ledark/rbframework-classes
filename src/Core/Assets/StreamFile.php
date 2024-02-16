@@ -6,6 +6,7 @@ use RBFrameworks\Core\Http;
 use RBFrameworks\Core\Legacy\SmartReplace;
 use RBFrameworks\Core\Directory;
 use RBFrameworks\Core\Config;
+use RBFrameworks\Core\Types\File;
 use RBFrameworks\Core\Utils\Strings\Dispatcher;
 
 class StreamFile {
@@ -31,6 +32,14 @@ class StreamFile {
         $this->realfilepath = $realfilepath;
         $this->replaces = $replaces;
         $this->options = $options;
+    }
+
+    public static function getFilenamePrefix():string {
+        return Config::assigned('location.cache.assets_prefix', 'fnfiles_');
+    }
+
+    public static function nameMaskReplaces():array {
+        return Config::assigned('location.cache.assets_mask', []);
     }
 
     private static function getCacheAssetsFolder():string {
@@ -78,6 +87,9 @@ class StreamFile {
         $name = str_replace('.', '-', $name);
         $parts = explode('/', $name);
         $finalname = array_pop($parts);
+        foreach(self::nameMaskReplaces() as $mask => $replace) {
+            $finalname = str_replace($mask, $replace, $finalname);
+        }
         return $finalname.$sufix;
     }
 
@@ -105,12 +117,12 @@ class StreamFile {
         $overname = $this->filename;
         $cache_assets = self::getCacheAssetsFolder();
         if(!empty($overname)) {
-            $fakepath = $cache_assets.'/fnfiles_'.$overname.$this->getExtension();
+            $fakepath = $cache_assets.'/'.self::getFilenamePrefix().$overname.$this->getExtension();
             if(strpos($overname.$this->getExtension(), '.js.js')) {
-                $fakepath = $cache_assets.'/fnfiles_'.$overname;
+                $fakepath = $cache_assets.'/'.self::getFilenamePrefix().$overname;
             }
         } else {
-            $fakepath = $cache_assets.'/fnfiles_'.self::getFileNameFrom($this->realfilepath, $this->replaces).$this->getExtension();
+            $fakepath = $cache_assets.'/'.self::getFilenamePrefix().self::getFileNameFrom($this->realfilepath, $this->replaces).$this->getExtension();
             //$fakepath = $cache_assets.'/fnfiles_'.md5($this->realfilepath).$this->getExtension();
         }
         
@@ -174,14 +186,18 @@ class StreamFile {
      * @param array $replaces
      * @return void
      */
-    public static function jsModules(array $paths = [], array $replaces = []) {
+    public static function jsModules(array $paths = [], array $replaces = [], array $searchFolders = []) {
 
         $scripts = [];
+        $realpaths = [];
         foreach($paths as $name => $path) {
             if(!file_exists($path)) {
-                $path = StreamFile::getUri($path, $replaces);
+                $path = (new File($path))->addSearchFolders(array_merge([
+                    dirname(debug_backtrace()[0]['file']),
+                ], $searchFolders))->getFilePath();
             }
-            $scripts[$name] = $path;
+            $realpaths[$name] = $path;
+            $scripts[$name] = StreamFile::getUri($path, $replaces);
         }
         unset($name, $path);
         
@@ -197,11 +213,10 @@ class StreamFile {
         echo '}}';
         echo '</script>';
         
-        foreach($scripts as $name => $script) {
+        foreach($realpaths as $name => $script) {
             StreamFile::jsModule($script, $replaces);
-            //echo '<script type="module" src="'.$script.'"></script>';
         }
 
-    }
+    }        
 	
 }

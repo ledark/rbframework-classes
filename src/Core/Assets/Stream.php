@@ -20,6 +20,10 @@ class Stream
         return Directory::rtrim($cache_assets);
     }
 
+    public static function getFilenamePrefix():string {
+        return Config::assigned('location.cache.assets_prefix', 'fnfiles_');
+    }
+
     /**
      * Copia os arquivos de forma inteligente, protegendo o original e devolvendo o fakepath.
      * Você pode passar também um array de replaces para que quando o arquivo seja lido, um smart_replace seja aplicado.
@@ -65,7 +69,7 @@ class Stream
 
 
         } else {
-            $fakepath = self::getCacheAssetsFolder().'/fnfiles_' . md5($realfilepath) . $extension;
+            $fakepath = self::getCacheAssetsFolder().'/'. self::getFilenamePrefix() . md5($realfilepath) . $extension;
         }
 
         if (count($replaces)) {
@@ -79,7 +83,7 @@ class Stream
                 $content = SmartReplace::smart_replace($content, $replaces, true);
             }
 
-            $fakepath = self::getCacheAssetsFolder().'/fnfiles_' . md5($realfilepath) . '_repl' . md5($content) . $extension;
+            $fakepath = self::getCacheAssetsFolder().'/' . self::getFilenamePrefix() . md5($realfilepath) . '_repl' . md5($content) . $extension;
             file_put_contents($fakepath, $content);
             return $fakepath;
         }
@@ -104,7 +108,7 @@ class Stream
         
         Directory::mkdir(self::getCacheAssetsFolder());
 
-        $files = glob(self::getCacheAssetsFolder().'/fnfiles_*');
+        $files = glob(self::getCacheAssetsFolder().'/'.self::getFilenamePrefix().'*');
         $timenow = time();
         foreach ($files as $file) {
             if (strpos($file, '_nostore') !== false) {

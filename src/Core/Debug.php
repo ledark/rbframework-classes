@@ -6,6 +6,7 @@ use RBFrameworks\Core\Utils\Strings\Dispatcher;
 use RBFrameworks\Core\Utils\Variables;
 use RBFrameworks\Core\Plugin;
 use RBFrameworks\Core\Config;
+use RBFrameworks\Core\Directory;
 use RBFrameworks\Core\Utils\Encoding;
 
 if(!function_exists('is_developer')) {
@@ -115,7 +116,6 @@ CARD;
 
 
 /**
-     * Nomes de GROUPS Incluídos Aqui são Excluídos do DEBUG
      *
      * @return array
      */
@@ -126,7 +126,6 @@ CARD;
         return array_merge($ignored, []);        
     }
     /**
-     * Nomes de Arquivo Incluídos Aqui são Excluídos do DEBUG
      *
      * @return array
      */
@@ -155,6 +154,7 @@ CARD;
 
         $filename = Config::assigned('location.log_file', 'debug.[filename_backtrace].log');
         $filename = str_replace('[filename_backtrace]', $filename_backtrace, $filename);
+        Directory::mkdir(dirname($filename));
         Encoding::DeepEncode($context);
         file_put_contents($filename, date('Y-m-d H:i:s').'['.$uid.']'.$group.': '.$message->getString().' --'.json_encode($context)."\r\n", FILE_APPEND);
     }
