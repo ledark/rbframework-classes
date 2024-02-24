@@ -43,7 +43,6 @@ use RBFrameworks\Core\Database\Traits\Crud as CrudTrait;
 use RBFrameworks\Core\Config;
 use RBFrameworks\Core\Debug;
 
-#[AllowDynamicProperties]
 class Database implements isCrudable
 {
 

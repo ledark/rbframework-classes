@@ -150,9 +150,7 @@ CARD;
 
         if(in_array($group, self::logIgnoreGroup()) == true) return;
         if(in_array($filename_backtrace, self::logIgnoreFilenames()) == true) return;
-        foreach(Config::assigned('debug.ignore_contexts', []) as $ignore) {
-            if($ignore($context) == true) return;
-        }
+
 
         $filename = Config::assigned('location.log_file', 'debug.[filename_backtrace].log');
         $filename = str_replace('[filename_backtrace]', $filename_backtrace, $filename);
