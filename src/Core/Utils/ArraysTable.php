@@ -61,7 +61,7 @@ abstract class ArraysTable {
     }
 
 
-    function array2table_simple($p) {
+    public static function array2table_simple($p) {
         ob_start();
         $j = 0;
         echo '<table class="table">';
@@ -85,7 +85,7 @@ abstract class ArraysTable {
         
     }
 
-    function array2table_ficha($p, $replaces = array()) {
+    public static function array2table_ficha($p, $replaces = array()) {
         ob_start();
         echo '<table class="table">';
         foreach($p as $i => $r) {
