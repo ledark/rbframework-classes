@@ -66,7 +66,10 @@ class Api {
     }
 
     public function addNamespace(string $namespace) {
-        $this->namespaces[] = $namespace;
+        $namespace = str_replace('/', '\\', $namespace);
+        $namespace = ltrim($namespace, '\\');
+        $namespace = rtrim($namespace, '.php');
+        $this->namespaces[] = '\\'.$namespace;
     }
 
     public function run() {

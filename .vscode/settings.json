@@ -19,7 +19,7 @@
         ]
       },
       "workbench.colorTheme": "Tomorrow Night Blue",
-      "files.encoding": "iso88591",
+      "files.encoding": "utf8",
       "files.exclude": {
         "vendor/symfony/**": true,
     },      
@@ -49,5 +49,9 @@
   "phpcs.ignorePatterns": [
     "*/_app/class/composer/*",
     "*/_app/class/*",
-  ]
+  ],
+  "tws.trimOnSave": true,
+  "tws.highlightTrailingWhiteSpace": true,
+  "tws.highlightOnlyChangedLines": false,
+  "tws.debugLog": true,
 }
