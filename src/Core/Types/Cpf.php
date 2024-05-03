@@ -7,6 +7,7 @@ use RBFrameworks\Core\Exceptions\CoreTypeException as Exception;
 class Cpf implements TypeInterface {
 
     protected $_value;
+    protected $_throwException;
     
     public function __construct(string $value, bool $throwException = true) {
         try {        
@@ -109,6 +110,10 @@ class Cpf implements TypeInterface {
     }
 
     public function getValetring() {
+        return $this->_value;
+    }
+
+    public function getValue() {
         return $this->_value;
     }
 

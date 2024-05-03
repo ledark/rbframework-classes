@@ -4,9 +4,10 @@ namespace RBFrameworks\Core\Types;
 
 use RBFrameworks\Core\Exceptions\CoreTypeException as Exception;
 
-class Cnpj {
+class Cnpj implements TypeInterface {
 
     protected $_value;
+    protected $_throwException;
     
     public function __construct(string $value, bool $throwException = true) {
         try {
@@ -126,6 +127,14 @@ class Cnpj {
     }
 
     public function __toString() {
+        return $this->_value;
+    }
+
+    public function getString():string {
+        return (string) $this->_value;
+    }
+
+    public function getValue() {
         return $this->_value;
     }
 

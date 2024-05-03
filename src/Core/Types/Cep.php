@@ -5,6 +5,8 @@ namespace RBFrameworks\Core\Types;
 class Cep {
 
     protected $_value;
+    protected $number;
+    protected $formatted;
     
     public function __construct($value) {
         $this->_value = $value;
