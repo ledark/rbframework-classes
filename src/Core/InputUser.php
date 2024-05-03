@@ -32,6 +32,8 @@ use RBFrameworks\Core\Utils\Encoding;
 
 class InputUser extends Input {
 
+    use InputUserTrait;
+
     public $instance;
     public $data;
 
