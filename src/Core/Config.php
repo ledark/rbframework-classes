@@ -24,8 +24,12 @@ class Config
     }
 
     public static function assigned(string $name, $default = '', $collections_dir = null) {
-        $res = self::get($name, $collections_dir);
-        return is_null($res) ? $default : $res;
+        try {
+            $res = self::get($name, $collections_dir);
+            return is_null($res) ? $default : $res;
+        } catch (\Exception $e) {
+            return $default;
+        }
     }
 
     public static function get(string $name, string $collections_dir = null) {
@@ -36,6 +40,13 @@ class Config
 
     private static function include_file(string $name, string $collections_dir = null) {
         if(is_null($collections_dir)) $collections_dir  = self::getCollectionDir();
+
+        if(defined('ENVIRONMENT') and ENVIRONMENT == 'development') {
+            if(file_exists($collections_dir.$name.'.development.php')) {
+                return include($collections_dir.$name.'.development.php');
+            }
+        }
+
         if(file_exists($collections_dir.$name.'.php')) {
             return include($collections_dir.$name.'.php');
         }
