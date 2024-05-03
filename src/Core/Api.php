@@ -4,12 +4,17 @@ namespace RBFrameworks\Core;
 
 use RBFrameworks\Core\Api\HandlerResponse;
 use RBFrameworks\Core\Response;
+use RBFrameworks\Core\Database;
+use RBFrameworks\Core\Debug;
 use RBFrameworks\Core\Config;
+use RBFrameworks\Core\Utils\Strings\Dispatcher;
 use Bramus\Router\Router;
+use RBFrameworks\Core\Directory;
 use RBFrameworks\Core\Types\File;
 use ReflectionClass;
 use ReflectionException;
 use DirectoryIterator;
+use RBFrameworks\Core\Utils\ExtendedReflectionClass;
 
 /**
  * Example of Use API
@@ -66,10 +71,7 @@ class Api {
     }
 
     public function addNamespace(string $namespace) {
-        $namespace = str_replace('/', '\\', $namespace);
-        $namespace = ltrim($namespace, '\\');
-        $namespace = rtrim($namespace, '.php');
-        $this->namespaces[] = '\\'.$namespace;
+        $this->namespaces[] = $namespace;
     }
 
     public function run() {
@@ -216,6 +218,90 @@ class Api {
         $router->run();
     }
 
+    public function loadFromDatabase(string $traitNamespace, string $parentNamespace, string $parentFilePath, string $cache_id = null) {
+        if(is_null($cache_id)) {
+            $cache_id = md5($traitNamespace);
+        }
+
+        Cache::stored(function() use($traitNamespace, $parentFilePath) {
+
+        $getUseClasses = function($classPath) use ($traitNamespace):string {
+            $usedClasses = "";
+            $classLines = file($classPath);
+            foreach($classLines as $ln => $line) {
+                if(strpos($line, 'use ') !== false) {
+                    if(strpos($line, $traitNamespace) !== false) {
+                        continue;
+                    }
+                    $usedClasses.= $line."\r\n";
+                }
+            }
+            return $usedClasses;
+        };
+
+        //Definindo Diretório
+        $parsed_file_location = Config::assigned('location.cache.default', 'log/cache/');
+        $parsed_file_location = rtrim($parsed_file_location, '/').'/autoload_class/';
+        Directory::mkdir($parsed_file_location);
+
+        $traitNamespace = ltrim($traitNamespace, '\\');
+        $directory = explode('\\', $traitNamespace);
+        array_pop($directory);
+        foreach($directory as $dir) {
+            $parsed_file_location = $parsed_file_location.$dir.'/';
+            Directory::mkdir($parsed_file_location);
+        }
+        $parsed_file_location = $parsed_file_location.$traitNamespace.'.php';
+
+        if(file_exists($parsed_file_location)) {
+            unlink($parsed_file_location);
+        }
+
+
+        if(!file_exists($parsed_file_location)) {
+            $result = '<?php
+
+            '.$getUseClasses($parentFilePath).'
+
+            trait '.$traitNamespace.' {
+                ';
+            $fromDatabase = Database::getInstance()->query("SELECT * FROM ?_rbf_api WHERE `status` > 0");
+            foreach($fromDatabase as $row) {
+                $methodName = Dispatcher::camelcased($row['title']);
+                if($row['utf8'] == 1) {
+                     $row['utf8'] = '@utf8 true';
+                } else
+                if($row['utf8'] == 0) {
+                    $row['utf8'] = '@utf8 false';
+                } else {
+                    $row['utf8'] = "";
+                }
+                ob_start();
+                echo '
+                /**
+                 * @route '.$row['method'].' '.$row['route'].'
+                 * @status '.$row['status'].'
+                 * @response '.$row['response'].'
+                 * '.$row['utf8'].'
+                 * '.$row['before'].'
+                 */
+                public function '.$methodName.'() {
+                    ';
+                    echo $row['phpcode'];
+                    echo '
+                }
+                ';
+                $result.= ob_get_clean();
+                unset($row);
+            }
+            $result.= '}';
+
+            file_put_contents($parsed_file_location, $result);
+        }
+    }, 'api-database-'.$cache_id, 60*60*24*30);
+        //include_once $parsed_file_location;
+        $this->addNamespace($parentNamespace);
+    }
 
     /**
      * @route POST /api/banners/sample-json
