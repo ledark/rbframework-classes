@@ -4,7 +4,37 @@ namespace RBFrameworks\Core;
 
 use RBFrameworks\Core\InputUser as RBInputUser;
 
-trait InputUserTrait {
+if(!function_exists('inputform')) {
+    function inputform() {
+        return new InputUser();
+    }
+    //Getting All in Array Form
+    function from_get():array {                 return InputForm::getFromGET();    }
+    function from_post():array {                return InputForm::getFromPOST();    }
+    function from_php():array {                 return InputForm::getFromPHP();    }
+    function from_session():array {             return InputForm::getFromSESSION();    }
+    function from_anywhere():array {            return InputForm::getFromAnywhere();    }
+    function from_headers():array {             return InputForm::getFromHeaders();    }
+    function from_uri(int $part = -1):string {  return InputForm::getFromUri($part); }
+
+    //Getting Specific Fields
+    function from_field_number(string $name, int $default = 0):int { return InputForm::getFieldNumber($name, $default); }
+    function from_field_text(string $name, string $default = ''):string { return InputForm::getFieldText($name, $default); }
+    function from_field_array(string $name, array $default = []):array { return InputForm::getFieldArray($name, $default); }
+    function from_field_textarea(string $name, string $default = ''):string { return InputForm::getFieldTextarea($name, $default); }
+
+}
+
+
+
+class InputForm {
+
+    /**
+     * Você pode usar InputForm::getFieldNumber('nome_do_campo') para pegar o valor de um campo
+     * Você pode usar InputForm::getFromPOST()['nome_do_campo'] para pegar o valor de um campo
+     */
+
+    use InputTrait;
 
     public static function getFieldNumber(string $name, int $default = 0):int {
         $options = new InputUserOptions();
