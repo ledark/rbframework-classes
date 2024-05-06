@@ -58,4 +58,11 @@ class PropString implements TypeInterface, PropInterface{
         return $instance->getString();
     }    
 
+    public function getShrinked() {
+        return $this->getValue();
+    }
+    public function getHydrated() {
+        return $this->getValue();
+    }
+
 }

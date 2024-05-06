@@ -17,5 +17,11 @@ interface TypeInterface {
 
     //getValue para extrair um valor mixed
     public function getValue();
+
+    //verifica se o valor já está shrinked. do contrário, assume-se ser hydratado, retorna o valor shrinked, ou seja o shrink.
+    public function getShrinked();
+
+    //verifica se o valor já está hydratado. do contrário, assume-se ser shrinked, retorna o valor original, ou seja o hydrata.
+    public function getHydrated();
   
 }

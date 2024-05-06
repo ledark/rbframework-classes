@@ -6,11 +6,16 @@ namespace RBFrameworks\Core\Types;
 
 use RBFrameworks\Core\Plugin;
 use RBFrameworks\Core\Types\Php\Common;
+use RBFrameworks\Core\Utils\Encoding;
 
 class Json implements TypeInterface {
 
     private $original_value;
     private $options = [];
+    private $json_decoded;
+    private $json_encoded;
+    private $json_encodedObj;
+
 
     public function __construct( $value) {
         $this->original_value = $value;
@@ -95,7 +100,7 @@ class Json implements TypeInterface {
     //Original Legacy Funcions
     public static function json_encode_nice($array, $options = null, $forceutf8 = true) {
         Plugin::load("utf8_encode_deep");
-        if($forceutf8) utf8_encode_deep($array);
+        if($forceutf8) Encoding::encodeDeep($array);
         $stringjson = json_encode($array);
         if(substr($options, 'comment' !== false )) $stringjson = " /* $stringjson */ ";
         return $stringjson;
@@ -107,8 +112,15 @@ class Json implements TypeInterface {
         $json = str_replace(array("\n","\r"),"",$json);
         $json = preg_replace('/([{,]+)(\s*)([^"]+?)\s*:/','$1"$3":',$json);
         $arr = json_decode($json,$assoc);
-        if($forceutf8) utf8_decode_deep($arr);
+        if($forceutf8) Encoding::decodeDeep($arr);
         return $arr;
     }  
+
+    public function getShrinked() {
+        return $this->getValue();
+    }
+    public function getHydrated() {
+        return $this->getValue();
+    }
 
 }

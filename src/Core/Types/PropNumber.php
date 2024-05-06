@@ -68,4 +68,11 @@ class PropNumber implements TypeInterface, PropInterface{
         return $instance->getNumber();
     }
 
+    public function getShrinked() {
+        return $this->getValue();
+    }
+    public function getHydrated() {
+        return $this->getValue();
+    }
+
 }

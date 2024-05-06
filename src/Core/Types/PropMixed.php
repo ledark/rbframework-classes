@@ -52,4 +52,11 @@ class PropMixed implements TypeInterface, PropInterface {
         return $instance->getValue();
     }      
 
+    public function getShrinked() {
+        return $this->getValue();
+    }
+    public function getHydrated() {
+        return $this->getValue();
+    }
+
 }

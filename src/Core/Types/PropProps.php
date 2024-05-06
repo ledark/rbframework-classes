@@ -80,4 +80,11 @@ class PropProps implements TypeInterface , PropInterface{
         return $instance;
     }
 
+    public function getShrinked() {
+        return $this->getValue();
+    }
+    public function getHydrated() {
+        return $this->getValue();
+    }
+
 }

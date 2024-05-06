@@ -70,5 +70,12 @@ class HtmlElement implements TypeInterface {
     public function getValue() {
         $this->value;
     }
+
+    public function getShrinked() {
+        return $this->getValue();
+    }
+    public function getHydrated() {
+        return $this->getValue();
+    }
   
 }

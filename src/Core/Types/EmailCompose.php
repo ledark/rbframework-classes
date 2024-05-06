@@ -115,5 +115,12 @@ class EmailCompose implements TypeInterface {
         return $this->_value;
     }
 
+    public function getShrinked() {
+        return $this->getValue();
+    }
+    public function getHydrated() {
+        return $this->getValue();
+    }
+
 
 }

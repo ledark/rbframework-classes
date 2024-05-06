@@ -6,6 +6,7 @@ class Phone
 {
 
     protected $_value;
+    protected $number;
 
     public function __construct(string $value)
     {
@@ -20,7 +21,7 @@ class Phone
         $value = preg_replace('/\D/', '', $value);
 
         //Validacoes Basicas
-        if (!ctype_digit($value)) throw new \Exception("Telefone Inv�lido" . $value);
+        if (!ctype_digit($value)) throw new \Exception("Telefone Inválido" . $value);
 
         //Outras Valida��es
 
