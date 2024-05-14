@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
  * @author   "Ricardo Bermejo" <ricardo@bermejo.com.br>
  * @copyright Copyright (c) 2021 Ricardo Bermejo
  * @package  Core\Database
- * @version  1.1.0 [Core v1.98.2] Ago/2021
+ * @version  1.2.0 [Core v1.98.2] May/2024
  * @license  Revised BSD
  */
 
@@ -42,6 +42,7 @@ use RBFrameworks\Core\Interfaces\isCrudable;
 use RBFrameworks\Core\Database\Traits\Crud as CrudTrait;
 use RBFrameworks\Core\Config;
 use RBFrameworks\Core\Debug;
+use RBFrameworks\Core\Cache;
 
 #[AllowDynamicProperties]
 class Database implements isCrudable
@@ -187,20 +188,82 @@ class Database implements isCrudable
      */
     private function improveArgs(&$arguments): void
     {
+
+        $parser = function(string $query, string $filter = ""):string {
+            $re = '/#FILTER::START\s(\w++)([\s\w\d\W]+)#FILTER::END/iuU';
+            preg_match_all($re, $query, $matches, PREG_SET_ORDER, 0);
+            foreach($matches as $match) {
+                $varname = $match[1];
+                $varcontent = $match[2];
+                if($varname != $filter) {
+                    $query = str_replace($match[0], '', $query);
+                } else {
+                    $query = str_replace($match[0], $varcontent, $query);
+                }
+            }
+            return $query;
+        };
+
         foreach ($arguments as &$arg) {
             if (is_string($arg)) {
+                $filter = '';
+                if(strpos($arg, '|') !== false) {
+                    $arg = explode('|', $arg);
+                    $filter = $arg[1];
+                    $arg = $arg[0];
+                }
                 if(Config::assigned('query.'.$arg, false) !== false) {
                     $arg = Config::get('query.'.$arg);
-                }                
+                }
+                $arg = $parser($arg, $filter);
                 $arg = preg_replace('/(\?_)/m', $this->getPrefixo(), $arg);
             }
         }
     }
 
+    public function getFieldListFromTable(string $table):array {
+        return Cache::stored(function() use($table) {
+            $table = str_replace('?_', $this->getPrefixo(), $table);
+            $database = new Database();
+            $query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = %s";
+            $res = $database->query($query, $table);
+            if(is_array($res)) {
+                $fieldList = [];
+                foreach($res as $r) {
+                    $fieldList[] = $r['COLUMN_NAME'];
+                }
+                return $fieldList;
+            }
+            return [];
+        }, 'getFieldListFromTable2'.$table, 60*60*24*7);
+    }
+
     private function improveFirstArgs(&$arguments):void {
         $count = 0;
         foreach($arguments as &$arg) {
-            if($count == 0 and is_string($arg)) $arg = preg_replace('/(\?_)/m', $this->getPrefixo(), $arg);
+
+            if($count == 0 and is_string($arg)) {
+                if(strpos($arg, '?_') !== false) {
+                    $table_name = $arg;
+                }
+                $arg = preg_replace('/(\?_)/m', $this->getPrefixo(), $arg);
+            }
+
+            //Prevent array $dados with invalid fields
+            if(isset($table_name) and !empty($table_name) and is_array($arg)) {
+                try {
+                    $fieldList = $this->getFieldListFromTable($table_name);
+                } catch(\Exception $e) {
+                    $fieldList = [];
+                }
+                if(count($fieldList)) {
+                    $res = array_intersect_key($arg, array_flip($fieldList));
+                    if(count($res)) {
+                        $arg = $res;
+                    }
+                }
+            }
+
             $count++;
         }
     }
