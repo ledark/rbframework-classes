@@ -10,6 +10,25 @@ abstract class Arrays {
 
     use ArraysDatabase;    
 
+    /**
+     * function pickOneFromArray
+     * Você tem uma array como por exemplo ["fruit" => "apple"]
+     * Você não sabe se a chave "fruit" existe, mas você quer pegar o valor dela
+     * Você pode enviar uma array de possíveis keys e pegar uma caso exista,
+     * como pickOne ["fruta", "fruit", "frutas", "fruits"] FromArray ["fruit" => "apple"]
+     * @param array $possibleKeys
+     * @param array $array
+     * @param mixed $default
+     */
+    public static function pickOneFromArray(array $possibleKeys, array $array, mixed $default = null) {
+        foreach ($possibleKeys as $key) {
+            if (isset($array[$key])) {
+                return $array[$key];
+            }
+        }
+        return $default;
+    }
+
     public static function setValueByKey(string $key, array &$data, $newValue = null) {
 
         if (!is_string($key) || empty($key) || !count($data)) {
