@@ -18,7 +18,7 @@
     "require": {
         "php": ">=7.2.0",
         "guzzlehttp/guzzle": "^6.5",
-        "sergeytsalkov/meekrodb": "^2.2",
+        "sergeytsalkov/meekrodb": "^3.1",
         "guzzlehttp/psr7": "^1.6",
         "eftec/bladeone": "^3.44",
         "eftec/bladeonehtml": "^1.4",
