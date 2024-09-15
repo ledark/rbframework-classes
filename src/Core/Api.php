@@ -25,6 +25,16 @@ use RBFrameworks\Core\Utils\ExtendedReflectionClass;
  * $routerApi->addNamespace('\Api\Produtos\Busca');
  * $routerApi->addNamespace('\Api\Newsletter');
  * $routerApi->run();
+ *
+ * And use the annotations in the class methods, that supports:
+ * -- @route GET|POST|PUT|DELETE|OPTIONS /api/uri
+ * -- @status 200
+ * -- @utf8 true|false or null to dont perform any action
+ * -- @before \function\name that not use any args
+ * -- @response html|text|json|css|javascript|file|redirect|image
+ * -- @descr description of the method, that can be used to perform some actions like log or history, using:
+ * ---- @history to push the route to the history
+ * ---- @log to log the description in a life log apiLogger
  */
 class Api {
     
@@ -104,7 +114,7 @@ class Api {
 
 
 
-                    $router->match($routeMethod, $routeUri, function() use ($namespace, $method) {
+                    $router->match($routeMethod, $routeUri, function() use ($namespace, $method, $routeUri) {
                         $forceEncodeUTF8 = null; 
                         $responseCode = 200;
                         $responseType = 'text';
@@ -138,6 +148,24 @@ class Api {
                             //response
                             if(preg_match('/@response\s+(html|text|json|css|javascript|file|redirect|image)/', $annotation, $matches)) {
                                 $responseType = $matches[1];
+                            }
+
+                            //description
+                            if(preg_match('/@descr\s+(.+)/', $annotation, $matches)) {
+                                $description = $matches[1];
+
+                                //push to the history
+                                if(strpos($description, '@history') !== false) {
+                                    $_SESSION['history'] = isset($_SESSION['history']) ? $_SESSION['history'] : [];
+                                    $_SESSION['history'] = array_slice($_SESSION['history'], -10);
+                                    $_SESSION['history'] = array_merge([$routeUri], $_SESSION['history']);
+                                }
+
+                                //push to the log
+                                if(strpos($description, '@log') !== false) {
+                                    Debug::log(str_replace('@log', '', $description), [], $routeUri, 'ApiLogger');
+                                }
+
                             }
                             
                         }
