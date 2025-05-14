@@ -2,6 +2,8 @@
 
 namespace Framework;
 
+use Framework\Types\File;
+
 abstract class Render {
 
     /**
@@ -35,6 +37,33 @@ abstract class Render {
             $assets_output_buffer[$name] = '';
             $assets_output_buffer[$name] = null;
             unset($assets_output_buffer[$name]);
+        }
+    }
+
+    public static function contentFile(string $name, string $path, bool $forceUTF8 = null):void {
+        $mime = File::getMimeType($path);
+        $prefix = '';
+        $suffix = '';
+        if($mime == 'application/javascript' and strpos($path, 'module.js')) {
+            if(file_exists($path)) {
+                $prefix = "<script type='module'>";
+            } else {
+                $prefix = "<script type='module' src='{$path}'>";
+            }
+            $suffix = "</script>";
+        } else
+        if($mime == 'application/javascript' and strpos($path, 'module.js') === false) {
+            $prefix = "<script>";
+            $suffix = "</script>";
+        } else
+        if($mime == 'text/css') {
+            $prefix = "<style>";
+            $suffix = "</style>";
+        }
+        if(file_exists($path)) {
+            self::content($name, $prefix.file_get_contents($path).$suffix, $forceUTF8);
+        } else {
+            self::content($name, $prefix.$suffix, $forceUTF8);
         }
     }
 
