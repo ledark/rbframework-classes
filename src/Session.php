@@ -77,6 +77,11 @@ class Session {
     public static function has(string $key):bool {
         return isset($_SESSION[$key]);
     }
+
+    public static function get(string $key, mixed $default = null):mixed {
+        return self::has($key) ? $_SESSION[$key] : $default;
+    }
+
     public static function clear():void {
         $_SESSION = [];
     }
