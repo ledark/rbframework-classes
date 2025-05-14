@@ -82,6 +82,16 @@ class Session {
         return self::has($key) ? $_SESSION[$key] : $default;
     }
 
+    public static function set(string $key, mixed $value):void {
+        $_SESSION[$key] = $value;
+    }
+
+    public static function remove(string $key):void {
+        if (self::has($key)) {
+            unset($_SESSION[$key]);
+        }
+    }
+
     public static function clear():void {
         $_SESSION = [];
     }
