@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "php": ">=8.4.0",
+        "php": ">=8.2.0",
         "sergeytsalkov/meekrodb": "^3.1",
         "eftec/bladeone": "^4.15",
         "bramus/router": "^1.6",
