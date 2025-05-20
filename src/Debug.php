@@ -98,7 +98,7 @@ CARD;
 
     public static function logFile(string $filename, string $message, array $context =[], string $group = 'log', string $directory = 'log/logs/'):void {
         global $RB_config_overwrite;
-        $RB_config_overwrite['log_file'] = rtrim($directory, '/').'/[filename_backtrace].log';
+        $RB_config_overwrite['log_file'] = rtrim($directory, '/').'/'.$filename.'-[filename_backtrace].log';
         self::log($message, $context, $group, $filename);
         $RB_config_overwrite = [];
     }
