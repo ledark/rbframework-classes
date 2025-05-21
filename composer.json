@@ -1,7 +1,7 @@
 {
     "name": "ledark/rbframeworks2",
     "type": "library",
-    "description": "Utilitarios para RBFrameworks otimizado para PHP 8.4+",
+    "description": "Utilitarios para RBFrameworks otimizado para PHP 8.2+",
     "keywords": [
         "rbframeworks"
     ],
