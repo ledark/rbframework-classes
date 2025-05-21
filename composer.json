@@ -1,11 +1,11 @@
 {
-    "name": "ledark/rbframeworks",
+    "name": "ledark/rbframeworks2",
     "type": "library",
-    "description": "Utilitarios para RBFrameworks",
+    "description": "Utilitarios para RBFrameworks otimizado para PHP 8.2+",
     "keywords": [
         "rbframeworks"
     ],
-    "homepage": "https://github.com/ledark/rbframework-classes",
+    "homepage": "https://github.com/ledark/rbframework-classes-v2",
     "license": "MIT",
     "authors": [
         {
@@ -16,32 +16,27 @@
         }
     ],
     "require": {
-        "php": ">=7.2.0",
-        "guzzlehttp/guzzle": "^6.5",
-        "sergeytsalkov/meekrodb": "^2.2",
-        "guzzlehttp/psr7": "^1.6",
-        "eftec/bladeone": "^3.44",
-        "eftec/bladeonehtml": "^1.4",
+        "php": ">=8.2.0",
+        "sergeytsalkov/meekrodb": "^3.1",
+        "eftec/bladeone": "^4.15",
         "bramus/router": "^1.6",
-        "symfony/cache": "^5.4",
-        "phpmailer/phpmailer": "^6.6",
-        "catfan/medoo": "^2.1"
+        "symfony/cache": "^7.1",
+        "guzzlehttp/guzzle": "^7.9"
     },
     "autoload": {
         "psr-4": {
-            "RBFrameworks\\": [
+            "Framework\\": [
                 "src/",
-                "src/v1/",
-                "src/v0/",
                 "tests/"
-            ],
-            "RBFrameworks\\Core\\Utils\\": "src/Core/Utils"
+            ]
         },
         "files": [
             "_include.php"
         ]
     },
     "require-dev": {
-        "phpunit/phpunit": "^8.0.0"
+        "phpunit/phpunit": "^9.5",
+        "symfony/console": "^7.1",
+        "chrome-php/chrome": "^1.11"
     }
 }
