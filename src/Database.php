@@ -20,7 +20,8 @@ class Database {
 
     public function __construct(mixed $config = null) {
         $config = $this->extractConfig($config);
-        $dsn = $config['type']??'mysql'.":host={$config['server']};dbname={$config['database']};";
+        $port = $config['port']??'3306';
+        $dsn = $config['type']??'mysql'.":host={$config['server']};port={$port};dbname={$config['database']};";
         $this->meekrodb = new MeekroDB($dsn, $config['login'], $config['senha']);
         $this->resolveMeekroDB();
         $this->defaultHandlers(is_null(Config::get('database.logs')) ? '' : Config::get('database.logs'));
