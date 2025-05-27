@@ -31,7 +31,7 @@ class Debug {
     }
 
     public static function devCard($message, string $title = "Core\Debug\Card", string $style = 'background: #D90707;color: #FFF;'):void {
-        if(is_developer()) {
+        if(self::isDeveloper()) {
             ob_start();
             self::message($message);
             $message = ob_get_clean();
@@ -162,6 +162,21 @@ CARD;
             if(empty($res[$level])) unset($res[$level]);
         }
         return $res;
+    }
+
+    public static function getFilenameBacktrace(int $level, bool $withLine = false):string {
+        $backtrace = self::getFileBacktrace();
+        if($level > count($backtrace)) $level = count($backtrace);
+        if(!isset($backtrace[$level])) return '';
+        $filename = $backtrace[$level];
+        if(!$withLine) {
+            $filename = explode(':', $filename);
+            $filename = $filename[0];
+            return $filename;
+        } else {
+            return $filename;
+        }
+
     }
 
 
