@@ -2,9 +2,19 @@
 
 namespace Framework;
 
+use Framework\Types\Directory;
 use Framework\Types\File;
 
 abstract class Render {
+
+    public static function dictReplaces(string $content, array $adicionalReplaces = []):string {
+        $dict = Config::get('dict', []);
+        $dict = array_merge($dict, $adicionalReplaces);
+        $re = '/\{(?!\$)([\w\.]+)\}/';
+        return preg_replace_callback($re, function($matches){
+            return Config::get('dict.'.$matches[1], $matches[0]);
+        }, $content);
+    }
 
     /**
      * Manages a global output buffer for a given asset name.
@@ -33,7 +43,9 @@ abstract class Render {
             $assets_output_buffer[$name].= "\r\n\t".$buffer;
         }
         if(is_null($buffer)) {
-            echo $assets_output_buffer[$name];
+            $finalContent = $assets_output_buffer[$name];
+            $finalContent = self::dictReplaces($finalContent);
+            echo $finalContent;
             $assets_output_buffer[$name] = '';
             $assets_output_buffer[$name] = null;
             unset($assets_output_buffer[$name]);
@@ -65,6 +77,79 @@ abstract class Render {
         } else {
             self::content($name, $prefix.$suffix, $forceUTF8);
         }
+    }
+
+    public static function streamFile(string $realfilepath, array $replaces = [], array $options = []) {
+        if(!file_exists($realfilepath)) {
+            throw new \Exception('File not found in Render::streamFile: '.$realfilepath);
+        }
+
+        $httpSite = Config::get('server.base_uri');
+
+        //DefaultOptions
+        $options = array_merge([
+            'process' => true,
+            'buffer' => null,
+            'forceUTF8' => null,
+            'assets_folder' => null,
+            'filename' => null,
+            'pathcallback' => function(string $fakepath) {
+                return $fakepath;
+            },
+        ], $options);
+
+        $getFakepath = function(bool $process = true) use ($realfilepath, $options, $replaces, $httpSite) {
+            if(is_null($options['assets_folder'])) {
+                $options['assets_folder'] = Config::get('location.cache.assets', get_root_path().'log/cache/assets/');
+                $options['assets_folder'] = rtrim($options['assets_folder'], '\\');
+                $options['assets_folder'] = rtrim($options['assets_folder'], '/');
+                if(!is_dir($options['assets_folder'])) {
+                    Directory::mkdir($options['assets_folder']);
+                }
+            }
+            if(is_null($options['filename'])) {
+                $options['filename'] = basename($realfilepath);
+            }
+            if(!$process) {
+                return str_replace('//', '/', $httpSite.$options['pathcallback']($options['assets_folder'].'/'.$options['filename']));
+            }
+            if(!file_exists($options['assets_folder'].'/'.$options['filename']) or filemtime($realfilepath) > filemtime($options['assets_folder'].'/'.$options['filename'])) {
+                $content = file_get_contents($realfilepath);
+                if ($content === false) {
+                    throw new \RuntimeException("Falha ao ler {$realfilepath}");
+                }
+                $content = self::dictReplaces($content, $replaces);
+                if(file_put_contents($options['assets_folder'].'/'.$options['filename'], $content) === false) {
+                    throw new \RuntimeException("Falha ao escrever");
+                }
+                //copy($realfilepath, $options['assets_folder'].'/'.$options['filename']);
+            }
+            return $options['pathcallback']($options['assets_folder'].'/'.$options['filename']);
+        };
+
+        if(!$options['process']) {
+            return $getFakepath(false);
+        }
+
+        $mime = File::getMimeType($realfilepath);
+        if($mime == 'application/javascript' and strpos($realfilepath, 'module.js')) {
+            $prefix = "<script type='module' src='".$httpSite.$getFakepath()."'>";
+            $suffix = "</script>";
+        } else
+        if($mime == 'application/javascript' and strpos($realfilepath, 'module.js') === false) {
+            $prefix = "<script src='".$httpSite.$getFakepath()."'>";
+            $suffix = "</script>";
+        } else
+        if($mime == 'text/css') {
+            $prefix = "<link rel='stylesheet' href='".$httpSite.$getFakepath()."'>";
+            $suffix = "";
+        }
+
+        if(is_null($options['buffer'])) {
+            return $httpSite.$getFakepath();
+        }
+
+        self::content($options['buffer'], $prefix.$suffix, $options['forceUTF8']);
     }
 
 }
