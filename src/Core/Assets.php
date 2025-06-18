@@ -115,7 +115,7 @@ abstract class Assets {
         
         if($forceUTF8 === true) utf8_encode($buffer);
         if($forceUTF8 === false) utf8_decode($buffer);        
-        $assets_output_buffer[$name].= $buffer;
+        $assets_output_buffer[$name].= "\r\n\t".$buffer;
         Debug::log('into $name', $assets_output_buffer, 'assets_output_buffer', 'CoreAssetsRender');
     }
     if(is_null($buffer)) {
@@ -149,11 +149,13 @@ abstract class Assets {
             $dir[] = dirname($path).'/';
             $dir[] = dirname($path).'/../';
         };
+
+        $debug_backtrace = debug_backtrace();
     
-        if(isset(debug_backtrace()[0]['file'])) $resolveDirectory($components_directories, debug_backtrace()[0]['file']);
-        if(isset(debug_backtrace()[1]['file'])) $resolveDirectory($components_directories, debug_backtrace()[1]['file']);
-        if(isset(debug_backtrace()[2]['file'])) $resolveDirectory($components_directories, debug_backtrace()[2]['file']);
-        if(isset(debug_backtrace()[3]['file'])) $resolveDirectory($components_directories, debug_backtrace()[3]['file']);        
+        if(isset($debug_backtrace[0]['file'])) $resolveDirectory($components_directories, $debug_backtrace[0]['file']);
+        if(isset($debug_backtrace[1]['file'])) $resolveDirectory($components_directories, $debug_backtrace[1]['file']);
+        if(isset($debug_backtrace[2]['file'])) $resolveDirectory($components_directories, $debug_backtrace[2]['file']);
+        if(isset($debug_backtrace[3]['file'])) $resolveDirectory($components_directories, $debug_backtrace[3]['file']);
 
         $inner = self::componentString($component_name, $replaces, $components_directories);
 
