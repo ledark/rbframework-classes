@@ -8,13 +8,17 @@ use RBFrameworks\Core\Debug;
 
 class Config
 {
+
+    private static function getCollectionSuffix(bool $forceDevelopment = false):string {
+        if($forceDevelopment === true or (defined('ENVIRONMENT') and ENVIRONMENT == 'development')) {
+            return '.development.php';
+        }
+        return '.php';
+    }
+
     public static function getCollectionDir():string {
-        if(is_dir(__DIR__.'/../../collections')) return __DIR__.'/../../collections/'; //_app/class/Core/ or src/Core/
-        if(is_dir('./collections')) return './collections/';
-        if(is_dir('_app/collections/')) return '_app/collections/';
         if(!function_exists('get_collection_dir')) {
             throw new \Exception('Create get_collection_dir() function in project that returns the collection dir');
-            function get_collection_dir():string { return '/_app/collections/'; }
         }
         return get_collection_dir();        
     }
@@ -28,8 +32,12 @@ class Config
     }
 
     public static function assigned(string $name, $default = '', $collections_dir = null) {
-        $res = self::get($name, $collections_dir);
-        return is_null($res) ? $default : $res;
+        try {
+            $res = self::get($name, $collections_dir);
+            return is_null($res) ? $default : $res;
+        } catch (\Exception $e) {
+            return $default;
+        }
     }
 
     public static function get(string $name, string $collections_dir = null) {
@@ -40,13 +48,14 @@ class Config
 
     private static function include_file(string $name, string $collections_dir = null) {
         if(is_null($collections_dir)) $collections_dir  = self::getCollectionDir();
-        if(file_exists($collections_dir.$name.'.php')) {
-            return include($collections_dir.$name.'.php');
+
+        if(file_exists($collections_dir.$name.self::getCollectionSuffix())) {
+            return include($collections_dir.$name.self::getCollectionSuffix());
         }
         $name = str_replace('.', '/', $name);
 
-        if (file_exists($collections_dir.$name.'.php')) {
-            return include($collections_dir.$name.'.php');
+        if (file_exists($collections_dir.$name.self::getCollectionSuffix())) {
+            return include($collections_dir.$name.self::getCollectionSuffix());
         }
         
         return null;
@@ -59,7 +68,7 @@ class Config
         $file = new File($collections_dir.$filename);
         $file->clearSearchFolders();
         if(!is_null($collections_dir)) $file->addSearchFolder($collections_dir);
-        $file->addSearchExtension('.php');
+        $file->addSearchExtension(self::getCollectionSuffix());
 
         if(!$file->hasFile()) return is_callable($errorCallback) ? $errorCallback() : array();
         return include($file->getFilePath());
@@ -70,11 +79,11 @@ class Config
         //Tentativa 1) MultiDirectory
         $collections_directory = is_null($collections_dir) ? self::getCollectionDir() : './';
         $collections_filename = str_replace('.', '/', $name);
-        $collections_filepath = $collections_directory.dirname($collections_filename).'.php';
+        $collections_filepath = $collections_directory.dirname($collections_filename).self::getCollectionSuffix();
         if(file_exists($collections_filepath)) {
             $collections_data = include($collections_filepath);
             if(is_array($collections_data)) {
-                return Arrays::getValueByDotKey(basename($collections_filename, '.php'), $collections_data, null, '.');
+                return Arrays::getValueByDotKey(basename($collections_filename, self::getCollectionSuffix()), $collections_data, null, '.');
             }
         }
         unset($collections_directory, $collections_filename, $collections_filepath, $collections_data);
@@ -101,7 +110,10 @@ class Config
 
         $collection = self::include_collection_file($collection_name, null, $collections_dir);
 
-        
+        if(!is_array($collection)) {
+            debug_write_log('collections_fails', 'Collection "'.$collection_name.'" not found in "'.$collections_dir.'"');
+            return null;
+        }
 
         
         return Arrays::getValueByDotKey($collection_path, $collection, null, '.');
@@ -109,10 +121,10 @@ class Config
 
     public static function getCollectionNames():array {
         $collections_dir = self::getCollectionDir();
-        $files = glob($collections_dir.'/*.php');
+        $files = glob($collections_dir.'/*'.self::getCollectionSuffix());
         $names = array();
         foreach($files as $file) {
-            $names[] = str_replace('.php', '', basename($file));
+            $names[] = str_replace(self::getCollectionSuffix(), '', basename($file));
         }
         return $names;
     }

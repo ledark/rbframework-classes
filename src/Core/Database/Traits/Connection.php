@@ -8,6 +8,7 @@ use RBFrameworks\Core\Types\PropProps;
 
 trait Connection {
 
+    public $modelObject;
 
     private function resolvePrefixo(string $prefixo):void {
         $this->prefixo = $prefixo;

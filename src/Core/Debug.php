@@ -6,6 +6,7 @@ use RBFrameworks\Core\Utils\Strings\Dispatcher;
 use RBFrameworks\Core\Utils\Variables;
 use RBFrameworks\Core\Plugin;
 use RBFrameworks\Core\Config;
+use RBFrameworks\Core\Directory;
 use RBFrameworks\Core\Utils\Encoding;
 
 if(!function_exists('is_developer')) {
@@ -115,7 +116,6 @@ CARD;
 
 
 /**
-     * Nomes de GROUPS Incluídos Aqui são Excluídos do DEBUG
      *
      * @return array
      */
@@ -126,7 +126,6 @@ CARD;
         return array_merge($ignored, []);        
     }
     /**
-     * Nomes de Arquivo Incluídos Aqui são Excluídos do DEBUG
      *
      * @return array
      */
@@ -139,11 +138,14 @@ CARD;
     //WriteFile
     public static function log($message, array $context = [], string $group = 'log', string $filename_backtrace = null, int $backtrace_level = 0) {
         //Plugin::load('utf8_encode_deep');
+        Plugin::load('trace_axiom');
+        $skips = 0;
         $uid = uniqid();
         $message = new Variables($message);
         if(is_null($filename_backtrace)) {
-            $filename_backtrace = debug_backtrace()[$backtrace_level]['file'];
-            $filename_backtrace = dirname($filename_backtrace).'.'.basename($filename_backtrace, '.php');
+            $filename_backtrace = date('Ymd');
+            //$filename_backtrace = debug_backtrace()[$backtrace_level]['file'];
+            //$filename_backtrace = dirname($filename_backtrace).'.'.basename($filename_backtrace, '.php');
         }
             $filename_backtrace = Dispatcher::file($filename_backtrace);
             $filename_backtrace = str_replace('\\', '-', $filename_backtrace);
@@ -151,12 +153,32 @@ CARD;
 
         if(in_array($group, self::logIgnoreGroup()) == true) return;
         if(in_array($filename_backtrace, self::logIgnoreFilenames()) == true) return;
+        foreach(Config::assigned('debug.ignore_contexts', []) as $ignore) {
+            if($ignore($context) == true) {
+                $skips++;
+            }
+        }
 
+        if(isset($_SERVER['REMOTE_ADDR'])) {
+            if(in_array($_SERVER['REMOTE_ADDR'], Config::assigned('debug.ignore_ips', []))) return;
+        }
+
+        if($skips > 0) return;
+
+        if(isset($_SERVER['REMOTE_ADDR'])) {
+            $compl = preg_replace('/[^a-z0-9]/', '', $_SERVER['REMOTE_ADDR']).'.';
+        } else {
+            $compl = 'NOIP';
+        }
 
         $filename = Config::assigned('location.log_file', 'debug.[filename_backtrace].log');
         $filename = str_replace('[filename_backtrace]', $filename_backtrace, $filename);
+        $filename = str_replace('debug.', 'debug.'.$compl, $filename);
+        Directory::mkdir(dirname($filename));
         Encoding::DeepEncode($context);
         file_put_contents($filename, date('Y-m-d H:i:s').'['.$uid.']'.$group.': '.$message->getString().' --'.json_encode($context)."\r\n", FILE_APPEND);
+
+        //trace_axiom_send(['message' => $message->getString(), 'context' => $context, 'group' => $group, 'filename' => $filename_backtrace]);
     }
 
     public static function pre($message) {
@@ -167,16 +189,22 @@ CARD;
 
     public static function getFileBacktrace():array {
         $res = [];
-        $backtrace = debug_backtrace();
-        foreach($backtrace as $level => $prop) {
-            $res[$level] = '';
-            if(isset($prop['file']) and isset($prop['line'])) {
-                $res[$level] = $prop['file'].':'.$prop['line'];
-            } else {
-                if(isset($prop['function']) and is_string($prop['function']) ) $res[$level].= 'fn:'.$prop['function'];
-                if(isset($prop['class']) and is_string($prop['function'])) $res[$level].= ' ['.$prop['class'].']';
+        try {
+            $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 10);
+            foreach($backtrace as $level => $prop) {
+                $res[$level] = '';
+                if(isset($prop['file']) and isset($prop['line'])) {
+                    $res[$level] = $prop['file'].':'.$prop['line'];
+                } else {
+                    if(isset($prop['function']) and is_string($prop['function']) ) $res[$level].= 'fn:'.$prop['function'];
+                    if(isset($prop['class']) and is_string($prop['function'])) $res[$level].= ' ['.$prop['class'].']';
+                }
+                if(empty($res[$level])) unset($res[$level]);
             }
-            if(empty($res[$level])) unset($res[$level]);
+        } catch(\Exception $e) {
+            $res = [
+                'file' => $e->getFile().':'.$e->getLine(),
+            ];
         }
         return $res;
     }

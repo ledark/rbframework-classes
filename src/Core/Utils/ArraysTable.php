@@ -61,7 +61,7 @@ abstract class ArraysTable {
     }
 
 
-    function array2table_simple($p) {
+    public static function array2table_simple($p) {
         ob_start();
         $j = 0;
         echo '<table class="table">';
@@ -85,7 +85,7 @@ abstract class ArraysTable {
         
     }
 
-    function array2table_ficha($p, $replaces = array()) {
+    public static function array2table_ficha($p, $replaces = array()) {
         ob_start();
         echo '<table class="table">';
         foreach($p as $i => $r) {
@@ -153,7 +153,7 @@ abstract class ArraysTable {
         }
         $table .= '>';
         
-        foreach($columns as $column) {
+        foreach($columns as $columnIndex => $column) {
             $table .= '<th';
             foreach($options['th'] as $key => $value) {
                 $table .= ' '.$key.'="'.$value.'"';
@@ -179,13 +179,17 @@ abstract class ArraysTable {
             }
             $table .= '>';
             
-            foreach($columns as $column) {
+            foreach($columns as $columnIndex => $column) {
                 $table .= '<td';
                 foreach($options['td'] as $key => $value) {
                     $table .= ' '.$key.'="'.$value.'"';
                 }
                 $table .= '>';
-                $table .= $row[$column];
+                if(is_numeric($columnIndex)) {
+                    $table .= $row[$column];
+                } else {
+                    $table .= $row[$columnIndex];
+                }
                 $table .= '</td>';
             }
 

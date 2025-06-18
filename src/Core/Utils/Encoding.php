@@ -164,7 +164,7 @@ class Encoding
      *
      * 1) when any of these characters:   ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞß
      *    are followed by any of these:  ("group B")
-     *                                    ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶•¸¹º»¼½¾¿
+     *                                    ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶?¸¹º»¼½¾¿
      * For example:   %ABREPRESENT%C9%BB. «REPRESENTÉ»
      * The "«" (%AB) character will be converted, but the "É" followed by "»" (%C9%BB)
      * is also a valid unicode character, and will be left unchanged.
@@ -346,6 +346,9 @@ class Encoding
 
   protected static function utf8_decode($text, $option = self::WITHOUT_ICONV)
   {
+    if(function_exists('mb_convert_encoding')) {
+      return mb_convert_encoding($text, 'UTF-8', 'ISO-8859-1');
+    }
     if ($option == self::WITHOUT_ICONV || !function_exists('iconv')) {
       $o = utf8_decode(
         str_replace(array_keys(self::$utf8ToWin1252), array_values(self::$utf8ToWin1252), self::toUTF8($text))
@@ -386,12 +389,12 @@ class Encoding
 
         //utf8_encode
       case 'UTF-8':
-        $input = utf8_encode($input);
+        $input = mb_convert_encoding($input, 'UTF-8', 'ISO-8859-1');
         break;
 
         //utf8_decode
       case 'ISO-8859-1':
-        $input = utf8_decode($input);
+        $input = mb_convert_encoding($input, 'ISO-8859-1', 'UTF-8');
 
         break;
 

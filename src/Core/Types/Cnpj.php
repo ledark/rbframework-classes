@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace RBFrameworks\Core\Types;
 
@@ -7,9 +7,14 @@ use RBFrameworks\Core\Exceptions\CoreTypeException as Exception;
 class Cnpj {
 
     protected $_value;
-    
+    public $number;
+    public $formatted;
+    public $untouched;
+    public $_throwException;
+
     public function __construct(string $value, bool $throwException = true) {
         try {
+            $this->untouched = $value;
             $this->_value = $this->validate($value);
             $this->_throwException = $throwException;
         } catch (Exception $e) {
@@ -22,7 +27,7 @@ class Cnpj {
     }
 
     private function validate(string $value):string {
-        
+
         //BasicPreparation
         $value = trim($value);
         $value = str_replace(' ', '', $value);
@@ -62,7 +67,7 @@ class Cnpj {
         if(strlen($value) == 14 and !$this->validDV()) {
             throw new Exception("CNPJ invalido");
         }
-        
+
 
         return $value;
     }
@@ -74,10 +79,11 @@ class Cnpj {
     public function getFormatted():string {
         if(strlen($this->_value) == 14) {
             return vsprintf("%s%s.%s%s%s.%s%s%s/%s%s%s%s-%s%s", str_split($this->_value));
-        } else 
+        } else
         if(strlen($this->_value) == 15) {
             return vsprintf("%s%s%s.%s%s%s.%s%s%s/%s%s%s%s-%s%s", str_split($this->_value));
         }
+        return is_null($this->_value) ? $this->untouched : $this->_value;
     }
 
     /*

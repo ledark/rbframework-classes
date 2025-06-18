@@ -63,19 +63,25 @@ class File {
         '.html',
         '.css',
         '.js',
-    ];
+        ];
         foreach($search_extensions as $extension) {
             $this->addSearchExtension($extension);
         }
-        
-
-        $this
-            ->addSearchFolder( dirname(debug_backtrace()[0]['file']).'/' )
-            ->addSearchFolder( dirname(debug_backtrace()[1]['file']).'/' )
-            ->addSearchFolder( dirname(debug_backtrace()[0]['file']).'/../' )
-            ->addSearchFolder( dirname(debug_backtrace()[1]['file']).'/../' )
-            ->addSearchPrefix('')
-        ;
+        $debug_backtrace = debug_backtrace();
+        //$debug_backtrace = [];
+        if(isset($debug_backtrace[0]) and isset($debug_backtrace[0]['file'])) {
+            $this->addSearchFolder( dirname($debug_backtrace[0]['file']).'/' );
+        }
+        if(isset($debug_backtrace[0]) and isset($debug_backtrace[0]['file'])) {
+            $this->addSearchFolder( dirname($debug_backtrace[1]['file']).'/' );
+        }
+        if(isset($debug_backtrace[0]) and isset($debug_backtrace[0]['file'])) {
+            $this->addSearchFolder( dirname($debug_backtrace[0]['file']).'/../' );
+        }
+        if(isset($debug_backtrace[0]) and isset($debug_backtrace[0]['file'])) {
+            $this->addSearchFolder( dirname($debug_backtrace[1]['file']).'/../' );
+        }
+        $this->addSearchPrefix('');
     }
 
     //Utils
@@ -301,7 +307,7 @@ class File {
     }
 
     /**
-     * static needsFile retorna o objeto File, ou falha se não conseguir.
+     * static needsFile retorna o objeto File, ou falha se nï¿½o conseguir.
      *
      * @param string $filePath
      * @param string|null $message

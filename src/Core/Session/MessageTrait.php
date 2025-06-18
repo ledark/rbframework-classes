@@ -12,7 +12,7 @@ trait MessageTrait
         $Msg->render();
     }
 
-    public static function doMsgError(string $message, string $redir = null):void {
+    public static function doMsgError(string $message, ?string $redir = null):void {
         (new Message())
             ->prepare()
             ->setMessage($message)
@@ -25,7 +25,7 @@ trait MessageTrait
         }
     }
 
-    public static function doMsgSuccess(string $message, string $redir = null):void {
+    public static function doMsgSuccess(string $message, ?string $redir = null):void {
         (new Message())
             ->prepare()
             ->setMessage($message)

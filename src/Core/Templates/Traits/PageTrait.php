@@ -57,6 +57,7 @@ trait PageTrait {
 
         $this->setVar($var);
         ob_start();
+	extract($this->global);
         if(!empty($template->getFilePath())) {
             include $template->getFilePath();
         } else {

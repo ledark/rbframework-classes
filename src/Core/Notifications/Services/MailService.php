@@ -56,7 +56,7 @@ class MailService extends Service {
             $this->mail->AltBody = strip_tags(Config::get('mail.body'));      
             
         } catch (Exception $e) {
-            $this->errors[] = "Message could not be created. Mailer Error: {$this->mail->ErrorInfo} $e->errorMessage();";
+            $this->errors[] = "Message could not be created. Mailer Error: {$this->mail->ErrorInfo} {$e->getMessage()};";
         } catch (\Exception $e) {
             $this->errors[] = "PHP err exception on created: {$e->getMessage()}";
         }   
@@ -80,6 +80,7 @@ class MailService extends Service {
     }
 
     public function useTemplate(string $message, string $subject = "", string $template = "sample" ):object {
+        $this->template = $template;
         ob_start();
         include($this->getTemplateDir().$template.$this->getTemplateExtension());
         $template = ob_get_clean();
@@ -113,26 +114,41 @@ class MailService extends Service {
         switch($collection) {
             case 'mail.from':
                 foreach($recipients as $mail => $name) {
+                    if(is_numeric($mail) and is_string($name)) {
+                        $mail = $name;
+                    }
                     $this->mail->setFrom($mail, $name);
                 }
             break;
             case 'mail.to':
                 foreach($recipients as $mail => $name) {
+                    if(is_numeric($mail) and is_string($name)) {
+                        $mail = $name;
+                    }
                     $this->mail->addAddress($mail, $name);
                 }
             break;
             case 'mail.reply':
                 foreach($recipients as $mail => $name) {
+                    if(is_numeric($mail) and is_string($name)) {
+                        $mail = $name;
+                    }
                     $this->mail->addReplyTo($mail, $name);
                 }
             break;
             case 'mail.cc':
                 foreach($recipients as $mail => $name) {
+                    if(is_numeric($mail) and is_string($name)) {
+                        $mail = $name;
+                    }
                     $this->mail->addCC($mail, $name);
                 }
             break;
             case 'mail.bcc':
                 foreach($recipients as $mail => $name) {
+                    if(is_numeric($mail) and is_string($name)) {
+                        $mail = $name;
+                    }
                     $this->mail->addBCC($mail, $name);
                 }
             break;
@@ -145,7 +161,7 @@ class MailService extends Service {
 
     public function getTemplate():string {
         ob_start();
-        include($this->getTemplateDir().$template.$this->getTemplateExtension());
+        include($this->getTemplateDir().$this->template.$this->getTemplateExtension());
         $template = ob_get_clean();
         return (new Replace($template, [
             'title' => $this->mail->Subject,
@@ -164,7 +180,7 @@ class MailService extends Service {
             $this->mail->send();
             $this->mail->Body = $originalBody;
         } catch (Exception $e) {
-            $this->errors[] = "Message could not be sent. Mailer Error: {$this->mail->ErrorInfo} $e->errorMessage();";
+            $this->errors[] = "Message could not be sent. Mailer Error: {$this->mail->ErrorInfo} {$e->getMessage()};";
         } catch (\Exception $e) {
             $this->errors[] = "PHP err exception: {$e->getMessage()}";
         }

@@ -249,6 +249,7 @@ class Http {
     }
     
     public static function redir(string $uri):void {
+        $uri = str_replace('{httpSite}', self::getSite(), $uri);
         header('Location: ' . $uri);
         exit();
     }

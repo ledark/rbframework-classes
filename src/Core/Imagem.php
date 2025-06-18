@@ -30,7 +30,10 @@ class Imagem {
     public $fallbackImage = '_app/resources/semfoto.jpg';
     
 
-    public function __construct(string $path) {
+    public function __construct(string $path, array $config = []) {
+		
+		if(isset($config['fallbackImage'])) $this->fallbackImage = $config['fallbackImage'];
+				
         $this->setOriginalPath($path);
         $this->detectUseWebp();
         $this->detectUseCache();

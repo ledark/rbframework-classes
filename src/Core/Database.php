@@ -41,7 +41,10 @@ use MeekroDB;
 use RBFrameworks\Core\Interfaces\isCrudable;
 use RBFrameworks\Core\Database\Traits\Crud as CrudTrait;
 use RBFrameworks\Core\Config;
+use RBFrameworks\Core\Debug;
+use RBFrameworks\Core\Cache;
 
+#[AllowDynamicProperties]
 class Database implements isCrudable
 {
 
@@ -51,9 +54,14 @@ class Database implements isCrudable
     public $tabela;
     public $model;
 
+    public $throw_exception_on_nonsql_error;
+    public $uncaught;
+
     private $host;
     private $user;
     private $pass;
+
+    private static $instance = null;
 
     /**
      * Configs
@@ -96,14 +104,18 @@ class Database implements isCrudable
     use Database\Traits\TableQueryOperations;
     use Database\Traits\Hooks;
 
-    public function __construct(string $tabela = 'untitled_tablename', array $model = [], $config = null)
+    public function __construct(string $tabela = 'untitled_tablename', array $model = [], $config = null, bool $prefer_singleton = false)
     {
 
         //Configs
         $config = $this->extractConfig($config);
 
         //ServerDatabaseConn
-        $this->DB = new MeekroDB($config['server'], $config['login'], $config['senha'], $config['database']);
+        if($prefer_singleton) {
+            $this->DB = database_meekro();
+        } else {
+            $this->DB = new MeekroDB($config['server'], $config['login'], $config['senha'], $config['database']);
+        }
         $this->resolveMeekroDB();
         $this->defaultHandlers(is_null(Config::get('database.logs')) ? '' : Config::get('database.logs'));
         $this->database = $config['database'];
@@ -123,7 +135,10 @@ class Database implements isCrudable
     }
 
     public static function getInstance() {
-        return new self();
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
     public function getPDOInstance():\PDO {
         return new \PDO($this->getDataSourceName(), $this->user, $this->pass);
@@ -131,11 +146,15 @@ class Database implements isCrudable
 
     private function resolveMeekroDB()
     {
-        $this->DB->error_handler = false; // disable standard error handler
-        $this->DB->nonsql_error_handler = false; // disable standard error handler
-        $this->DB->throw_exception_on_error = true; // throw exception on mysql query errors
-        $this->DB->throw_exception_on_nonsql_error = true; // throw exception on library errors (bad syntax, etc)        
-    }
+        try {            
+            $this->DB->error_handler = false; // disable standard error handler
+            $this->DB->nonsql_error_handler = false; // disable standard error handler
+            $this->DB->throw_exception_on_error = true; // throw exception on mysql query errors
+            $this->DB->throw_exception_on_nonsql_error = true; // throw exception on library errors (bad syntax, etc)        
+        } catch (\Exception $e) {
+            Debug::log($e->getMessage(), [], 'MeekroDB.Exception','MeekroDB');
+        }    
+     }
 
     /**
      * Example of usage:
@@ -165,11 +184,31 @@ class Database implements isCrudable
         return $this->query($query);
     }
 
+    public function upserting(string $table, array $dados, string $where) {
+        try {
+            $this->insert($table, $dados);
+            return [
+                'inserted' => true,
+                'updated' => false,
+                'cod_insert' => $this->insertId(),
+                'affected_rows' => $this->affectedRows(),
+            ];
+        } catch(\Exception $e) {
+            $this->update($table, $dados, $where);
+            return [
+                'inserted' => false,
+                'updated' => true,
+                'cod_insert' => 0,
+                'affected_rows' => $this->affectedRows(),
+            ];
+        }
+    }
+
     public function __call(string $name, array $arguments)
     {
         if (in_array($name, ['table_exists'])) return call_user_func_array(array($this, $name), $arguments);
-        if (in_array($name, ['query', 'queryFirstField', 'queryFirstRow', 'queryFirstList', 'queryFirstColumn', 'queryFullColumns', 'queryWalk'])) $this->improveArgs($arguments);
-        if (in_array($name, ['insert', 'update', 'delete'])) $this->improveFirstArgs($arguments);
+        if (in_array($name, ['query', 'queryFirstField', 'queryFirstRow', 'queryFirstList', 'queryFirstColumn', 'queryFullColumns', 'queryWalk', 'parse'])) $this->improveArgs($arguments);
+        if (in_array($name, ['insert', 'update', 'delete', 'upserting'])) $this->improveFirstArgs($arguments);
         return call_user_func_array(array($this->DB, $name), $arguments);
     }
 
@@ -181,17 +220,82 @@ class Database implements isCrudable
      */
     private function improveArgs(&$arguments): void
     {
+
+        $parser = function(string $query, string $filter = ""):string {
+            $re = '/#FILTER::START\s(\w++)([\s\w\d\W]+)#FILTER::END/iuU';
+            preg_match_all($re, $query, $matches, PREG_SET_ORDER, 0);
+            foreach($matches as $match) {
+                $varname = $match[1];
+                $varcontent = $match[2];
+                if($varname != $filter) {
+                    $query = str_replace($match[0], '', $query);
+                } else {
+                    $query = str_replace($match[0], $varcontent, $query);
+                }
+            }
+            return $query;
+        };
+
         foreach ($arguments as &$arg) {
             if (is_string($arg)) {
+                $filter = '';
+                if(strpos($arg, '|') !== false) {
+                    $arg = explode('|', $arg);
+                    $filter = $arg[1];
+                    $arg = $arg[0];
+                }
+                if(Config::assigned('query.'.$arg, false) !== false) {
+                    $arg = Config::get('query.'.$arg);
+                }
+                $arg = $parser($arg, $filter);
                 $arg = preg_replace('/(\?_)/m', $this->getPrefixo(), $arg);
             }
         }
     }
 
+    public function getFieldListFromTable(string $table):array {
+        return Cache::stored(function() use($table) {
+            $table = str_replace('?_', $this->getPrefixo(), $table);
+            $database = new Database();
+            $query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = %s";
+            $res = $database->query($query, $table);
+            if(is_array($res)) {
+                $fieldList = [];
+                foreach($res as $r) {
+                    $fieldList[] = $r['COLUMN_NAME'];
+                }
+                return $fieldList;
+            }
+            return [];
+        }, 'getFieldListFromTable2'.$table, 60*60*24*7);
+    }
+
     private function improveFirstArgs(&$arguments):void {
         $count = 0;
         foreach($arguments as &$arg) {
-            if($count == 0 and is_string($arg)) $arg = preg_replace('/(\?_)/m', $this->getPrefixo(), $arg);
+
+            if($count == 0 and is_string($arg)) {
+                if(strpos($arg, '?_') !== false) {
+                    $table_name = $arg;
+                }
+                $arg = preg_replace('/(\?_)/m', $this->getPrefixo(), $arg);
+            }
+
+            //Prevent array $dados with invalid fields
+            if(isset($table_name) and !empty($table_name) and is_array($arg)) {
+                try {
+                    $fieldList = $this->getFieldListFromTable($table_name);
+                } catch(\Exception $e) {
+                    $fieldList = [];
+                }
+                if(count($fieldList)) {
+                    $res = array_intersect_key($arg, array_flip($fieldList));
+                    if(count($res)) {
+                        $arg = $res;
+                    }
+                }
+            }
+
             $count++;
         }
     }

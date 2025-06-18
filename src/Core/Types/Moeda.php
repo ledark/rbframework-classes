@@ -5,9 +5,12 @@ namespace RBFrameworks\Core\Types;
 class Moeda {
 
     protected $_value;
+    protected bool $_signed;
+    private int $number;
     
     public function __construct($value) {
         $this->_value = $value;
+        $this->_signed = $value < 0 ? true : false;
     }
 
     public function getDecimal() {
@@ -23,6 +26,9 @@ class Moeda {
     public function getNumber():int {
         if(isset($this->number)) return $this->number;
         $this->number = preg_replace('/\D/', '', $this->_value);
+        if($this->_signed) {
+            $this->number = $this->number * -1;
+        }
         return (int) $this->number;
     }
 

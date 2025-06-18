@@ -17,6 +17,9 @@ namespace RBFrameworks\Core\Legacy;
 use RBFrameworks\Core\Plugin;
 use RBFrameworks\Core\Utils\Replace;
 use RBFrameworks\Core\Types\Php\Parse;
+use RBFrameworks\Core\Types\File;
+use RBFrameworks\Core\Debug;
+use RBFrameworks\Core\Cache;
 use Exception;
 
 class Template {
@@ -27,23 +30,30 @@ class Template {
      * Utilizado internamente como include_path
      */
     private static function search_tmpl($str) {
-        $trys = array(
-            $str
-        ,   __DIR__ . "/Templates/$str"
-        ,   __DIR__ . "/Templates/$str.tmpl"
-        ,   __DIR__ . "/Templates/Legacy/$str"
-        ,   __DIR__ . "/Templates/Legacy/$str.tmpl"
-        ,   "_app/class/user/class.Template/$str"
-        ,   "_app/class/user/class.Template/$str.tmpl"
-        ,   "_app/class/user/class.Form/$str"
-        ,   "_app/class/user/class.Form/$str.tmpl"
-        ,   __DIR__."/class.Template/$str"
-        ,   __DIR__."/class.Template/$str.tmpl"
-        );
-        foreach($trys as $try) {
-            if(file_exists($try)) return $try;
-        }
-        return false;
+        return Cache::stored(function() use ($str) {
+            $searchDefaultFolders = [
+                __DIR__ . "/Templates/",
+                __DIR__ . "/Templates/Legacy/",
+                "_app/class/user/class.Template/",
+                "_app/class/user/class.Form/",
+                __DIR__."/class.Template/Pieces/",
+                __DIR__ . "/Templates/Pieces/",
+                __DIR__ . "/Templates/Legacy/Pieces/",
+                "_app/class/user/class.Template/Pieces/",
+                "_app/class/user/class.Form/Pieces/",
+                __DIR__."/class.Template/Pieces/",
+            ];
+            $searchBacktraceFolders = [];
+            foreach(Debug::getFileBacktrace() as $level => $file_line) {
+                $file_line = explode(':', $file_line);
+                $searchBacktraceFolders[] = dirname($file_line[0]).'/';
+                $searchBacktraceFolders[] = dirname($file_line[0]).'/Pieces/';
+            }
+            $tmpl = new File($str);
+            $tmpl->addSearchExtension('.tmpl');
+            $tmpl->addSearchFolders(array_merge($searchDefaultFolders, $searchBacktraceFolders));
+            return $tmpl->hasFile() ? $tmpl->getFilePath() : false;
+        }, 'tmpla_'.md5($str), 60*60*24);
     }
 	
     //@deprecate

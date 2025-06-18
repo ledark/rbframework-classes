@@ -63,7 +63,7 @@ class Session
     /**
      * O constructor dessa função cria uma sessão se a mesma não existir, ou atualiza-a com LAST_ACTIVITY = time()
      */
-    public function __construct(string $session_id = null)
+    public function __construct(?string $session_id = null)
     {
         self::session_init();
         $this->createSessionID($session_id);
@@ -111,10 +111,14 @@ class Session
      * createSessionID 
      * @return void
      */
-    public function createSessionID(string $session_id = null):void
+    public function createSessionID(?string $session_id = null):void
     {
         $session_id = is_null($session_id) ? session_id() : $session_id;
         $this->session_id = $session_id === false ? uniqid('_') : $session_id;
+    }
+
+    public static function clear() {
+        $_SESSION = [];
     }
 
 }

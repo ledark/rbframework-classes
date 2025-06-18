@@ -24,4 +24,20 @@ trait VarTrait {
         return $this->var[$name];
     }
 
+    public $global = [];
+
+    public function addGlobal(string $name, $value = null):object {
+        $this->global[$name] = $value;
+        return $this;
+    }
+
+    public function clearAllGlobals() {
+        $this->global = [];
+    }
+
+    public function setGlobal(array $vars):object {
+        $this->global = array_merge($this->global, $vars);
+        return $this;
+    } 
+
 }

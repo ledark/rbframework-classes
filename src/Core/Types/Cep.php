@@ -1,11 +1,13 @@
-<?php 
+<?php
 
 namespace RBFrameworks\Core\Types;
 
 class Cep {
 
     protected $_value;
-    
+    public $number;
+    public $formatted;
+
     public function __construct($value) {
         $this->_value = $value;
     }

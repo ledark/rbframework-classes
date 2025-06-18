@@ -7,16 +7,22 @@ use RBFrameworks\Core\Session;
 class Message
 {
 
-    private $blockname = 'RBFv99doMSG';
+    private $blockname = 'RBFv100doMSG';
 
-    public function __construct() {
+    public function __construct(string $blockname = 'RBFv100doMSG') {
+        $this->blockname = $blockname;
         new Session;
+        if(!isset($_SESSION[$this->blockname])) $_SESSION[$this->blockname] = [];
     }
 
     public function prepare():object {
         if(!$this->hasMessage()) {
             $this->setDefault();
         }
+        if(!isset($_SESSION[$this->blockname]['prefix'])) $_SESSION[$this->blockname]['prefix'] = '';
+        if(!isset($_SESSION[$this->blockname]['cssclass'])) $_SESSION[$this->blockname]['cssclass'] = '';
+        if(!isset($_SESSION[$this->blockname]['message'])) $_SESSION[$this->blockname]['message'] = '';
+        if(!isset($_SESSION[$this->blockname]['sufix'])) $_SESSION[$this->blockname]['sufix'] = '';
         return $this;
     }
 

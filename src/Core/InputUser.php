@@ -175,7 +175,9 @@ class InputUser extends Input {
     }
 
     public function customSanitizeField(string $field, callable $callback):object {
-        $this->data[$field] = $callback($this->data[$field]);
+		if(isset($this->data[$field])) {
+            $this->data[$field] = $callback($this->data[$field]);
+        }
         return $this;
     }
 

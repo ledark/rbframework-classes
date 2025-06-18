@@ -15,6 +15,8 @@ class Directory {
     }
 
     public static function mkdir(string $path, int $mode = 0755, bool $recursive = true):void {
+		$path = str_replace('\\', '/', $path);
+		$path = ltrim($path, '/');
         if(!is_dir($path)) {        
             $parts = explode('/', $path);
             foreach($parts as $key => $part) {
