@@ -18,6 +18,7 @@ use Symfony\Contracts\Cache\ItemInterface;
  */
 class Cache {
 
+    private $id = null;
     private $cache_folder = null;
 
     public function __construct(string $id = null, int $expires = 86400) {
@@ -45,7 +46,7 @@ class Cache {
      * $value = Cache::stored(function(){ 
      *      return 'value after long process...  
      * });
-     * @param string $callback que deve retornar o valor processado
+     * @param callable $callback que deve retornar o valor processado
      * @param string $cachedid opcional com o nome do cachedid
      * @param int $ttl in seconds, default to 3600 [1 hour]
      * @return mixed
@@ -56,6 +57,14 @@ class Cache {
 			return $callback();
         });		
 	}
+
+    public static function delete(string $cacheid) {
+        try {
+            return (new FilesystemAdapter('symfony', 3600, Config::get('location.cache.default')))->delete($cacheid);
+        } catch(\Exception $e) {
+            return false;
+        }
+    }
 
     private function hasOpcache() {
         return is_array(opcache_get_configuration()) ? true : false;
