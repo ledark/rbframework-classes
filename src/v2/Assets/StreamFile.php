@@ -1,0 +1,249 @@
+<?php
+
+namespace RBFrameworks\Core\Assets;
+
+use RBFrameworks\Core\Http;
+use RBFrameworks\Core\Legacy\SmartReplace;
+use RBFrameworks\Core\Directory;
+use RBFrameworks\Core\Config;
+use RBFrameworks\Core\Types\File;
+use RBFrameworks\Core\Utils\Strings\Dispatcher;
+
+class StreamFile {
+
+    public $realfilepath;
+    public $replaces = [];
+    public $options = [];
+    public $cache = false;
+    public $filename = '';
+
+    private $fakepath = '';
+
+    /**
+     * (new StreamFile('file.txt'))->getFilepath(); //faz a copia e retorna o fakepath copiado
+     *
+     * @param string $realfilepath
+     * @param array $replaces
+     */
+    public function __construct(string $realfilepath, array $replaces = [], array $options = []) {
+        if(!file_exists($realfilepath)) {
+			$file = new File($realfilepath);
+			if(!$file->hasFile()) {
+				throw new \Exception('File not found in Assets\StreamFile: '.$realfilepath);
+			} else {
+				$realfilepath = $file->getFilepath();
+			}
+        }
+        $this->realfilepath = $realfilepath;
+        $this->replaces = $replaces;
+        $this->options = $options;
+    }
+
+    private static function getDefaultReplaces(array $mergeResult = []):array {
+        return array_merge([
+            'httpSite' => Http::getSite(),
+        ], $mergeResult);
+    }
+
+    public static function getFilenamePrefix():string {
+        return Config::assigned('location.cache.assets_prefix', 'fnfiles_');
+    }
+
+    public static function nameMaskReplaces():array {
+        return Config::assigned('location.cache.assets_mask', []);
+    }
+
+    private static function getCacheAssetsFolder():string {
+        $cache_assets = Config::get('location.cache.assets');
+        if(is_null($cache_assets)) throw new \Exception('Config location.cache.assets not found');
+        return Directory::rtrim($cache_assets);
+    }
+
+    private function getExtension():string {
+        return '.'.pathinfo($this->realfilepath, PATHINFO_EXTENSION);
+    }
+
+    private function mkdir(string $path) {
+        if(strpos($path, '/') !== false) {
+            $parts = explode('/', $path);
+            array_pop($parts);
+            Directory::mkdir(implode('/', $parts));
+        }
+    }
+
+    public static function getFileNameFrom($name, $replaces = [], string $return = 'name.sufix'):string {
+        if(is_array($replaces) and count($replaces) > 0) {
+            $sufix = Config::assigned('location.cache.assets_sufix', '__[long_hash]');
+            $long_hash = md5(serialize($replaces));
+            $sufix = str_replace('[long_hash]', $long_hash, $sufix);
+            $sufix = str_replace('[short_hash]', substr($long_hash, 0, 8), $sufix);
+        } else {
+            $sufix = '';
+        }
+
+        $path = empty($_SERVER['DOCUMENT_ROOT']) ? dirname($_SERVER['SCRIPT_FILENAME']) : $_SERVER['DOCUMENT_ROOT'];
+        $path = str_replace('\\', '/', $path);
+        $path = rtrim($path, '/').'/';
+        $path = str_replace('/vendor/bin', '', $path);
+        $name = str_replace('\\', '/', $name);
+        
+        
+        $name = str_replace($path, '', $name);
+
+        //cut extension off
+        if(strpos($name, '.') !== false) {
+            $name = explode('.', $name);
+            array_pop($name);
+            $name = implode('.', $name);            
+        }
+
+        $name = Dispatcher::file($name);
+        $name = str_replace('.', '-', $name);
+        $parts = explode('/', $name);
+        $finalname = array_pop($parts);
+        foreach(self::nameMaskReplaces() as $mask => $replace) {
+            if(strpos($mask, '|NOSUFIX') !== false) {
+                $mask = str_replace('|NOSUFIX', '', $mask);
+                $finalname.= '[NOSUFIX]';
+            }
+            $finalname = str_replace($mask, $replace, $finalname);
+        }
+        if(strpos($finalname, '[NOSUFIX]') !== false) {
+            return str_replace('[NOSUFIX]', '', $finalname);
+        }
+        if($return == 'name') return $finalname;
+        if($return == 'sufix') return $sufix;
+        if($return == 'name.sufix') return $finalname.$sufix;
+        if($return == 'long_hash') return $long_hash;
+        return $finalname.$sufix;
+    }
+
+    private function parseAndCopy(string $originalPath, string $fakePath) {
+        if(in_array($this->getExtension(), ['.js', '.css', '.html'])) {
+
+            if(count($this->replaces) > count(self::getDefaultReplaces())) {
+                ob_start();
+                include($originalPath);
+                $content = ob_get_clean();
+            } else {
+                $content = file_get_contents($originalPath);
+            }
+
+            if(count($this->replaces)) {
+                $bracketL = isset($this->options['bracketL']) ? $this->options['bracketL'] : '{';
+                $bracketR = isset($this->options['bracketR']) ? $this->options['bracketR'] : '}';                
+                foreach($this->replaces as $key => $value) {
+                    $content = str_replace($bracketL.$key.$bracketR, $value, $content);
+                }
+            }
+            file_put_contents($fakePath, $content);
+        } else {
+            copy($originalPath, $fakePath);
+        }
+    }
+
+    private function getFakepath():string {
+        if(!empty($this->fakepath)) return $this->fakepath;
+        $overname = $this->filename;
+        $cache_assets = self::getCacheAssetsFolder();
+        if(!empty($overname)) {
+            $fakepath = $cache_assets.'/'.self::getFilenamePrefix().$overname.$this->getExtension();
+            if(strpos($overname.$this->getExtension(), '.js.js')) {
+                $fakepath = $cache_assets.'/'.self::getFilenamePrefix().$overname;
+            }
+        } else {
+            $fakepath = $cache_assets.'/'.self::getFilenamePrefix().self::getFileNameFrom($this->realfilepath, $this->replaces).$this->getExtension();
+            //$fakepath = $cache_assets.'/fnfiles_'.md5($this->realfilepath).$this->getExtension();
+        }
+        
+        //Genera se Nao Existir
+        if(!file_exists($fakepath)) {
+            $this->mkdir($fakepath);
+            $this->parseAndCopy($this->realfilepath, $fakepath);
+        }
+
+        //Regera se Tamanho for Diferente
+        if (filesize($fakepath) != filesize($this->realfilepath)) {
+            $this->parseAndCopy($this->realfilepath, $fakepath);
+        }
+        $this->fakepath = $fakepath;
+        return $fakepath;
+    }
+
+    private function process() {
+        if(count($this->replaces)) {
+            $this->parseAndCopy($this->realfilepath, $this->getFakepath());
+            /*
+            $content = file_get_contents($this->realfilepath);
+            foreach($this->replaces as $key => $value) {
+                $content = str_replace('{'.$key.'}', $value, $content);
+            }
+            file_put_contents($this->getFakepath(), $content);
+            */
+        }
+    }
+
+    public function getFilePath():string {
+        $this->process();
+        return $this->getFakepath();
+    }
+
+    public function getHttpPath():string {
+        $this->process();
+        return Http::getSite().$this->getFakepath();
+    }
+
+    public static function getUri(string $path, array $replaces = [], array $options = []) {
+        return (new self($path, self::getDefaultReplaces($replaces), $options))->getHttpPath();
+    }
+    public static function jsModule(string $path, array $replaces = [], array $options = []):void {
+        echo '<script type="module" src="'.static::getUri($path, $replaces, $options).'"></script>';
+    }
+    public static function js(string $path, array $replaces = [], array $options = []):void {
+        echo '<script src="'.static::getUri($path, $replaces, $options).'"></script>';
+    }
+    public static function css(string $path, array $replaces = [], array $options = []):void {
+        echo '<link href="'.static::getUri($path, $replaces, $options).'" rel="stylesheet">';
+    }
+	
+   /**
+     * jsModules function 
+     *
+     * @param array $paths [name => path, ...]
+     * @param array $replaces
+     * @return void
+     */
+    public static function jsModules(array $paths = [], array $replaces = [], array $searchFolders = []) {
+
+        $scripts = [];
+        $realpaths = [];
+        foreach($paths as $name => $path) {
+            if(!file_exists($path)) {
+                $path = (new File($path))->addSearchFolders(array_merge([
+                    dirname(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3)[0]['file']),
+                ], $searchFolders))->getFilePath();
+            }
+            $realpaths[$name] = $path;
+            $scripts[$name] = StreamFile::getUri($path, $replaces);
+        }
+        unset($name, $path);
+        
+        echo '<script type="importmap">';
+        echo '{
+            "imports": {';
+        $imports = '';
+        foreach($scripts as $name => $script) {
+            $imports.= '"'.$name.'": "'.$script.'",';
+        }
+        $imports = rtrim($imports, ',');
+        echo $imports;
+        echo '}}';
+        echo '</script>';
+        
+        foreach($realpaths as $name => $script) {
+            StreamFile::jsModule($script, $replaces);
+        }
+
+    }        
+	
+}
