@@ -254,7 +254,7 @@ class Database implements isCrudable
     }
 
     public function getFieldListFromTable(string $table):array {
-        return Cache::stored(function() use($table) {
+        return cache_stored(function() use($table) {
             $table = str_replace('?_', $this->getPrefixo(), $table);
             $database = new Database();
             $query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = %s";

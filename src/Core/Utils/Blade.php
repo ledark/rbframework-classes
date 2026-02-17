@@ -34,7 +34,7 @@ if(!function_exists('blade')) {
         $cacheId = $component.md5(serialize($variables)).md5(serialize($options));
 
         if(!isset($options['views'])) {
-            $options['views'] = Cache::stored(function() use ($component) {
+            $options['views'] = cache_stored(function() use ($component) {
                 $searchDirectories = Debug::getFileBacktrace();
                 foreach($searchDirectories as $searchDirectory) {
                     $searchDirectory = dirname($searchDirectory);

@@ -30,7 +30,7 @@ class Template {
      * Utilizado internamente como include_path
      */
     private static function search_tmpl($str) {
-        return Cache::stored(function() use ($str) {
+        return cache_stored(function() use ($str) {
             $searchDefaultFolders = [
                 __DIR__ . "/Templates/",
                 __DIR__ . "/Templates/Legacy/",
