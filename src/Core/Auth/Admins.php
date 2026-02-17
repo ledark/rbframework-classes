@@ -11,6 +11,8 @@ use RBFrameworks\Events\EventDispatcher;
 
 class Admins extends Database {
 
+    public array $roles;
+
     public function __construct(string $tabela = 'admins', array $model = [], $config = null) {
 
         if(!count($model)) $model = [
@@ -76,7 +78,7 @@ class Admins extends Database {
     }
     
     public function getRoles():array {
-        if(isset($this->roles)) return $this->roles;
+        if(isset($this->roles) and count($this->roles)) return $this->roles;
         $cod_admin = self::show('cod');
         $this->roles = $this->query("SELECT `role_key`, `role_value` `FROM {prefixo}admins` LEFT `JOIN {prefixo}admins_tipos` ON `{prefixo}admins`.tipo = `{prefixo}admins_tipos`.tipo WHERE `{prefixo}admins`.cod = {$cod_admin}");
         return $this->roles;
