@@ -19,12 +19,14 @@ class Autoload {
     }
     
     public static function loadFunction(string $functionName):void {
-        $functionFile = __DIR__ . "/../../functions/{$functionName}.php";
-        if(function_exists($functionName)) {
-            return;
-        } else
-        if (file_exists($functionFile)) {
-            require_once $functionFile;
+        foreach(collection('location.functions') as $functionFile) {
+            $functionFile = str_replace('[FUNCTION_NAME]', $functionName, $functionFile);
+            if(function_exists($functionName)) {
+                return;
+            } else
+            if (file_exists($functionFile)) {
+                require_once $functionFile;
+            }
         }
     }
 
