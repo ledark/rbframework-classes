@@ -18,7 +18,8 @@
     "autoload": {
         "psr-4": {
             "RBFrameworks\\": [
-                "src/v3/"
+                "src/v3/",
+                "src/v2/"
             ],
             "Tests\\": "tests/"
         }
