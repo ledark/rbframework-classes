@@ -101,7 +101,7 @@ abstract class Assets {
 
    //Adicionar para Renderização Posterior
 
-   public static function Render(string $name, string $buffer = null, bool $forceUTF8 = null) {
+   public static function Render(string $name, ?string $buffer = null, ?bool $forceUTF8 = null) {
     global $assets_output_buffer;
     if(!isset($assets_output_buffer)) {
         $assets_output_buffer = [];

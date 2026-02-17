@@ -25,7 +25,7 @@ class Replace {
         $this->setReplaces($replaces);
     }
 
-    public static function replace(string $string = null, array $replaces = [], bool $returnLiteral = true):string {
+    public static function replace(?string $string = null, array $replaces = [], bool $returnLiteral = true):string {
         if(is_null($string)) $string = ob_get_clean();
         if($returnLiteral) {
             return (new self($string, $replaces))->ignoreLiteral()->render(true);
