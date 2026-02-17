@@ -21,6 +21,10 @@
                 "src/v3/",
                 "src/v2/"
             ],
+            "RBFrameworks\\Core\\": [
+                "src/v3/",
+                "src/v2/"
+            ],
             "Tests\\": "tests/"
         }
     },
