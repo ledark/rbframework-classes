@@ -30,7 +30,7 @@ return [
         /** Adicione suas Rotas para serem carregadas automaticamente.
          * Use o padrão: path/to/routes => Namespace\
          */
-        __DIR__.'/../class/Api/' => 'Api\\'
+        __DIR__.'/../tests/projeto-exemplo/class/Route/' => 'Route\\'
     ],
     'direct_files' => [
         /** Adicione extensões de arquivos que podem ser servidos diretamente, sem passar pelo roteamento do framework. */
