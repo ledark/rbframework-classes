@@ -17,7 +17,7 @@ if(!function_exists('get_root_path')) {
 
 /*
 function get_root_path(string $sufix = ""):string {
-    $rootPath = realpath(__DIR__ . '/../../').DIRECTORY_SEPARATOR.ltrim($sufix, '/');
+    $rootPath = realpath(__DIR__ . '/').DIRECTORY_SEPARATOR.ltrim($sufix, '/');
     return $rootPath;
 }
 */

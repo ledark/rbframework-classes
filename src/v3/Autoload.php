@@ -2,6 +2,7 @@
 
 namespace RBFrameworks;
 
+use DirectoryIterator;
 use RBFrameworks\Core\Api;
 use RBFrameworks\Core\Types\File;
 
@@ -78,11 +79,14 @@ class Autoload {
 
     public static function routeApi(?callable $fn404):void {
         $router = new Api();
-
         foreach(collection('routes.autoload', []) as $route_dir => $route_namespace) {
             $glob_routerdir = glob($route_dir.'/*.php');
             if(!is_array($glob_routerdir)) {
-                $glob_routerdir =  glob($route_dir.'/*.php');
+                foreach(new DirectoryIterator($route_dir) as $fileinfo) {
+                    if($fileinfo->isFile() && $fileinfo->getExtension() === 'php') {
+                        $glob_routerdir[] = $fileinfo->getPathname();
+                    }
+                }
             }
             foreach($glob_routerdir as $route_file) {
                 $full_namespace = '\\'.trim($route_namespace, '\\').'\\'.basename($route_file, '.php');
