@@ -32,4 +32,10 @@ return [
          */
         __DIR__.'/../class/Api/' => 'Api\\'
     ],
+    'direct_files' => [
+        /** Adicione extensões de arquivos que podem ser servidos diretamente, sem passar pelo roteamento do framework. */
+        'css',
+        'js',
+        'json',
+    ]
 ];
