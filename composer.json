@@ -44,12 +44,13 @@
         "phpunit/phpunit": "^9.6"
     },
     "require": {
+        "php": ">=8.2.0",
         "guzzlehttp/guzzle": "^7.10",
         "bramus/router": "^1.6",
         "symfony/cache": "^7.2",
         "sergeytsalkov/meekrodb": "^2.2",
-        "eftec/bladeone": "^3.44",
-        "eftec/bladeonehtml": "^1.4",
+        "eftec/bladeone": "^4.15",
+        "eftec/bladeonehtml":"^2.5",
         "phpmailer/phpmailer": "^6.8"
     }
 }
