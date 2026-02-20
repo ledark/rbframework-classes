@@ -41,7 +41,6 @@
         "phpunit/phpunit": "^9.6"
     },
     "require": {
-        "php": ">=8.5.0",
         "guzzlehttp/guzzle": "^7.10",
         "bramus/router": "^1.6",
         "symfony/cache": "^7.2",
