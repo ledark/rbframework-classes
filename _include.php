@@ -38,12 +38,12 @@ function collection(string $collectionName, $default = null) {
 
 function config(string $configName, $default = null, bool $overwrite = false) {
     $globalId = collection('server.project_name', 'Framework');
-    if(isset($GLOBALS[$globalId][$configName])) {
-        return $GLOBALS[$globalId][$configName];
-    }
     if($overwrite) {
         $GLOBALS[$globalId][$configName] = $default;
         return $default;
+    }
+    if(isset($GLOBALS[$globalId][$configName])) {
+        return $GLOBALS[$globalId][$configName];
     }
     $actual = collection($configName, $default);
     $GLOBALS[$globalId][$configName] = $actual;
