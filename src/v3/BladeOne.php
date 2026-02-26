@@ -60,7 +60,7 @@ class BladeOne extends BladeOneBase {
         $response = ob_get_clean();
     }
     */
-    private function renderBlade(string $component, array $variables = [], array $options = []) {
+    private static function renderBlade(string $component, array $variables = [], array $options = []) {
         Autoload::loadFunction('cache');
 
         $directives = isset($options['directives']) ? $options['directives'] : [];
@@ -149,7 +149,7 @@ class BladeOne extends BladeOneBase {
         }
     }
 
-    public function render(string $view, $injector = []):string {
+    public static function render(string $view, $injector = []):string {
 
         $scriptFile = str_replace('.', '/', $view);
         //$scriptFile = get_root_path('_app/class/Auditor/Views/') . $scriptFile . '.php';
