@@ -38,14 +38,14 @@ use RBFrameworks\Core\Http;
  * ---- @log to log the description in a life log apiLogger
  */
 class Api {
-    
+
     public $namespaces = [];
     public $prefix = '';
     public $fn404 = null;
     public $router = null;
     public $mountOn = '';
 
-    public static function autoload(string $directory, string $namespace = "", callable $on404 = null) {
+    public static function autoload(string $directory, string $namespace = "", ?callable $on404 = null) {
         $namespace = rtrim($namespace, '\\').'\\';
         $router = new self();
         foreach (new DirectoryIterator($directory) as $fileInfo) {
@@ -101,10 +101,10 @@ class Api {
                 if($routeAnotation === false) continue;
                 if(count($matches) < 3) continue;
 
-                
+
 
                 foreach($matches[1] as $routeKey => $routeMethod) {
-                    
+
                     $routeUri = $matches[2][$routeKey];
                     $routeUri = $this->prefix.trim($routeUri);
 
@@ -116,7 +116,7 @@ class Api {
 
 
                     $router->match($routeMethod, $routeUri, function() use ($namespace, $method, $routeUri) {
-                        $forceEncodeUTF8 = null; 
+                        $forceEncodeUTF8 = null;
                         $responseCode = 200;
                         $responseType = 'text';
                         $annotation = $method->getDocComment();
@@ -140,7 +140,7 @@ class Api {
                             }
 
                             //beforeMiddleware
-                            if(preg_match('/@before\s+(.+)/', $annotation, $matches)) {                                
+                            if(preg_match('/@before\s+(.+)/', $annotation, $matches)) {
                                 $beforeMiddleware = $matches[1];
                                 $beforeMiddleware = trim($beforeMiddleware);
                                 call_user_func($beforeMiddleware);
@@ -168,7 +168,7 @@ class Api {
                                 }
 
                             }
-                            
+
                         }
                         $class = new $namespace();
                         $method = $method->getName();
@@ -192,7 +192,7 @@ class Api {
                         if(isset($forceEncodeUTF8) and is_bool($forceEncodeUTF8)) {
                             $ApiHandlerResponse->utf8 = $forceEncodeUTF8;
                         }
-                        
+
                         $ApiHandlerResponse
                             ->send();
 
@@ -214,7 +214,7 @@ class Api {
                             if(!headers_sent()) {
                                 header('Content-Type: text/javascript'.$charset());
                             }
-                            echo $result;                                                        
+                            echo $result;
                         } else if($responseType == 'file') {
                             if(!headers_sent()) {
                                 header('Content-Type: application/octet-stream');
@@ -222,7 +222,7 @@ class Api {
                             readfile($result);
                         } else if($responseType == 'image') {
                             $image = new File($result);
-                            File::readFile($image->getFilePath());                            
+                            File::readFile($image->getFilePath());
                         } else if($responseType == 'redirect') {
                             if(!headers_sent()) {
                                 header('Location: '.$result);
@@ -231,7 +231,7 @@ class Api {
                             if(!headers_sent()) {
                                 header('Content-Type: text/plain'.$charset());
                             }
-                            echo $result;                            
+                            echo $result;
                         }
 */
                         exit();
@@ -247,7 +247,7 @@ class Api {
         $router->run();
     }
 
-    public function loadFromDatabase(string $traitNamespace, string $parentNamespace, string $parentFilePath, string $cache_id = null) {
+    public function loadFromDatabase(string $traitNamespace, string $parentNamespace, string $parentFilePath, ?string $cache_id = null) {
         if(is_null($cache_id)) {
             $cache_id = md5($traitNamespace);
         }
@@ -337,7 +337,7 @@ class Api {
      * @route GET /api/banners/sample-json
      * @status 200
      * @utf8 true
-     */    
+     */
     public function sampleJson() {
         return [
             'sample-line1' => "this arrays works on GET or POST",
@@ -360,7 +360,7 @@ class Api {
     /**
      * @route GET /api/example/xyz anotherparam
      * @response html
-     */    
+     */
     public function sampleWrongRouted() {
         return 'this is never called because the route is wrong';
     }
