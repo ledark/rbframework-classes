@@ -8,7 +8,7 @@ class HtmlResponse extends HandlerResponse {
     
     public HandlerResponse $response;
 
-    public function __construct(HandlerResponse $response = null) {
+    public function __construct(?HandlerResponse $response) {
         if(is_null($response)) {
             $response = new HandlerResponse();
             $response

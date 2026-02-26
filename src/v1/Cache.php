@@ -17,7 +17,7 @@ class Cache {
      * @param int $ttl in seconds, default to 3600 [1 hour]
      * @return mixed
      */
-	public static function stored(callable $callback, string $cacheid = null, int $ttl = null) {
+	public static function stored(callable $callback, ?string $cacheid = null, ?int $ttl = null) {
         if(is_null($ttl)) $ttl = Config::get('cache.ttl', 3600);
 		if(is_null($cacheid)) $cacheid = md5(serialize(debug_backtrace(2)));
         $cachenamespace = Config::get('cache.namespace', 'symfony');
