@@ -96,7 +96,11 @@ class Autoload {
 
         if(is_callable($fn404)) {
             $router->fn404 = function() use ($router, $fn404) {
-                $request_file = substr($_SERVER['REQUEST_URI'], strlen($_SERVER['SCRIPT_NAME'])-strlen('index.php'));
+                if(strpos('index.php', $_SERVER['REQUEST_URI']) !== false) {
+                    $request_file = substr($_SERVER['REQUEST_URI'], strlen($_SERVER['SCRIPT_NAME'])-strlen('index.php'));
+                } else {
+                    $request_file = $_SERVER['REQUEST_URI'];
+                }
 
                 if(file_exists($request_file)) {
                     $extension = pathinfo($request_file, PATHINFO_EXTENSION);
@@ -110,7 +114,7 @@ class Autoload {
                     }
                 }
 
-                $fn404($request_file, $router);
+                $fn404($router);
             };
         }
 

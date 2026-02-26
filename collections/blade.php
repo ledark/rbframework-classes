@@ -9,7 +9,7 @@
     ],
     'views' => [
         get_root_path().'/views',
-        get_collection_path().'/blade',
+        get_collection_dir().'/blade',
     ]
 
 ];

@@ -15,6 +15,7 @@ use ReflectionClass;
 use ReflectionException;
 use DirectoryIterator;
 use RBFrameworks\Core\Utils\ExtendedReflectionClass;
+use RBFrameworks\Core\Http;
 
 /**
  * Example of Use API
@@ -362,6 +363,36 @@ class Api {
      */    
     public function sampleWrongRouted() {
         return 'this is never called because the route is wrong';
-    }    
+    }
+
+    public function redirectWhenEmpty(string $redirectTo = '/home') {
+        if($this->router->getCurrentUri() == '/' or $this->router->getCurrentUri() == '') {
+            Http::redir($redirectTo);
+        }
+        return $this;
+    }
+
+    public function serveFile(string $suffix = '') {
+        $request_file = $this->router->getCurrentUri();
+        if(file_exists(get_root_path($suffix.$request_file))) {
+            File::readFile(get_root_path($suffix.$request_file));
+            exit();
+        }
+        return $this;
+    }
+
+    public function throw404Page(?string $pageFileOrContent) {
+        header('HTTP/1.0 404 Not Found');
+        if(is_null($pageFileOrContent)) {
+            echo '404 Not Found: '.$this->router->getCurrentUri();
+            exit();
+        }
+        if(file_exists($pageFileOrContent)) {
+            include($pageFileOrContent);
+            exit();
+        }
+        echo $pageFileOrContent;
+        exit();
+    }
 
 }
