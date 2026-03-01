@@ -21,11 +21,17 @@ function get_root_path(string $sufix = ""):string {
 
 try {
 
-    Autoload::start();
-    Autoload::forceHttps();
-    Autoload::routeMiddleware();
-    Autoload::routeDirectFiles();
-    Autoload::routeApi(function($request_file, $router) {
+    Autoload
+    ::start()
+    ::forceHttps()
+    ::loadFunctions([
+        /** Funções da pasta /functions podem ser carregadas aqui */
+        'cache',
+        'location',
+    ])
+    ::routeMiddleware()
+    ::routeDirectFiles()
+    ::routeApi(function($request_file, $router) {
         header('HTTP/1.0 404 Not Found');
         echo '404 Not Found: '.$request_file;
         echo $router->router->getCurrentUri();
