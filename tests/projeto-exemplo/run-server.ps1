@@ -1,0 +1,1 @@
+php84 -S localhost:80 .\index.php
