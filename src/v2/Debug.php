@@ -9,67 +9,63 @@ use RBFrameworks\Core\Config;
 use RBFrameworks\Core\Directory;
 use RBFrameworks\Core\Utils\Encoding;
 
-if(!function_exists('is_developer')) {
-    function is_developer():bool {
-        return true;
-    }
-}
+class Debug
+{
 
-if(class_exists('RBFrameworks\Core\Debug')) return;
-
-class Debug {
-
-    public static function isLocalhost():bool {
-        if(!isset($_SERVER['REMOTE_ADDR'])) return false;
+    public static function isLocalhost(): bool
+    {
+        if (!isset($_SERVER['REMOTE_ADDR'])) return false;
         return in_array($_SERVER['REMOTE_ADDR'], ['127.0.0.1', '::1']);
     }
 
-    public static function isDeveloper():bool {
+    public static function isDeveloper(): bool
+    {
         Plugin::load('helper');
-        if(!function_exists('is_developer')) {
+        if (!function_exists('is_developer')) {
             return false;
         }
         return is_developer();
     }
 
     //Errors Control
-    public static function displayErrors(bool $display):void {
-        
+    public static function displayErrors(bool $display): void
+    {
+
         ini_set('display_errors', ($display) ? 1 : 'Off');
         ini_set('display_startup_errors', ($display) ? 1 : 'Off');
-        if($display) error_reporting(E_ALL); else error_reporting(0);
-        
+        if ($display) error_reporting(E_ALL);
+        else error_reporting(0);
+
         set_time_limit(50);
     }
 
-    //Getter
-    public static function getPrintableAsText($message):string {
+    public static function getPrintableAsText($message): string
+    {
         ob_start();
-        if(gettype($message) == 'array') {
+        if (is_array($message) || is_object($message)) {
             print_r($message);
-            $message = "";
-        } else
-        if(gettype($message) == 'object') {
-            print_r($message);
-            $message = "";
+            $message = '';
         }
         echo $message;
         return ob_get_clean();
     }
 
     //Getter
-    public static function getPrintableAsArray($message):array {
+    public static function getPrintableAsArray($message): array
+    {
         return ['debug' => self::getPrintableAsText($message)];
     }
 
-    public static function devValue($mixedValue, string $title = "Core\Debug\Card"):void {
-        if(is_developer()) {
-            $var = new Utils\Variables($mixedValue);
-            echo "<span class=\"card p-3 d-inline-block\"><span class=\"d-inline\">{$title}: </span>".$var->getStringBadged()."</span>";
+    public static function devValue($mixedValue, string $title = "Core\Debug\Card"): void
+    {
+        if (is_developer()) {
+            $var = new Variables($mixedValue);
+            echo "<span class=\"card p-3 d-inline-block\"><span class=\"d-inline\">{$title}: </span>" . $var->getStringBadged() . "</span>";
         }
     }
-    public static function devCard($message, string $title = "Core\Debug\Card", string $style = 'background: #D90707;color: #FFF;'):void {
-        if(is_developer()) {
+    public static function devCard($message, string $title = "Core\Debug\Card", string $style = 'background: #D90707;color: #FFF;'): void
+    {
+        if (is_developer()) {
             ob_start();
             self::message($message);
             $message = ob_get_clean();
@@ -86,7 +82,8 @@ CARD;
         }
     }
 
-    public static function card($message, string $title = "Core\Debug\Card"):void {
+    public static function card($message, string $title = "Core\Debug\Card"): void
+    {
         ob_start();
         self::message($message);
         $message = ob_get_clean();
@@ -100,124 +97,126 @@ CARD;
             </div>
         </div>
 CARD;
-    }    
+    }
 
-    //DisplayInfo
-    public static function error($message)    {
+    public static function error($message): void
+    {
         self::message($message, 'color: red;');
     }
 
     //DisplayInfo
-    public static function message($message, $css_class = ''):void {
-        echo '<pre style="'.$css_class.'">';
+    public static function message($message, $css_class = ''): void
+    {
+        echo '<pre style="' . $css_class . '">';
         echo self::getPrintableAsText($message);
         echo '</pre>';
     }
 
 
-/**
-     *
-     * @return array
-     */
-    private static function logIgnoreGroup():array {
-        //Plugin::load("helper");
+    private static function logIgnoreGroup(): array
+    {
         $ignored = Config::get('debug.ignore_groups');
-        if(!is_array($ignored)) $ignored = [];
-        return array_merge($ignored, []);        
+        return is_array($ignored) ? $ignored : [];
     }
-    /**
-     *
-     * @return array
-     */
-    private static function logIgnoreFilenames():array {
+
+    private static function logIgnoreFilenames(): array
+    {
         $ignored = Config::get('debug.ignore_filenames');
-        if(!is_array($ignored)) $ignored = [];
-        return array_merge($ignored, []);
+        return is_array($ignored) ? $ignored : [];
+    }
+
+    private static function getFilename(?string $filename_backtrace = null): string
+    {
+        if (is_null($filename_backtrace)) {
+            $filename_backtrace = date('Ymd');
+        }
+        //Remove Special Characters
+        $filename_backtrace = Dispatcher::file($filename_backtrace);
+        $filename_backtrace = preg_replace('/[^a-z0-9]/', '', $filename_backtrace);
+        $filename_backtrace = str_replace('\\', '-', $filename_backtrace);
+        $filename_backtrace = str_replace('/', '-', $filename_backtrace);
+
+        //Complemento de Nome
+        $compl = isset($_SERVER['REMOTE_ADDR']) ? preg_replace('/[^a-z0-9]/', '', $_SERVER['REMOTE_ADDR']) . '.' : 'NOIP.';
+
+        $filename = Config::assigned('location.log_file', 'debug.[filename_backtrace].log');
+        $filename = str_replace('[filename_backtrace]', $filename_backtrace, $filename);
+        $filename = str_replace('[ymd]', date('ymd'), $filename);
+        $filename = str_replace('debug.', 'debug.' . $compl, $filename);
+
+        return $filename;
+    }
+
+    private static function save(string $filename, string $uid, string $group, Variables $message, array $context): void
+    {
+        Directory::mkdir(dirname($filename));
+        Encoding::DeepEncode($context);
+        $data = date('Y-m-d H:i:s') . '[' . $uid . ']' . $group . ': ' . $message->getString() . ' --' . json_encode($context) . "\r\n";
+        file_put_contents($filename, $data, FILE_APPEND);
     }
 
     //WriteFile
-    public static function log($message, array $context = [], string $group = 'log', string $filename_backtrace = null, int $backtrace_level = 0) {
-        //Plugin::load('utf8_encode_deep');
-        Plugin::load('trace_axiom');
+    public static function log($message, array $context = [], string $group = 'log', ?string $filename_backtrace = null, int $backtrace_level = 0): void
+    {
         $skips = 0;
         $uid = uniqid();
         $message = new Variables($message);
-        if(is_null($filename_backtrace)) {
-            $filename_backtrace = date('Ymd');
-            //$filename_backtrace = debug_backtrace()[$backtrace_level]['file'];
-            //$filename_backtrace = dirname($filename_backtrace).'.'.basename($filename_backtrace, '.php');
-        }
-            $filename_backtrace = Dispatcher::file($filename_backtrace);
-            $filename_backtrace = str_replace('\\', '-', $filename_backtrace);
-            $filename_backtrace = str_replace('/', '-', $filename_backtrace);
 
-        if(in_array($group, self::logIgnoreGroup()) == true) return;
-        if(in_array($filename_backtrace, self::logIgnoreFilenames()) == true) return;
-        foreach(Config::assigned('debug.ignore_contexts', []) as $ignore) {
-            if($ignore($context) == true) {
+        if (in_array($group, self::logIgnoreGroup())) return;
+        if ($filename_backtrace !== null && in_array($filename_backtrace, self::logIgnoreFilenames())) return;
+        foreach (Config::assigned('debug.ignore_contexts', []) as $ignore) {
+            if ($ignore($context)) {
                 $skips++;
             }
         }
 
-        if(isset($_SERVER['REMOTE_ADDR'])) {
-            if(in_array($_SERVER['REMOTE_ADDR'], Config::assigned('debug.ignore_ips', []))) return;
+        if (isset($_SERVER['REMOTE_ADDR']) && in_array($_SERVER['REMOTE_ADDR'], Config::assigned('debug.ignore_ips', []))) {
+            return;
         }
 
-        if($skips > 0) return;
+        if ($skips > 0) return;
 
-        if(isset($_SERVER['REMOTE_ADDR'])) {
-            $compl = preg_replace('/[^a-z0-9]/', '', $_SERVER['REMOTE_ADDR']).'.';
-        } else {
-            $compl = 'NOIP';
-        }
-
-        $filename = Config::assigned('location.log_file', 'debug.[filename_backtrace].log');
-        $filename = str_replace('[filename_backtrace]', $filename_backtrace, $filename);
-        $filename = str_replace('debug.', 'debug.'.$compl, $filename);
-        Directory::mkdir(dirname($filename));
-        Encoding::DeepEncode($context);
-        file_put_contents($filename, date('Y-m-d H:i:s').'['.$uid.']'.$group.': '.$message->getString().' --'.json_encode($context)."\r\n", FILE_APPEND);
-
-        //trace_axiom_send(['message' => $message->getString(), 'context' => $context, 'group' => $group, 'filename' => $filename_backtrace]);
+        $filename = self::getFilename($filename_backtrace);
+        self::save($filename, $uid, $group, $message, $context);
     }
 
-    public static function pre($message) {
-        echo '<pre>haha';
+    public static function pre($message): void
+    {
+        echo '<pre>';
         print_r($message);
         echo '</pre>';
     }
 
-    public static function getFileBacktrace():array {
+    public static function getFileBacktrace(): array
+    {
         $res = [];
         try {
             $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 10);
-            foreach($backtrace as $level => $prop) {
+            foreach ($backtrace as $level => $prop) {
                 $res[$level] = '';
-                if(isset($prop['file']) and isset($prop['line'])) {
-                    $res[$level] = $prop['file'].':'.$prop['line'];
+                if (isset($prop['file']) and isset($prop['line'])) {
+                    $res[$level] = $prop['file'] . ':' . $prop['line'];
                 } else {
-                    if(isset($prop['function']) and is_string($prop['function']) ) $res[$level].= 'fn:'.$prop['function'];
-                    if(isset($prop['class']) and is_string($prop['function'])) $res[$level].= ' ['.$prop['class'].']';
+                    if (isset($prop['function']) and is_string($prop['function'])) $res[$level] .= 'fn:' . $prop['function'];
+                    if (isset($prop['class']) and is_string($prop['function'])) $res[$level] .= ' [' . $prop['class'] . ']';
                 }
-                if(empty($res[$level])) unset($res[$level]);
+                if (empty($res[$level])) unset($res[$level]);
             }
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $res = [
-                'file' => $e->getFile().':'.$e->getLine(),
+                'file' => $e->getFile() . ':' . $e->getLine(),
             ];
         }
         return $res;
     }
 
-    public static function preDanger():void {
-        $args = func_get_args();
+    public static function preDanger(mixed $title, mixed ...$args): void
+    {
         echo '<pre style="display: block;position: absolute; z-index:9999; top: 0; left:0; background: rgba(155, 0, 0, 0.9);margin: 0;padding: 2em;color: #FFF;">';
-        echo '<strong style="background: #f9bf52;display: block;color: #b52e2e;font-size: 110%;padding: 1em;">'.self::getPrintableAsText($args[0]).'</strong>';
-        foreach($args as $i => $arg) {
-            if($i == 0) continue;
+        echo '<strong style="background: #f9bf52;display: block;color: #b52e2e;font-size: 110%;padding: 1em;">' . self::getPrintableAsText($title) . '</strong>';
+        foreach ($args as $arg) {
             print_r($arg);
         }
-        echo '</pre>';        
+        echo '</pre>';
     }
-    
 }
