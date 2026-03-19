@@ -19,10 +19,13 @@ class Autoload
         }
 
         if(!isset($_SERVER['REQUEST_URI'])) {
-            $_SERVER['REQUEST_URI'] = '/';
+            $_SERVER['REQUEST_URI'] = '/';    
             
             if(php_sapi_name() == 'cli') {
-                $uri = $argv[1] ?? '/';
+                
+                $argv = $_SERVER['argv']??[];
+                $uri = $argv[1] ?? '/home';
+                
                 $_SERVER['REQUEST_URI'] = $uri;
 
                 if(isset($argv[2])) {
@@ -32,7 +35,9 @@ class Autoload
                     $_SERVER['REQUEST_METHOD'] = 'GET';
                 }
             }
-        }        
+        }   
+        
+        
 
         return new self;
 
