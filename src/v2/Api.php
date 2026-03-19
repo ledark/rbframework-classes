@@ -367,6 +367,10 @@ class Api {
 
     public function redirectWhenEmpty(string $redirectTo = '/home') {
         if($this->router->getCurrentUri() == '/' or $this->router->getCurrentUri() == '') {
+            if(php_sapi_name() == 'cli') {
+                echo "Api::redirectWhenEmpty: ".$_SERVER['REQUEST_URI'].' ==>'.$redirectTo;
+                exit();
+            }
             Http::redir($redirectTo);
         }
         return $this;
