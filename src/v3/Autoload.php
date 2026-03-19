@@ -28,6 +28,21 @@ class Autoload
         return new self;
     }
 
+    public static function assertDirectories(array $directories): self {
+        if(file_exists(get_root_path('assertDirectories.cache'))) {
+            return new self;
+        }
+        foreach( $directories as $directory ) {
+            $directory = get_root_path($directory);
+            if(!is_dir($directory)) {
+                mkdir($directory, 0777, true);
+                continue;
+            }
+        }
+        file_put_contents(get_root_path('assertDirectories.cache'), '');
+        return new self;
+    }
+
     public static function loadFunction(string $functionName): self
     {
         foreach (collection('location.functions') as $functionFile) {

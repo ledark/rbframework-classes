@@ -5,9 +5,13 @@ use RBFrameworks\BladeOne;
 use RBFrameworks\Core\Session;
 
 //error_reporting(0);
-
-require_once get_root_path("_app/class/composer/autoload.php");
-require_once get_root_path("_app/class/composer/ledark/rbframeworks/_include.php");
+if(file_exists(get_root_path("../../vendor/autoload.php"))) {
+    require_once get_root_path("../../vendor/autoload.php");
+    require_once get_root_path("../../_include.php");
+} else {
+    require_once get_root_path("_app/class/composer/autoload.php");
+    require_once get_root_path("_app/class/composer/ledark/rbframeworks/_include.php");
+}
 
 function get_root_path(string $sufix = ""): string
 {
@@ -22,11 +26,11 @@ try {
     Autoload
         ::start()
         ::forceHttps()
+        ::assertDirectories(['log', 'log/cache', 'log/cache/bladeone'])
         ::loadFunctions(['rbframeworks', 'query'])
         ::routeMiddleware()
         ::routeDirectFiles()
-        ::routeApi(function ($router) {
-        $router
+        ::routeApi(function ($router) { $router
             ->redirectWhenEmpty()
             ->serveFile('views/')
             ->throw404Page(BladeOne::render('404', ['router' => $router->router->getCurrentUri()]))
