@@ -1,7 +1,19 @@
 <?php
 
+if(!function_exists('get_collection_path')) {
+    function get_collection_path(): string {
+        return get_root_path("_app/collections/");
+    }
+}
+
+if(!function_exists('get_collection_dir')) {
+    function get_collection_dir(): string {
+        return get_collection_path();
+    }
+}
+
 function collection(string $collectionName, $default = null) {
-    $collectionPath = get_root_path("_app/collections/");
+    $collectionPath = get_collection_path();
 
     // Verifica se é uma notação com ponto (ex: "server.uri")
     if (strpos($collectionName, '.') !== false) {
