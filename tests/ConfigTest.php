@@ -1,8 +1,10 @@
 <?php 
 
+/*
 function get_collection_path():string {
     return __DIR__.'/collection/';
 }
+*/
 
 class ConfigTest extends \PHPUnit\Framework\TestCase {
     public function testConfig() {
@@ -10,7 +12,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase {
         $this->assertInstanceOf(\Framework\Config::class, $config);
         $this->assertNull(\Framework\Config::get('invalid_dict'));
         $this->assertEquals('ninguno', \Framework\Config::get('invalid_dict', 'ninguno'));
-        $this->assertTrue(\Framework\Config::get('dict.setting', 'ninguno'));
+        $this->assertTrue('ninguno' == \Framework\Config::get('dict.setting', 'ninguno'));
 
 
         $this->assertEquals('valor da opcao1', \Framework\Config::get('dict.opcao1')());

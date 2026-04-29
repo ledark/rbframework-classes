@@ -17,6 +17,19 @@ function get_root_path(string $sufix = ""):string {
     return $rootPath;
 }
 
+// Define collection path for tests BEFORE including _include.php
+if(!function_exists('get_collection_path')) {
+    function get_collection_path(): string {
+        return __DIR__ . '/../collection/';
+    }
+}
+
+if(!function_exists('get_collection_dir')) {
+    function get_collection_dir(): string {
+        return __DIR__ . '/../collection/';
+    }
+}
+
 $include(__DIR__ . '/../../vendor/autoload.php');
 $include(__DIR__.'/../../_include.php');
 
