@@ -67,12 +67,20 @@ class Password {
     }
     */
     public static function encrypt(string $string, string $cryptKey  = 'qJB0rGtIn5UB1xG03efyCp'):string {
-        $qEncoded = openssl_encrypt($string, 'aes-128-gcm', $cryptKey);
-        return $qEncoded;
+        $method = 'aes-128-cbc';
+        $ivLength = openssl_cipher_iv_length($method);
+        $iv = openssl_random_pseudo_bytes($ivLength);
+        $qEncoded = openssl_encrypt($string, $method, $cryptKey, 0, $iv);
+        return base64_encode($iv . $qEncoded);
     }
 
     public static function decrypt(string $string, string $cryptKey  = 'qJB0rGtIn5UB1xG03efyCp'):string {
-        $qDecoded = openssl_decrypt($string, 'aes-128-gcm', $cryptKey);
+        $method = 'aes-128-cbc';
+        $ivLength = openssl_cipher_iv_length($method);
+        $data = base64_decode($string);
+        $iv = substr($data, 0, $ivLength);
+        $encrypted = substr($data, $ivLength);
+        $qDecoded = openssl_decrypt($encrypted, $method, $cryptKey, 0, $iv);
         return $qDecoded;
     }
 

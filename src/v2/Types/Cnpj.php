@@ -21,6 +21,7 @@ class Cnpj {
             if($throwException) {
                 throw new Exception($e->getMessage());
             } else {
+                $this->_value = false;
                 return false;
             }
         }
@@ -132,6 +133,10 @@ class Cnpj {
     }
 
     public function __toString() {
+        return $this->_value;
+    }
+
+    public function getValue() {
         return $this->_value;
     }
 

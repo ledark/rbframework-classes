@@ -368,7 +368,7 @@ class Encoding
 
   public static function has_utf8($string)
   {
-    return preg_match('%(?:
+    return (bool) preg_match('%(?:
         [\xC2-\xDF][\x80-\xBF]        # non-overlong 2-byte
         |\xE0[\xA0-\xBF][\x80-\xBF]               # excluding overlongs
         |[\xE1-\xEC\xEE\xEF][\x80-\xBF]{2}      # straight 3-byte

@@ -14,6 +14,20 @@ use RBFrameworks\Core\Assets\StreamFile;
  * Chame: Vue::module('js/vue/contador-exemplo.js');
  */
 class Vue {
+    
+    private $file = null;
+
+    public function __construct(string $file = null) {
+        $this->file = $file;
+    }
+
+    public function getFile(): ?string {
+        return $this->file;
+    }
+
+    public function render(): string {
+        return $this->file ? '<script type="module" src="'.$this->file.'"></script>' : '';
+    }
 
     public static function getUri(string $path, array $replaces = []) {
         return (new StreamFile($path, $replaces))->getHttpPath();

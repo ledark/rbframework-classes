@@ -6,6 +6,14 @@ class Includes
 {
     private $originalIncludeRequest;
 
+    public function __construct() {
+        $this->originalIncludeRequest = [];
+    }
+
+    public function render(): string {
+        return '';
+    }
+
     private static function extractExtensionWithFilters(string $arg):array {
         if( strpos($arg, '|') !== false ) {
             $params = explode('|', $arg);

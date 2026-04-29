@@ -127,7 +127,7 @@ class Chance {
         }
         $file = file($filepath);
         $result = trim($file[array_rand($file)]);
-        return encoding($result);
+        return $result;
     }
 
     /**

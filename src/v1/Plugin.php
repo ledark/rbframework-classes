@@ -49,4 +49,8 @@ class Plugin {
         include_once $path;
     }
 
+    public static function isLoaded(string $functionname): bool {
+        return function_exists($functionname);
+    }
+
 }

@@ -4,6 +4,24 @@ namespace RBFrameworks\Core\Assets;
 
 class Js
 {
+    private $file = null;
+
+    public function __construct(string $file = null) {
+        $this->file = $file;
+    }
+
+    public function getFile(): ?string {
+        return $this->file;
+    }
+
+    public function setFile(string $file): self {
+        $this->file = $file;
+        return $this;
+    }
+
+    public function render(): string {
+        return $this->file ? '<script src="'.$this->file.'"></script>' : '';
+    }
 
     public static function getTag(string $uri, string $type):string {
         return "<script src=\"{$uri}\" type=\"{$type}\" ></script>";

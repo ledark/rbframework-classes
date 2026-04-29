@@ -6,7 +6,7 @@ use RBFrameworks\Core\Config;
 
 trait Configs {
 
-    private function extractConfig($mixed):array {
+    public function extractConfig($mixed):array {
         switch(gettype($mixed)) {
             case 'array':
                 if (array() === $mixed) {

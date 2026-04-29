@@ -71,25 +71,13 @@ class Time {
         $this->formattype = self::IS_DATE;
         $this->timetype = self::getTypeOnDate($this->getValue());
 
-        //as:Time
-        if($this->timetype == self::NOT_A_DATE) {
-            $this->formattype = self::IS_TIME;
-            $this->timetype = self::getTypeOnTime($this->getValue());
+        //If valid date type found, return
+        if($this->timetype != self::NOT_A_DATE) {
+            return $this->timetype;
         }
 
-        //asDateTime
-        if($this->timetype == self::NOT_A_TIME) {
-            $this->formattype = self::IS_DATETIME;
-            $this->timetype = self::getTypeOnDateTime($this->getValue());
-        }
-        
-        //asInvalidFormat
-        if($this->timetype == self::NOT_A_DATE_OR_TIME) {
-            $this->formattype = self::IS_TIME;
-            $this->timetype = self::NOT_A_DATE_OR_TIME;
-        }
-
-        return $this->timetype;
+        //Date validation failed, return NOT_A_DATE
+        return self::NOT_A_DATE;
     }
 
     public function getFormatType():string {

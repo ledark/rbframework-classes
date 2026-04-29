@@ -27,7 +27,9 @@ class Cache {
             return $cacheObject->getItem($cacheid)->get();
         } else {
             $value = $callback();
-            $cacheObject->save($cacheObject->getItem($cacheid)->set($value));
+            $item = $cacheObject->getItem($cacheid);
+            $item->set($value);
+            $cacheObject->save($item);
             return $value;
         }
 	}

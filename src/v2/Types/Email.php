@@ -9,7 +9,7 @@ class Email {
     protected $_isValid = false;
     
     public function __construct(string $value, bool $throwException = true) {
-
+        
         try {
             $this->_value = $this->validate($value);
             $this->_isValid = true;
@@ -17,7 +17,8 @@ class Email {
             if($throwException) {
                 throw new Exception($e->getMessage());
             } else {
-                return false;
+                $this->_value = false;
+                $this->_isValid = false;
             }
         }
     }
@@ -49,7 +50,7 @@ class Email {
         return $this->_value;
     }
 
-    public function getValue():string {
+    public function getValue() {
         return $this->_value;
     }
 

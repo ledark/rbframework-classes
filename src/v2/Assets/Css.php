@@ -8,6 +8,31 @@ use RBFrameworks\Core\Assets;
 class Css
 {
 
+    private $file = null;
+
+    public function __construct(string $file = null) {
+        $this->file = $file;
+    }
+
+    public function getFile(): ?string {
+        return $this->file;
+    }
+
+    public function setFile(string $file): self {
+        $this->file = $file;
+        return $this;
+    }
+
+    public function render(bool $inline = false): string {
+        if($inline && $this->file) {
+            $FileObject = new File($this->file);
+            if($FileObject->hasFile()) {
+                return '<style type="text/css">' . file_get_contents($FileObject->getFilePath()) . '</style>';
+            }
+        }
+        return $this->file ? '<link rel="stylesheet" href="'.$this->file.'">' : '';
+    }
+
     public static function getTag(string $uri):string {
         return '<link rel="stylesheet" href="'.$uri.'">';
     }

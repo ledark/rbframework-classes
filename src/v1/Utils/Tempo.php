@@ -177,8 +177,8 @@ class Tempo
     //Determinar se a data passada pode ser tratada como Unix em valores positivos
     public static function date_unixpossible($datastr)
     {
-        $ano = self::date_formatar($datastr, 'ano');
-        if ($ano > 1969) {
+        $unix = self::date_convert($datastr, 'unix');
+        if ($unix > 0) {
             return true;
         } else {
             return false;

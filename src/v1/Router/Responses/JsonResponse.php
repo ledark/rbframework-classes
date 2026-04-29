@@ -29,7 +29,6 @@ class JsonResponse extends HandlerResponse {
             $content = encoding($content);
         }
 		echo json_encode($content);
-		exit();
     }
 
 }

@@ -7,6 +7,25 @@ use RBFrameworks\Core\Assets\Js;
 
 class Html
 {
+    private $file = null;
+
+    public function __construct(string $file = null) {
+        $this->file = $file;
+    }
+
+    public function getFile(): ?string {
+        return $this->file;
+    }
+
+    public function setFile(string $file): self {
+        $this->file = $file;
+        return $this;
+    }
+
+    public function render(): string {
+        return $this->file ? '<link rel="import" href="'.$this->file.'">' : '';
+    }
+
     /**
      * -----------------------------------------------------------------------------------------
      * Based on `https://github.com/mecha-cms/mecha-cms/blob/master/system/kernel/converter.php`

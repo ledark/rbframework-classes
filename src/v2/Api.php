@@ -81,8 +81,63 @@ class Api {
         $this->prefix = $prefix;
     }
 
-    public function addNamespace(string $namespace) {
+    public function addNamespace(string $namespace): self {
         $this->namespaces[] = $namespace;
+        return $this;
+    }
+
+    public function getRoutes(): array {
+        return $this->namespaces;
+    }
+
+    public function set404(callable $fn): self {
+        $this->fn404 = $fn;
+        return $this;
+    }
+
+    public static function getResponse(string $annotation): string {
+        if(preg_match('/@response\s+(html|text|json|css|javascript|file|redirect|image)/', $annotation, $matches)) {
+            return $matches[1];
+        }
+        return 'text';
+    }
+
+    public static function getStatusCode(string $annotation): int {
+        if(preg_match('/@status\s+(\d+)/', $annotation, $matches)) {
+            $code = intval($matches[1]);
+            if($code >= 100 && $code <= 599) {
+                return $code;
+            }
+        }
+        return 200;
+    }
+
+    public static function getUtf8(string $annotation): bool {
+        if(preg_match('/@utf8\s+(true|false)/', $annotation, $matches)) {
+            return $matches[1] === 'true';
+        }
+        return false;
+    }
+
+    public static function getBefore(string $annotation): string {
+        if(preg_match('/@before\s+(.+)/', $annotation, $matches)) {
+            return trim($matches[1]);
+        }
+        return '';
+    }
+
+    public static function getDescr(string $annotation): string {
+        if(preg_match('/@descr\s+(.+)/', $annotation, $matches)) {
+            return trim($matches[1]);
+        }
+        return '';
+    }
+
+    public static function getCache(string $annotation): string {
+        if(preg_match('/@cache\s+(.+)/', $annotation, $matches)) {
+            return trim($matches[1]);
+        }
+        return '';
     }
 
     public function run() {

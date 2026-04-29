@@ -17,7 +17,7 @@ class Cpf implements TypeInterface {
             if($throwException) {
                 throw new Exception($e->getMessage());
             } else {
-                return false;
+                $this->_value = false;
             }            
         }
     }

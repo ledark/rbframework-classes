@@ -15,11 +15,16 @@ abstract class Auth {
 
     public static function generateTokenConditional(string $salt = ''):string {
         $token = Config::get('session.admin.token');
+        if(is_null($token)) {
+            return self::generateToken($salt);
+        }
         return self::checkToken($token, $salt) ? $token : self::generateToken($salt);
     }
 
-    public static function checkToken(string $token, string $salt = ''):bool {
+    public static function checkToken(?string $token, string $salt = ''):bool {
+        if(is_null($token)) return false;
         $tokenParts = explode('-', $token);
+        if(count($tokenParts) < 3) return false;
         $secret = $tokenParts[0];
         $userIP = $tokenParts[1];
         $uniqID = self::resolveUniqID($tokenParts[2]);

@@ -1,5 +1,7 @@
 <?php
 
+namespace Framework;
+
 class HttpCodes {
     public static array $codes = [        
         100 => 'Continue',
@@ -84,14 +86,14 @@ class HttpCodes {
         return self::$codes;
     }
 
-    /**
-     * Retrieve the HTTP status code corresponding to a given status text.
-     *
-     * @param string $searchTerm The status text to search for.
-     * @return int The HTTP status code associated with the given status text, or false if not found.
-     */
+     /**
+      * Retrieve the HTTP status code corresponding to a given status text.
+      *
+      * @param string $searchTerm The status text to search for.
+      * @return int|false The HTTP status code associated with the given status text, or false if not found.
+      */
 
-     public static function getCodeByName(string $searchTerm): int {
+     public static function getCodeByName(string $searchTerm) {
         foreach (self::$codes as $code => $text) {
             if (stripos($text, $searchTerm) !== false) {
                 return $code;

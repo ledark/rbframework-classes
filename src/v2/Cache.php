@@ -33,7 +33,12 @@ class Cache {
         $this->id = $id;
         
         $location_cache = Config::get('location.cache.default');
-        if(!is_string($location_cache)) CollectionException::throw('location.cache.default is not a string');
+        if(!is_string($location_cache)) {
+            $location_cache = sys_get_temp_dir() . '/cache';
+        }
+        if(!is_dir($location_cache)) {
+            @mkdir($location_cache, 0777, true);
+        }
         $this->setCacheFolder($location_cache);
         if($expires > 1000000) {
             $this->expiresWhen($expires);
@@ -196,7 +201,7 @@ class Cache {
         return $this;
     }
     
-    public function toString($mixed):string {
+    public static function toString($mixed):string {
         if(is_object($mixed)) {
             $mixed = (array) $mixed;
         }

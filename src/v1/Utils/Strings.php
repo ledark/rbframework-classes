@@ -115,7 +115,32 @@ class Strings {
     public static function isCPF(string $string): bool {
         $string = trim($string);
         $string = self::clearCPF($string);
-        return (strlen($string) == 11) ? true : false;
+        if(strlen($string) != 11) return false;
+        
+        // Check if all digits are the same (invalid CPF)
+        if(preg_match('/(\d)\1{10}/', $string)) return false;
+        
+        // Validate first check digit
+        $sum = 0;
+        for($i = 0; $i < 9; $i++) {
+            $sum += $string[$i] * (10 - $i);
+        }
+        $remainder = $sum % 11;
+        $digit1 = ($remainder < 2) ? 0 : 11 - $remainder;
+        
+        if($string[9] != $digit1) return false;
+        
+        // Validate second check digit
+        $sum = 0;
+        for($i = 0; $i < 10; $i++) {
+            $sum += $string[$i] * (11 - $i);
+        }
+        $remainder = $sum % 11;
+        $digit2 = ($remainder < 2) ? 0 : 11 - $remainder;
+        
+        if($string[10] != $digit2) return false;
+        
+        return true;
     }
     public static function isCNPJ(string $string): bool {
         $string = trim($string);

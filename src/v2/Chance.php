@@ -205,27 +205,27 @@ class Chance {
     }
 
 	/**
-	 *	Method: "prop" add in: 22/01/2019
-	 *	Chance::prob("resultado when true", 40, "resultado quando false); //Retorna a string1 em 40% dos casos, e a segunda string em 60%
-	 *	Chance::prob("Infectado!", 30); //Retorna "Infectado!" em 30% dos casos, ou false em 70%;
-	 *	Chance::prob(25); //Equivale a porcent(25)
-	 *	Chance::prob("texto"); //Equivale a prob("texto", 50);
-	*/
+ 	 *	Method: "prop" add in: 22/01/2019
+ 	 *	Chance::prob("resultado when true", 40, "resultado quando false"); //Retorna a string1 em 40% dos casos, e a segunda string em 60%
+ 	 *	Chance::prob("Infectado!", 30); //Retorna "Infectado!" em 30% dos casos, ou false em 70%;
+ 	 *	Chance::prob(25); //Equivale a porcent(25)
+ 	 *	Chance::prob("texto"); //Equivale a prob("texto", 50);
+ 	 */
 	public static function prob($param1, $param2 = null, $param3 = null) {
-		if(is_numeric($param1) and is_null($param2) and is_null($param3)) {
-			return self::porcent($param1);
-		} else
-		if(is_string($param1) and is_null($param2) and is_null($param3)) {
-			return self::prob($param1, 50);
-		} else
-		if(is_string($param1) and is_numeric($param2) and is_null($param3)) {
-			return (rand(0,100) < $param2) ? $param1 : false;
-		} else
-		if(is_string($param1) and is_numeric($param2) and is_string($param3)) {
-			return (rand(0,100) < $param2) ? $param1 : $param3;
+ 		if(is_numeric($param1) and is_null($param2) and is_null($param3)) {
+ 			return self::porcent($param1);
+ 		} else
+ 		if(is_string($param1) and is_null($param2) and is_null($param3)) {
+ 			return self::porcent(50);
+ 		} else
+ 		if(is_string($param1) and is_numeric($param2) and is_null($param3)) {
+ 			return (rand(0,100) < $param2) ? $param1 : false;
+ 		} else
+ 		if(is_string($param1) and is_numeric($param2) and is_string($param3)) {
+		return (rand(0,100) < $param2) ? $param1 : $param3;
         } else
-        if(is_callable($param1) and is_numeric($param3) and is_callable($param3)) {
-            return (rand(0,100) < $param2) ? $param1(): $param3();
+        if(is_callable($param1) and is_numeric($param2) and is_callable($param3)) {
+            return (rand(0,100) < $param2) ? $param1() : $param3();
 		} else {
 			throw new \Exception("::prob fail");
 		}
