@@ -137,7 +137,7 @@ abstract class Arrays {
         return array_key_exists($key, $data) ? $data[$key] : $default;
     }    
     
-    public static function setValueByDotKey(string $key, array &$data, $overwriteValue = null, $separator = '.'):array {
+    public static function setValueByDotKey(string $key, array &$data, $overwriteValue = null, $separator = '.'): ?array {
         // @assert $key is a non-empty string
         // @assert $data is a loopable array
         // @otherwise return $default value

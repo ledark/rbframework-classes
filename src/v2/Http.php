@@ -244,7 +244,7 @@ class Http {
         return self::getHost(). substr($_SERVER['SCRIPT_NAME'], 0, strlen($script)*-1); //remove index.php 
     }
 
-    public static function getDomain():string {
+    public static function getDomain(): ?string {
         return Config::get('server.http_host');
     }
     
