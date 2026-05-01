@@ -53,7 +53,7 @@ class Imagem {
         $imagemNullResized = 'log/cache/fotos/'.$w.'x'.$h.'sem-foto'.$r.'.jpg';
         $imagemResized = $this->getCachedFilename();
 
-        //Validação dos Diretórios e Arquivo Null
+        //Validaï¿½ï¿½o dos Diretï¿½rios e Arquivo Null
         if(!is_dir(dirname($imagemResized))) exit("ERR_INVALID_DIR: $imagemResized");
         if(!is_dir(dirname($imagemNullResized))) exit("ERR_INVALID_DIR: $imagemNullResized");
         if(!file_exists($imagemNull)) exit("ERR_INVALID_NULL: $imagemNull");        
@@ -65,17 +65,19 @@ class Imagem {
     }
 
     public function detectUseWebp() {
+        $usewebp = false;
         //WebP Suportado pelo Chrome, CriOS ou Firefox
-        if (strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false
-        ||  strpos($_SERVER['HTTP_USER_AGENT'], 'CriOS') !== false
-        ||  strpos($_SERVER['HTTP_USER_AGENT'], 'Firefox') !== false
-        ) {
+        if (isset($_SERVER['HTTP_USER_AGENT']) && (
+            strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false
+            ||  strpos($_SERVER['HTTP_USER_AGENT'], 'CriOS') !== false
+            ||  strpos($_SERVER['HTTP_USER_AGENT'], 'Firefox') !== false
+        )) {
             $usewebp = true;
         } 
 
         if(isset($_GET['nowebp'])) $usewebp = false;
 
-        //Forçar desativação de webp
+        //ForÃ§ar desativaÃ§Ã£o de webp
         $usewebp = false;
 
         if(isset($_GET['forcewebp'])) $usewebp = true;
@@ -83,7 +85,7 @@ class Imagem {
         $this->usewebp = $usewebp;
     }
 
-    //A ideia é manter o cache para requisições mais rápidas
+    //A ideia Ã© manter o cache para requisiÃ§Ãµes mais rÃ¡pidas
     public function detectUseCache() {
         $manterCache = $this->manterCache;
         if(isset($_GET['cache'])) $manterCache = true; 
@@ -202,7 +204,7 @@ class Imagem {
         }
         */
         
-        //Toda Renderização da Original acontece aqui
+        //Toda Renderizaï¿½ï¿½o da Original acontece aqui
         $Canvas = new Canvas();
         $Canvas
             ->carrega($localSource)
@@ -231,7 +233,7 @@ class Imagem {
         echo "<br/>";        
 
         echo $this->getCachedFilename();
-        if($this->isWebp()) echo "Usará WEBP!";
+        if($this->isWebp()) echo "Usarï¿½ WEBP!";
         
         print_r($this->pathInfo);
         
@@ -241,7 +243,7 @@ class Imagem {
     }
 
     /*
-    As condicionais para a renderização de uma imagem serão centradas na URL, que naturalmente é a $this->getImagemOriginal():
+    As condicionais para a renderizaï¿½ï¿½o de uma imagem serï¿½o centradas na URL, que naturalmente ï¿½ a $this->getImagemOriginal():
 
         Se $this->isCacheEnabled()
 
@@ -257,7 +259,7 @@ class Imagem {
             }
         }
 
-        //Garantir que exista uma cópia local em caso de arquivos remotos
+        //Garantir que exista uma cï¿½pia local em caso de arquivos remotos
         if($this->isRemote()) {
             if(!file_exists($this->getCachedFilename('ori'))) {
                 file_put_contents(
@@ -276,7 +278,7 @@ class Imagem {
             $this->saveImagem($localSource, $resizedImage);
         }
 
-        //Se você já possui um localSource e um resizedImage, então resta exibir o que tem (em caso de cache ativo) ou reprocessar (em caso de cache inativo)
+        //Se vocï¿½ jï¿½ possui um localSource e um resizedImage, entï¿½o resta exibir o que tem (em caso de cache ativo) ou reprocessar (em caso de cache inativo)
         if(!$this->isCacheEnabled()) {
             $this->saveImagem($localSource, $resizedImage);
         } 
@@ -351,7 +353,7 @@ class Imagem {
         }
         */
         
-        //Toda Renderização da Original acontece aqui
+        //Toda Renderizaï¿½ï¿½o da Original acontece aqui
         $Canvas = new Canvas();
         $Canvas
             ->carrega($imagemOriginal)
@@ -481,7 +483,7 @@ class Imagem {
             }
             */
             
-            //Toda Renderização da Original acontece aqui
+            //Toda Renderizaï¿½ï¿½o da Original acontece aqui
             $Canvas = new Canvas();
             $Canvas
                 ->carrega($imagemOriginal)

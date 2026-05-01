@@ -12,11 +12,11 @@ trait Configs {
                 if (array() === $mixed) {
                     //case simple_array
                     return [
-                        'server' => $mixed[0],
-                        'login' => $mixed[1],
-                        'senha' => $mixed[2],
-                        'database' => $mixed[3],
-                        'prefixo' => $mixed[4],
+                        'server' => $mixed[0] ?? '',
+                        'login' => $mixed[1] ?? '',
+                        'senha' => $mixed[2] ?? '',
+                        'database' => $mixed[3] ?? '',
+                        'prefixo' => $mixed[4] ?? '',
                     ];
                 } else
                 if(array_keys($mixed) !== range(0, count($mixed) - 1)) {
@@ -50,6 +50,7 @@ trait Configs {
                 throw new \Exception("Tipo desconhecido que n?o possui uma configura??o de banco de dados detecada");
             break;
         }
+        return [];
     }
 
     private function getNumDimensions(array $array):int {

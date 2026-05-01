@@ -17,13 +17,16 @@ class TemplateController extends Template {
 
     public function setPrefixContent(string $content) {
         $this->prefixContent = $content;
+        return $this;
     }
     public function setSufixContent(string $content) {
         $this->sufixContent = $content;
+        return $this;
     }
 
     public function setTemplatePage(string $templatePage) {
         $this->templatePage = $templatePage;
+        return $this;
     }
 
     public function renderPages(array $pages = []) {

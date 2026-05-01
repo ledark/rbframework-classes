@@ -4,7 +4,7 @@ namespace RBFrameworks\Core\Validator;
 
 class Rule {
 
-    private function setValidState(bool $valid) {
+    public function setValidState(bool $valid) {
         $this->_valid = $valid;
     }
 

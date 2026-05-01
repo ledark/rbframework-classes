@@ -141,7 +141,7 @@ abstract class Arrays {
         // @assert $key is a non-empty string
         // @assert $data is a loopable array
         // @otherwise return $default value
-        if (!is_string($key) || empty($key) || !count($data))
+        if (!is_string($key) || empty($key))
         {
             return null;
         }
@@ -151,27 +151,7 @@ abstract class Arrays {
         {
             $keys = explode($separator, $key);
             $code = "\$data['".implode("']['", $keys)."'] = \$overwriteValue; return \$data; ";
-            eval($code);            
-    
-            foreach ($keys as $innerKey)
-            {
-                // @assert $data[$innerKey] is available to continue
-                // @otherwise return $default value
-                if(is_string($data)) {
-                    return null;
-                }
-
-                /*
-                if (!array_key_exists($innerKey, $data))
-                {
-                    $data[$innerKey] = $overwriteValue;
-                }
-    
-                $data[$innerKey] = $overwriteValue;
-                */
-            }
-    
-            return $data;
+            return eval($code);            
         }
     
         // @fallback returning value of $key in $data or $default value
