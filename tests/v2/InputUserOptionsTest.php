@@ -10,53 +10,44 @@ class InputUserOptionsTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf(InputUserOptions::class, $options);
     }
 
-    public function testSetOption()
+    public function testDefaultProperty()
     {
         $options = new InputUserOptions();
-        $result = $options->setOption('test', 'value');
-        $this->assertInstanceOf(InputUserOptions::class, $result);
+        $this->assertEquals('', $options->default);
     }
 
-    public function testGetOption()
+    public function testGetFromAnywhereProperty()
     {
         $options = new InputUserOptions();
-        $options->setOption('test', 'value');
-        $this->assertEquals('value', $options->getOption('test'));
+        $this->assertIsBool($options->getFromAnywhere);
+        $this->assertTrue($options->getFromAnywhere);
     }
 
-    public function testGetOptionDefault()
+    public function testDecodeUTF8Property()
     {
         $options = new InputUserOptions();
-        $this->assertNull($options->getOption('nonexistent'));
+        $this->assertIsBool($options->decodeUTF8);
+        $this->assertTrue($options->decodeUTF8);
     }
 
-    public function testSetOptions()
+    public function testSanitizeProperty()
     {
         $options = new InputUserOptions();
-        $result = $options->setOptions(['a' => 1, 'b' => 2]);
-        $this->assertInstanceOf(InputUserOptions::class, $result);
+        $this->assertIsBool($options->sanitize);
+        $this->assertTrue($options->sanitize);
     }
 
-    public function testGetOptions()
+    public function testSetProperties()
     {
         $options = new InputUserOptions();
-        $options->setOptions(['a' => 1, 'b' => 2]);
-        $result = $options->getOptions();
-        $this->assertIsArray($result);
-    }
-
-    public function testHasOption()
-    {
-        $options = new InputUserOptions();
-        $options->setOption('test', 'value');
-        $this->assertTrue($options->hasOption('test'));
-    }
-
-    public function testRemoveOption()
-    {
-        $options = new InputUserOptions();
-        $options->setOption('test', 'value');
-        $result = $options->removeOption('test');
-        $this->assertInstanceOf(InputUserOptions::class, $result);
+        $options->default = 'test';
+        $options->getFromAnywhere = false;
+        $options->decodeUTF8 = false;
+        $options->sanitize = false;
+        
+        $this->assertEquals('test', $options->default);
+        $this->assertFalse($options->getFromAnywhere);
+        $this->assertFalse($options->decodeUTF8);
+        $this->assertFalse($options->sanitize);
     }
 }

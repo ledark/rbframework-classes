@@ -4,49 +4,46 @@ use RBFrameworks\Core\Database\Traits\Hooks;
 
 class HooksTest extends \PHPUnit\Framework\TestCase
 {
-    public function testAddHook()
+    public function testPreParseReturnsCallable()
     {
         $trait = $this->getObjectForTrait(Hooks::class);
-        $result = $trait->addHook('test_hook', function() { return 'hooked'; });
-        $this->assertTrue($result);
+        $result = $trait->pre_parse();
+        $this->assertIsCallable($result);
     }
 
-    public function testRunHook()
+    public function testPreRunReturnsCallable()
     {
         $trait = $this->getObjectForTrait(Hooks::class);
-        $trait->addHook('test_hook', function() { return 'hooked'; });
-        $result = $trait->runHook('test_hook');
-        $this->assertEquals('hooked', $result);
+        $result = $trait->pre_run();
+        $this->assertIsCallable($result);
     }
 
-    public function testRunHookWithArgs()
+    public function testPostRunReturnsCallable()
     {
         $trait = $this->getObjectForTrait(Hooks::class);
-        $trait->addHook('test_hook', function($arg) { return $arg; });
-        $result = $trait->runHook('test_hook', ['test_arg']);
-        $this->assertEquals('test_arg', $result);
+        $result = $trait->post_run();
+        $this->assertIsCallable($result);
     }
 
-    public function testRemoveHook()
+    public function testRunSuccessReturnsCallable()
     {
         $trait = $this->getObjectForTrait(Hooks::class);
-        $trait->addHook('test_hook', function() {});
-        $result = $trait->removeHook('test_hook');
-        $this->assertTrue($result);
+        $result = $trait->run_success();
+        $this->assertIsCallable($result);
     }
 
-    public function testHasHook()
+    public function testRunFailedReturnsCallable()
     {
         $trait = $this->getObjectForTrait(Hooks::class);
-        $trait->addHook('test_hook', function() {});
-        $this->assertTrue($trait->hasHook('test_hook'));
+        $result = $trait->run_failed();
+        $this->assertIsCallable($result);
     }
 
-    public function testClearHooks()
+    public function testPreParseCallableWorks()
     {
         $trait = $this->getObjectForTrait(Hooks::class);
-        $trait->addHook('test_hook', function() {});
-        $result = $trait->clearHooks();
-        $this->assertTrue($result);
+        $callable = $trait->pre_parse();
+        $result = $callable(['test' => 'data']);
+        $this->assertNull($result);
     }
 }

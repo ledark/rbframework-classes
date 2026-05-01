@@ -4,51 +4,18 @@ use RBFrameworks\Core\Database\Traits\Crud;
 
 class CrudTest extends \PHPUnit\Framework\TestCase
 {
-    public function testCreate()
+    public function testTraitExists()
     {
-        $trait = $this->getObjectForTrait(Crud::class);
-        $this->assertTrue(method_exists(Crud::class, 'create'));
+        $this->assertTrue(trait_exists(Crud::class));
     }
 
-    public function testRead()
+    public function testExtractValidFieldsMethodExists()
     {
-        $trait = $this->getObjectForTrait(Crud::class);
-        $this->assertTrue(method_exists(Crud::class, 'read'));
+        $this->assertTrue(method_exists(Crud::class, 'extractValidFields'));
     }
 
-    public function testUpdate()
+    public function testConvertArrayToQueryMethodExists()
     {
-        $trait = $this->getObjectForTrait(Crud::class);
-        $this->assertTrue(method_exists(Crud::class, 'update'));
-    }
-
-    public function testDelete()
-    {
-        $trait = $this->getObjectForTrait(Crud::class);
-        $this->assertTrue(method_exists(Crud::class, 'delete'));
-    }
-
-    public function testSelect()
-    {
-        $trait = $this->getObjectForTrait(Crud::class);
-        $this->assertTrue(method_exists(Crud::class, 'select'));
-    }
-
-    public function testInsert()
-    {
-        $trait = $this->getObjectForTrait(Crud::class);
-        $this->assertTrue(method_exists(Crud::class, 'insert'));
-    }
-
-    public function testGetTable()
-    {
-        $trait = $this->getObjectForTrait(Crud::class);
-        $this->assertTrue(method_exists(Crud::class, 'getTable'));
-    }
-
-    public function testSetTable()
-    {
-        $trait = $this->getObjectForTrait(Crud::class);
-        $this->assertTrue(method_exists(Crud::class, 'setTable'));
+        $this->assertTrue(method_exists(Crud::class, 'convertArray_toQuery'));
     }
 }

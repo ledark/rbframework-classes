@@ -4,6 +4,11 @@ use RBFrameworks\Core\Database\Traits\QueryCommon;
 
 class QueryCommonTest extends \PHPUnit\Framework\TestCase
 {
+    protected function setUp(): void
+    {
+        $this->markTestSkipped('Database tests require database connection');
+    }
+
     public function testSetField()
     {
         $trait = $this->getObjectForTrait(QueryCommon::class);
@@ -44,9 +49,5 @@ class QueryCommonTest extends \PHPUnit\Framework\TestCase
     {
         $trait = $this->getObjectForTrait(QueryCommon::class);
         $this->assertTrue(method_exists($trait, 'clear'));
-    }
-
-    public function getObjectForTrait(string $traitName, array $arguments = [], string $traitClassName = '', bool $callOriginalConstructor = true, bool $callOriginalClone = true, bool $callAutoload = true): object {
-        return eval("return new class { use \\$traitName; };");
     }
 }

@@ -81,8 +81,9 @@ class ArraysV2Test extends \PHPUnit\Framework\TestCase
     public function testSetValueByKey()
     {
         $data = ['foo' => 'bar'];
-        $result = Arrays::setValueByKey('new_key', $data, 'new_value');
+        $result = Arrays::setValueByKey('foo', $data, 'new_value');
         $this->assertTrue($result);
+        $this->assertEquals('new_value', $data['foo']);
     }
 
     public function testSetValueByDotKey()
@@ -90,5 +91,7 @@ class ArraysV2Test extends \PHPUnit\Framework\TestCase
         $data = [];
         $result = Arrays::setValueByDotKey('foo.bar', $data, 'value');
         $this->assertNotNull($result);
+        $this->assertIsArray($result);
+        $this->assertEquals('value', $result['foo']['bar']);
     }
 }

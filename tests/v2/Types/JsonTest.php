@@ -44,19 +44,26 @@ class JsonTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(-1, $result);
     }
 
-    public function testGetValue()
+    public function testGetValueWithArray()
     {
         $json = new Json(['key' => 'value']);
         $result = $json->getValue();
-        $this->assertIsArray($result);
+        $this->assertIsString($result); // For array input, getValue returns getString()
+    }
+
+    public function testGetValueWithString()
+    {
+        $json = new Json('{"key":"value"}');
+        $result = $json->getValue();
+        $this->assertIsArray($result); // For string input, getValue returns getArray()
     }
 
     public function testSetOption()
     {
         $json = new Json('test');
-        $json->setOption('forceUtf8', true);
+        $json->setOption('forceUtf8', 'true'); // Note: setOption expects string value
         $result = $json->getOption('forceUtf8');
-        $this->assertTrue($result);
+        $this->assertEquals('true', $result);
     }
 
     public function testGetOptionDefault()

@@ -4,68 +4,41 @@ use RBFrameworks\Core\Modulo;
 
 class ModuloTest extends \PHPUnit\Framework\TestCase
 {
-    public function testConstructor()
+    public function testHasMethodExists()
     {
-        $modulo = new Modulo('Test Module');
+        $this->assertTrue(method_exists(Modulo::class, 'has'));
+        $this->assertTrue(method_exists(Modulo::class, 'hasAny'));
+        $this->assertTrue(method_exists(Modulo::class, 'hasAll'));
+    }
+
+    public function testGetInstance()
+    {
+        $modulo = Modulo::getInstance();
         $this->assertInstanceOf(Modulo::class, $modulo);
     }
 
-    public function testGetName()
+    public function testHasReturnsBool()
     {
-        $modulo = new Modulo('Test Module');
-        $this->assertEquals('Test Module', $modulo->getName());
+        $result = Modulo::has('non-existent-module-' . uniqid());
+        $this->assertIsBool($result);
     }
 
-    public function testSetName()
+    public function testHasAnyReturnsBool()
     {
-        $modulo = new Modulo('Old Name');
-        $modulo->setName('New Name');
-        $this->assertEquals('New Name', $modulo->getName());
+        $result = Modulo::hasAny(['non-existent-module-' . uniqid()]);
+        $this->assertIsBool($result);
     }
 
-    public function testGetSlug()
+    public function testHasAllReturnsBool()
     {
-        $modulo = new Modulo('Test Module');
-        $result = $modulo->getSlug();
-        $this->assertIsString($result);
+        $result = Modulo::hasAll(['non-existent-module-' . uniqid()]);
+        $this->assertIsBool($result);
     }
 
-    public function testGetIcon()
+    public function testGetInstanceSameInstance()
     {
-        $modulo = new Modulo('Test');
-        $this->assertIsString($modulo->getIcon());
-    }
-
-    public function testSetIcon()
-    {
-        $modulo = new Modulo('Test');
-        $result = $modulo->setIcon('fa fa-test');
-        $this->assertInstanceOf(Modulo::class, $result);
-    }
-
-    public function testGetRoute()
-    {
-        $modulo = new Modulo('Test');
-        $this->assertIsString($modulo->getRoute());
-    }
-
-    public function testSetRoute()
-    {
-        $modulo = new Modulo('Test');
-        $result = $modulo->setRoute('/test');
-        $this->assertInstanceOf(Modulo::class, $result);
-    }
-
-    public function testIsVisible()
-    {
-        $modulo = new Modulo('Test');
-        $this->assertIsBool($modulo->isVisible());
-    }
-
-    public function testSetVisible()
-    {
-        $modulo = new Modulo('Test');
-        $result = $modulo->setVisible(false);
-        $this->assertInstanceOf(Modulo::class, $result);
+        $instance1 = Modulo::getInstance();
+        $instance2 = Modulo::getInstance();
+        $this->assertSame($instance1, $instance2);
     }
 }

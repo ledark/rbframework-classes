@@ -30,9 +30,11 @@ class InterfacesTest extends \PHPUnit\Framework\TestCase
     public function testIsCrudableMethods()
     {
         $methods = get_class_methods(isCrudable::class);
-        $this->assertContains('create', $methods);
-        $this->assertContains('read', $methods);
-        $this->assertContains('update', $methods);
-        $this->assertContains('delete', $methods);
+        // The actual methods are: add, set, upsert, get, del
+        $this->assertContains('add', $methods);
+        $this->assertContains('set', $methods);
+        $this->assertContains('upsert', $methods);
+        $this->assertContains('get', $methods);
+        $this->assertContains('del', $methods);
     }
 }

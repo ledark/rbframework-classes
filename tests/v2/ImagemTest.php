@@ -10,67 +10,60 @@ class ImagemTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf(Imagem::class, $imagem);
     }
 
-    public function testConstructorWithoutPath()
-    {
-        $imagem = new Imagem();
-        $this->assertInstanceOf(Imagem::class, $imagem);
-    }
-
-    public function testGetPath()
+    public function testGetImagemOriginal()
     {
         $imagem = new Imagem(__FILE__);
-        $this->assertEquals(__FILE__, $imagem->getPath());
+        $this->assertEquals(__FILE__, $imagem->getImagemOriginal());
     }
 
-    public function testSetPath()
+    public function testSetOriginalPath()
     {
         $imagem = new Imagem('old.jpg');
-        $imagem->setPath('new.jpg');
-        $this->assertEquals('new.jpg', $imagem->getPath());
+        $result = $imagem->setOriginalPath('new.jpg');
+        $this->assertInstanceOf(Imagem::class, $result);
+        $this->assertEquals('new.jpg', $imagem->getImagemOriginal());
     }
 
-    public function testGetWidth()
-    {
-        $imagem = new Imagem();
-        $this->assertIsInt($imagem->getWidth());
-    }
-
-    public function testGetHeight()
-    {
-        $imagem = new Imagem();
-        $this->assertIsInt($imagem->getHeight());
-    }
-
-    public function testGetMime()
-    {
-        $imagem = new Imagem();
-        $this->assertIsString($imagem->getMime());
-    }
-
-    public function testIsValid()
+    public function testGetDimensions()
     {
         $imagem = new Imagem(__FILE__);
-        $this->assertIsBool($imagem->isValid());
+        $dimensions = $imagem->getDimensions();
+        $this->assertIsArray($dimensions);
+        $this->assertArrayHasKey('width', $dimensions);
+        $this->assertArrayHasKey('height', $dimensions);
     }
 
-    public function testResize()
+    public function testSetDimensions()
     {
-        $imagem = new Imagem();
-        $result = $imagem->resize(100, 100);
-        $this->assertInstanceOf(Imagem::class, $result);
+        $imagem = new Imagem(__FILE__);
+        $imagem->setDimensions(100, 200, 100, 'crop');
+        $dimensions = $imagem->getDimensions();
+        $this->assertEquals(100, $dimensions['width']);
+        $this->assertEquals(200, $dimensions['height']);
     }
 
-    public function testCrop()
+    public function testIsWebp()
     {
-        $imagem = new Imagem();
-        $result = $imagem->crop(50, 50);
-        $this->assertInstanceOf(Imagem::class, $result);
+        $imagem = new Imagem(__FILE__);
+        $this->assertIsBool($imagem->isWebp());
     }
 
-    public function testSave()
+    public function testIsCacheEnabled()
     {
-        $imagem = new Imagem();
-        $result = $imagem->save('test_output.jpg');
-        $this->assertIsBool($result);
+        $imagem = new Imagem(__FILE__);
+        $this->assertIsBool($imagem->isCacheEnabled());
+    }
+
+    public function testIsRemote()
+    {
+        $imagem = new Imagem(__FILE__);
+        $this->assertIsBool($imagem->isRemote());
+    }
+
+    public function testGetCachedFilename()
+    {
+        $imagem = new Imagem(__FILE__);
+        $filename = $imagem->getCachedFilename();
+        $this->assertIsString($filename);
     }
 }

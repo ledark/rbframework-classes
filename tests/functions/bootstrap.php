@@ -13,7 +13,7 @@ $include = function(string $path) {
 };
 
 function get_root_path(string $sufix = ""):string {
-    $rootPath = realpath(__DIR__ . '/../../').DIRECTORY_SEPARATOR.ltrim($sufix, '/');
+    $rootPath = realpath(__DIR__ . '/../../') . DIRECTORY_SEPARATOR . ltrim($sufix, '/');
     return $rootPath;
 }
 
@@ -30,8 +30,22 @@ if(!function_exists('get_collection_dir')) {
     }
 }
 
+// Define functions_dir for Plugin::load to work
+if(!function_exists('get_functions_dir')) {
+    function get_functions_dir(): string {
+        return __DIR__ . '/../collection/';
+    }
+}
+
 $include(__DIR__ . '/../../vendor/autoload.php');
 $include(__DIR__.'/../../_include.php');
+
+// Set default config for tests
+if (!function_exists('config')) {
+    function config(string $configName, $default = null, bool $overwrite = false) {
+        return $default;
+    }
+}
 
 register_shutdown_function(function () {
 
