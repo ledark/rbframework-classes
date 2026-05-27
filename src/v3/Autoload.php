@@ -134,11 +134,20 @@ class Autoload
     public static function routeDirectFiles(): self
     {
         if (file_exists($_SERVER['REQUEST_URI'])) {
+            $file_request = $_SERVER['REQUEST_URI'];
+        } else 
+        if (file_exists(get_root_path($_SERVER['REQUEST_URI']))) {
+            $file_request = get_root_path($_SERVER['REQUEST_URI']);
+        } else {
+            $file_request = null;
+        }
+
+        if (file_exists($file_request)) {
             $extension = pathinfo($_SERVER['REQUEST_URI'], PATHINFO_EXTENSION);
             if (in_array($extension, collection('routes.direct_files', ['css', 'js', 'json']))) {
                 header('Cache-Control: max-age=31536000');
                 header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 31536000) . ' GMT');
-                File::readFile($_SERVER['REQUEST_URI']);
+                File::readFile($file_request);
                 exit();
             }
         }
