@@ -12,7 +12,7 @@ class Options {
     public function __construct() {
         $this->default = '';
         $this->getFromAnywhere = true;
-        $this->decodeUTF8 = true;
+        $this->decodeUTF8 = false;
         $this->sanitize = true;
     }
 
