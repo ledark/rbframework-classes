@@ -44,12 +44,12 @@ trait SessionMessageTrait {
             echo $_SESSION[self::getBlockNameMessage()]['prefix'];
             echo '<span class="'.$_SESSION[self::getBlockNameMessage()]['cssclass'].'">'.$_SESSION[self::getBlockNameMessage()]['message'].'</span>';
             echo $_SESSION[self::getBlockNameMessage()]['sufix'];
-            self::clear();
+            self::clearMessage();
         }
         if($capture) return ob_get_clean();
     }
 
-    public static function clear() {
+    public static function clearMessage() {
         $_SESSION[self::getBlockNameMessage()] = [
             'prefix' => '',
             'cssclass' => '',
