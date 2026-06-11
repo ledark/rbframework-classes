@@ -11,10 +11,11 @@ trait SessionMessageTrait {
     }
 
     public static function setMessage(string $message = '', string $cssclass = '', $prefix = '<div class="alert alert-info">', $sufix = '</div>'):void {        
+        $prevMessage = self::getMessage();
         $_SESSION[self::getBlockNameMessage()] = [
             'prefix' => $prefix,
             'cssclass' => $cssclass,
-            'message' => $message,
+            'message' => $prevMessage.$message,
             'sufix' => $sufix,
             'rendered' => 0,
         ];
@@ -36,6 +37,13 @@ trait SessionMessageTrait {
 
     public static function setError(string $message):void {
         self::setMessage($message, 'alert-danger', '<div class="alert alert-danger">', '</div>');
+    }
+
+    public static function getMessage():string {
+        if(self::hasMessage()) {
+            return $_SESSION[self::getBlockNameMessage()]['message'];
+        }
+        return "";
     }
 
     public static function render(bool $capture = false) {
